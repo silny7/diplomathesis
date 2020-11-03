@@ -232,11 +232,21 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
 
     @Override
     public EnumeratedAssignment visitEnumerated_assignment(UnityGrammarParser.Enumerated_assignmentContext ctx){
-        return null; 
+        List<Variable> variableList = visitVariable_list(ctx.variable_list());
+
+
+        return new EnumeratedAssignment();
     }
 
     @Override
     public QuantifiedAssignment visitQuantified_assignment(UnityGrammarParser.Quantified_assignmentContext ctx){
+        return new QuantifiedAssignment();
+    }
+
+    @Override
+    public List<Variable> visitVariable_list(UnityGrammarParser.Variable_listContext ctx){
+        //may be variable name
+        //may be also variableName[index]
         return null;
     }
 
