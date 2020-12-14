@@ -1,6 +1,8 @@
 
 package silny7.uniba.sk.gui;
 
+import silny7.uniba.sk.parser.UnityGrammarException;
+import silny7.uniba.sk.unity.Unity;
 import silny7.uniba.sk.unity.UnityProgram;
 
 import javax.swing.*;
@@ -144,8 +146,16 @@ public class ProgramGUI extends JFrame {
                 //read the whole
                 JOptionPane.showMessageDialog(null, inputCodeTA.getText(), "InfoBox: ", JOptionPane.INFORMATION_MESSAGE);
                 String programToParse = inputCodeTA.getText();
-                unityProgram = new UnityProgram();
+                //unityProgram = new UnityProgram();
                 //unityProgram.createProgramFromString(programToParse);
+
+                Unity unity = new Unity();
+                try {
+                    unity.createProgramFromString(programToParse);
+                } catch (UnityGrammarException unityGrammarException) {
+                    unityGrammarException.printStackTrace();
+                }
+
             }
         });
 

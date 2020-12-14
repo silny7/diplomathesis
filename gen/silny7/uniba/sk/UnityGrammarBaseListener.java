@@ -1,4 +1,4 @@
-// Generated from C:/Users/boris/OneDrive/Poèítaè/mAIN 2019-20/Diplomová práca/unityToJava/src/main/antlr4\UnityGrammar.g4 by ANTLR 4.7
+// Generated from C:/Users/boris/OneDrive/Poèítaè/mAIN 2019-20/Diplomová práca/unityToJava/src/main/antlr4\UnityGrammar.g4 by ANTLR 4.9
 package silny7.uniba.sk;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -340,6 +340,42 @@ public class UnityGrammarBaseListener implements UnityGrammarListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterSimple_value_expression(UnityGrammarParser.Simple_value_expressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitSimple_value_expression(UnityGrammarParser.Simple_value_expressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterRelational_operator_expression(UnityGrammarParser.Relational_operator_expressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitRelational_operator_expression(UnityGrammarParser.Relational_operator_expressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterComplex_relational_operator_expression(UnityGrammarParser.Complex_relational_operator_expressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitComplex_relational_operator_expression(UnityGrammarParser.Complex_relational_operator_expressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterBoolean_expression(UnityGrammarParser.Boolean_expressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -352,13 +388,13 @@ public class UnityGrammarBaseListener implements UnityGrammarListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterValue_expression(UnityGrammarParser.Value_expressionContext ctx) { }
+	@Override public void enterAdd_minus_or_expression(UnityGrammarParser.Add_minus_or_expressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitValue_expression(UnityGrammarParser.Value_expressionContext ctx) { }
+	@Override public void exitAdd_minus_or_expression(UnityGrammarParser.Add_minus_or_expressionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -563,18 +599,6 @@ public class UnityGrammarBaseListener implements UnityGrammarListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitNumber(UnityGrammarParser.NumberContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterIntegerValue(UnityGrammarParser.IntegerValueContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitIntegerValue(UnityGrammarParser.IntegerValueContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -19,7 +19,7 @@ program : PROGRAM program_name=text?
 //declare section:
 declare_section: DECLARE COLON? declare_component+;
 
-declare_component: variable_declaration_list COLON baseType;
+declare_component: variable_declaration_list COLON baseType SEMI_COLON?;
 
 variable_declaration_list: variableID (COMMA variableID)*;
 
@@ -75,29 +75,34 @@ quantified_assignment: QUANTIFICATION_OPEN DETERM_SEPARATOR quantification assig
 quantification: variable_list COLON boolean_expression DOUBLE_COLON;
 
 //VARIABLE, EXPRESSION
-variable: variableID | variableID OPEN_BRACKET simple_expression_list CLOSE_BRACKET;
+variable: variableID | (variableID OPEN_BRACKET simple_expression_list CLOSE_BRACKET);
 
 //three types:
 //VALUE (may be variable, constant or mathematical expression)
 //VALUE RELATIONAL_OPERATOR VALUE
 //VALUE RELATIONAL_OPERATOR VALUE RELATIONAL_OPERATOR (e.g. 1 <= x <= N)
-expression: value_expression |
-            value_expression relational_operator value_expression |
-            value_expression relational_operator value_expression relational_operator value_expression;
+expression: simple_value_expression |
+            relational_operator_expression |
+            complex_relational_operator_expression;
+
+simple_value_expression: add_minus_or_expression;
+relational_operator_expression: add_minus_or_expression relational_operator add_minus_or_expression;
+complex_relational_operator_expression: add_minus_or_expression relational_operator add_minus_or_expression relational_operator add_minus_or_expression;
+
 
 boolean_expression: expression;
 
-value_expression: mul_div_mod_and_expression (add_minus_or_operator mul_div_mod_and_expression)*;
+add_minus_or_expression: (mul_div_mod_and_expression add_minus_or_operator add_minus_or_expression) | mul_div_mod_and_expression;
 
-mul_div_mod_and_expression: power_expression (times_div_mod_and_operator power_expression)*;
+mul_div_mod_and_expression: (power_expression times_div_mod_and_operator mul_div_mod_and_expression) | power_expression;
 
-power_expression: unary_expression (POWER unary_expression)*;
+power_expression: (unary_expression POWER power_expression) | unary_expression;
 
-unary_expression: unary_operator primary_expression | primary_expression;
+unary_expression: (unary_operator unary_expression) | primary_expression;
 
 primary_expression: variable |
                     booleanValue  |
-                    integerValue  |
+                    number  |
                     methodDeclaration |
                     expressionDeclaration |
                     quantificationDeclaration |
@@ -108,12 +113,12 @@ methodDeclaration: function OPEN_PARENTHESES simple_expression_list CLOSE_PARENT
 
 expressionDeclaration: OPEN_PARENTHESES expression CLOSE_PARENTHESES;
 
-quantificationDeclaration: QUANTIFICATION_OPEN quantification_operator quantification QUANTIFICATION_CLOSE;
+quantificationDeclaration: QUANTIFICATION_OPEN quantification_operator quantification expression QUANTIFICATION_CLOSE;
 
 elementListDeclaration: OPEN_BRACKET element_list CLOSE_BRACKET;
 
 //className.methodName ....
-function: IDENTIFIER (DOT IDENTIFIER)*;
+function: text (DOT text)*;
 
 element_list: simple_expression_list?;
 
@@ -130,8 +135,7 @@ text                    : STRING |
 
 number                  : INT;
 
-integerValue : INTEGER;
-booleanValue : BOOLEAN;
+booleanValue : BOOL;
 
 
 /*
@@ -139,7 +143,7 @@ booleanValue : BOOLEAN;
 */
 
 //PROGRAM KEYWORDS
-PROGRAM :   'PROGRAM'   | 'program';
+PROGRAM :   'PROGRAM'   | 'program' | 'Program';
 DECLARE :   'DECLARE'   | 'declare';
 ALWAYS  :   'ALWAYS'    | 'always';
 INITIALLY:  'INITIALLY' | 'initially';
@@ -155,6 +159,7 @@ IF      :   'IF'        | 'if';
 //SIGNS:
 COLON : ':';
 DOUBLE_COLON : '::';
+SEMI_COLON : ';';
 COMMA : ',';
 OPEN_PARENTHESES: '(';
 CLOSE_PARENTHESES: ')';
@@ -186,6 +191,7 @@ TIMES: '*';
 DIV: '/' | 'DIV' | 'div';
 POWER: '^';
 MOD: 'MOD' | 'mod';
+
 
 
 

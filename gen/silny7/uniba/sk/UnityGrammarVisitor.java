@@ -1,4 +1,4 @@
-// Generated from C:/Users/boris/OneDrive/Poèítaè/mAIN 2019-20/Diplomová práca/unityToJava/src/main/antlr4\UnityGrammar.g4 by ANTLR 4.7
+// Generated from C:/Users/boris/OneDrive/Poèítaè/mAIN 2019-20/Diplomová práca/unityToJava/src/main/antlr4\UnityGrammar.g4 by ANTLR 4.9
 package silny7.uniba.sk;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -173,17 +173,35 @@ public interface UnityGrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitExpression(UnityGrammarParser.ExpressionContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link UnityGrammarParser#simple_value_expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSimple_value_expression(UnityGrammarParser.Simple_value_expressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link UnityGrammarParser#relational_operator_expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRelational_operator_expression(UnityGrammarParser.Relational_operator_expressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link UnityGrammarParser#complex_relational_operator_expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitComplex_relational_operator_expression(UnityGrammarParser.Complex_relational_operator_expressionContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link UnityGrammarParser#boolean_expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitBoolean_expression(UnityGrammarParser.Boolean_expressionContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link UnityGrammarParser#value_expression}.
+	 * Visit a parse tree produced by {@link UnityGrammarParser#add_minus_or_expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitValue_expression(UnityGrammarParser.Value_expressionContext ctx);
+	T visitAdd_minus_or_expression(UnityGrammarParser.Add_minus_or_expressionContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link UnityGrammarParser#mul_div_mod_and_expression}.
 	 * @param ctx the parse tree
@@ -286,12 +304,6 @@ public interface UnityGrammarVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitNumber(UnityGrammarParser.NumberContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link UnityGrammarParser#integerValue}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitIntegerValue(UnityGrammarParser.IntegerValueContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link UnityGrammarParser#booleanValue}.
 	 * @param ctx the parse tree

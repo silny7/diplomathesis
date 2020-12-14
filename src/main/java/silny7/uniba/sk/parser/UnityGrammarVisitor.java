@@ -7,6 +7,10 @@ import silny7.uniba.sk.UnityGrammarParser;
 import silny7.uniba.sk.parser.exceptions.InvalidStatementException;
 import silny7.uniba.sk.parser.exceptions.InvalidVariableTypeException;
 import silny7.uniba.sk.unity.UnityProgram;
+import silny7.uniba.sk.unity.expressions.*;
+import silny7.uniba.sk.unity.expressions.operators.BinaryOperator;
+import silny7.uniba.sk.unity.expressions.UnaryExpression;
+import silny7.uniba.sk.unity.expressions.operators.UnaryOperator;
 import silny7.uniba.sk.unity.sections.AlwaysSection;
 import silny7.uniba.sk.unity.sections.AssignSection;
 import silny7.uniba.sk.unity.sections.DeclareSection;
@@ -39,8 +43,12 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
         if (ctx.program_name != null) unityProgram.setProgramName(visitText(ctx.program_name));
 
         if (ctx.declare_section() != null) unityProgram.setDeclareSection(visitDeclare_section(ctx.declare_section()));
+        if (ctx.always_section() != null) unityProgram.setAlwaysSection(visitAlways_section(ctx.always_section()));
+        if (ctx.initially_section() != null) unityProgram.setInitiallySection(visitInitially_section(ctx.initially_section()));
 
-        return null;
+        unityProgram.setAssignSection(visitAssign_section(ctx.assign_section()));
+
+        return unityProgram;
     }
 
 //region declare section
@@ -61,17 +69,17 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
         //format:
         //variable, variable : variable_type
         //return List<Variable> -> each will have type included in this declareComponent
-        List<Variable> variables = visitVariable_declaration_list(ctx.variable_declaration_list());
+        List<DeclaredVariable> variables = visitVariable_declaration_list(ctx.variable_declaration_list());
         BaseType baseType = visitBaseType(ctx.baseType());
 
         return new VariableDeclaration(variables, baseType);
     }
 
     @Override
-    public List<Variable> visitVariable_declaration_list(UnityGrammarParser.Variable_declaration_listContext ctx) {
-        List<Variable> variables = new ArrayList<Variable>();
+    public List<DeclaredVariable> visitVariable_declaration_list(UnityGrammarParser.Variable_declaration_listContext ctx) {
+        List<DeclaredVariable> variables = new ArrayList<DeclaredVariable>();
         for (UnityGrammarParser.VariableIDContext variableIDContext : ctx.variableID()){
-            variables.add(new Variable(visitVariableID(variableIDContext)));
+            variables.add(new DeclaredVariable(visitVariableID(variableIDContext)));
         }
         return variables;
     }
@@ -169,20 +177,19 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
 
 
     @Override
-    public Object visitAlways_section(UnityGrammarParser.Always_sectionContext ctx){
+    public AlwaysSection visitAlways_section(UnityGrammarParser.Always_sectionContext ctx){
         List<Statement> statements = visitStatement_list(ctx.statement_list());
-
         return new AlwaysSection(statements);
     }
 
     @Override
-    public Object visitInitially_section(UnityGrammarParser.Initially_sectionContext ctx){
+    public InitiallySection visitInitially_section(UnityGrammarParser.Initially_sectionContext ctx){
         List<Statement> statements = visitStatement_list(ctx.statement_list());
         return new InitiallySection(statements);
     }
 
     @Override
-    public Object visitAssign_section(UnityGrammarParser.Assign_sectionContext ctx){
+    public AssignSection visitAssign_section(UnityGrammarParser.Assign_sectionContext ctx){
         List<Statement> statements = visitStatement_list(ctx.statement_list());
         return new AssignSection(statements);
     }
@@ -191,10 +198,9 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
     @Override
     public List<Statement> visitStatement_list(UnityGrammarParser.Statement_listContext ctx){
         List<Statement> statements = new ArrayList<Statement>();
-        for (UnityGrammarParser.StatementContext sctx : ctx.statement()){
-            statements.add(visitStatement(sctx));
+        for (UnityGrammarParser.StatementContext statementCtx : ctx.statement()){
+            statements.add(visitStatement(statementCtx));
         }
-
         return statements;
     }
 
@@ -218,7 +224,9 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
 
     @Override
     public QuantifiedStatement visitQuantified_statement(UnityGrammarParser.Quantified_statementContext ctx){
-        return null;
+        Quantification quantification = visitQuantification(ctx.quantification());
+        List<Statement> statements = visitStatement_list(ctx.statement_list());
+        return new QuantifiedStatement(quantification, statements);
     }
 
     @Override
@@ -231,25 +239,259 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
     }
 
     @Override
-    public EnumeratedAssignment visitEnumerated_assignment(UnityGrammarParser.Enumerated_assignmentContext ctx){
+    public Assignment visitEnumerated_assignment(UnityGrammarParser.Enumerated_assignmentContext ctx){
         List<Variable> variableList = visitVariable_list(ctx.variable_list());
 
+        List<Expression> expressions = null;
+        if (ctx.simple_expression_list() != null) {
+            expressions = visitSimple_expression_list(ctx.simple_expression_list());
+            return new EnumeratedAssignment(variableList, expressions);
+        }
+        if (ctx.conditional_expression_list() != null) {
+            ConditionalEnumeratedAssignment conditionalEnumeratedAssignment = visitConditional_expression_list(ctx.conditional_expression_list());
+            conditionalEnumeratedAssignment.setVariableList(variableList);
+            return conditionalEnumeratedAssignment;
+        }
 
-        return new EnumeratedAssignment();
+        errors.add(new UnityGrammarError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Invalid enumerated assignment definition"));
+        throw new ParseCancellationException(new InvalidStatementException(ctx.getText()));
     }
 
     @Override
     public QuantifiedAssignment visitQuantified_assignment(UnityGrammarParser.Quantified_assignmentContext ctx){
-        return new QuantifiedAssignment();
+        Quantification quantification = visitQuantification(ctx.quantification());
+        AssignmentStatement assignmentStatement = visitAssignment_statement(ctx.assignment_statement());
+        return new QuantifiedAssignment(quantification, assignmentStatement);
     }
 
     @Override
     public List<Variable> visitVariable_list(UnityGrammarParser.Variable_listContext ctx){
+        List<Variable> variables = new ArrayList<Variable>();
         //may be variable name
         //may be also variableName[index]
+        for (UnityGrammarParser.VariableContext varCtx : ctx.variable()){
+            variables.add(visitVariable(varCtx));
+        }
+        return variables;
+    }
+
+    @Override
+    public List<Expression> visitSimple_expression_list(UnityGrammarParser.Simple_expression_listContext ctx) {
+        List<Expression> expressions = new ArrayList<Expression>();
+        for (UnityGrammarParser.ExpressionContext expressionContext : ctx.expression()){
+            expressions.add(visitExpression(expressionContext));
+        }
+        return expressions;
+    }
+
+    @Override
+    public ConditionalEnumeratedAssignment visitConditional_expression_list(UnityGrammarParser.Conditional_expression_listContext ctx) {
+        ConditionalEnumeratedAssignment condEnumAssignment = new ConditionalEnumeratedAssignment();
+
+        for (int i = 0; i < ctx.simple_expression_list().size(); i++){
+            condEnumAssignment.addCondition(visitSimple_expression_list(ctx.simple_expression_list(i)),
+                                            visitBoolean_expression(ctx.boolean_expression(i)));
+        }
+        return condEnumAssignment;
+    }
+
+    @Override
+    public Quantification visitQuantification(UnityGrammarParser.QuantificationContext ctx) {
         return null;
     }
 
+    @Override
+    public Variable visitVariable(UnityGrammarParser.VariableContext ctx) {
+        String varName = visitVariableID(ctx.variableID());
+        if (ctx.simple_expression_list() != null) {
+            List<Expression> expression = visitSimple_expression_list(ctx.simple_expression_list());
+            return new ArrayVariable(varName, expression);
+        }
+        return new SimpleVariable(varName);
+    }
+
+    @Override
+    public Expression visitExpression(UnityGrammarParser.ExpressionContext ctx) {
+        if (ctx.simple_value_expression() != null) return visitSimple_value_expression(ctx.simple_value_expression());
+        else if (ctx.relational_operator_expression() != null) return visitRelational_operator_expression(ctx.relational_operator_expression());
+        else if (ctx.complex_relational_operator_expression() != null) return visitComplex_relational_operator_expression(ctx.complex_relational_operator_expression());
+        else return null;
+    }
+
+    @Override
+    public Expression visitSimple_value_expression(UnityGrammarParser.Simple_value_expressionContext ctx) {
+        return visitAdd_minus_or_expression(ctx.add_minus_or_expression());
+    }
+
+    @Override
+    public Expression visitRelational_operator_expression(UnityGrammarParser.Relational_operator_expressionContext ctx) {
+        Expression expr1 = visitAdd_minus_or_expression(ctx.add_minus_or_expression(0));
+        Expression expr2 = visitAdd_minus_or_expression(ctx.add_minus_or_expression(1));
+        BinaryOperator operator = visitRelational_operator(ctx.relational_operator());
+        return new BinaryExpression(operator, expr1, expr2);
+    }
+
+    @Override
+    public Expression visitComplex_relational_operator_expression(UnityGrammarParser.Complex_relational_operator_expressionContext ctx) {
+        Expression expr1 = visitAdd_minus_or_expression(ctx.add_minus_or_expression(0));
+        Expression expr2 = visitAdd_minus_or_expression(ctx.add_minus_or_expression(1));
+        Expression expr3 = visitAdd_minus_or_expression(ctx.add_minus_or_expression(2));
+
+        BinaryOperator operator1 = visitRelational_operator(ctx.relational_operator(0));
+        BinaryOperator operator2 = visitRelational_operator(ctx.relational_operator(1));
+
+        BinaryExpression binaryExpression1 = new BinaryExpression(operator1, expr1, expr2);
+        BinaryExpression binaryExpression2 = new BinaryExpression(operator2, expr2, expr3);
+
+        return new BinaryExpression(BinaryOperator.AND, binaryExpression1, binaryExpression2);
+    }
+
+    @Override
+    public Expression visitBoolean_expression(UnityGrammarParser.Boolean_expressionContext ctx) {
+        return visitExpression(ctx.expression());
+    }
+
+    @Override
+    public Expression visitAdd_minus_or_expression(UnityGrammarParser.Add_minus_or_expressionContext ctx) {
+        if (ctx.add_minus_or_operator() != null){
+            Expression expr1 = visitMul_div_mod_and_expression(ctx.mul_div_mod_and_expression());
+            Expression expr2 = visitAdd_minus_or_expression(ctx.add_minus_or_expression());
+            BinaryOperator operator = visitAdd_minus_or_operator(ctx.add_minus_or_operator());
+            return new BinaryExpression(operator, expr1, expr2);
+        }
+        else return visitMul_div_mod_and_expression(ctx.mul_div_mod_and_expression());
+    }
+
+    @Override
+    public Expression visitMul_div_mod_and_expression(UnityGrammarParser.Mul_div_mod_and_expressionContext ctx) {
+        if (ctx.times_div_mod_and_operator() != null) {
+            Expression expr1 = visitPower_expression(ctx.power_expression());
+            Expression expr2 = visitMul_div_mod_and_expression(ctx.mul_div_mod_and_expression());
+            BinaryOperator operator = visitTimes_div_mod_and_operator(ctx.times_div_mod_and_operator());
+            return new BinaryExpression(operator, expr1, expr2);
+        }
+        else return visitPower_expression(ctx.power_expression());
+    }
+
+    @Override
+    public Expression visitPower_expression(UnityGrammarParser.Power_expressionContext ctx) {
+        if (ctx.POWER() != null) {
+            Expression expr1 = visitUnary_expression(ctx.unary_expression());
+            Expression expr2 = visitPower_expression(ctx.power_expression());
+            return new BinaryExpression(BinaryOperator.POWER, expr1, expr2);
+        }
+        return visitUnary_expression(ctx.unary_expression());
+    }
+
+    @Override
+    public Expression visitUnary_expression(UnityGrammarParser.Unary_expressionContext ctx) {
+        if (ctx.unary_operator() != null) {
+            UnaryOperator operator = visitUnary_operator(ctx.unary_operator());
+            Expression expression = visitUnary_expression(ctx.unary_expression());
+            return new UnaryExpression(operator, expression);
+        }
+        else return visitPrimary_expression(ctx.primary_expression());
+    }
+
+    @Override
+    public Expression visitPrimary_expression(UnityGrammarParser.Primary_expressionContext ctx) {
+        if (ctx.variable() != null) return visitVariable(ctx.variable());
+        else if (ctx.booleanValue() != null) return new Constant(visitBooleanValue(ctx.booleanValue()));
+        else if (ctx.number() != null) return new Constant(visitNumber(ctx.number()));
+        else if (ctx.methodDeclaration() != null) return visitMethodDeclaration(ctx.methodDeclaration());
+        else if (ctx.expressionDeclaration() != null) return visitExpressionDeclaration(ctx.expressionDeclaration());
+        else if (ctx.quantificationDeclaration() != null) return visitQuantificationDeclaration(ctx.quantificationDeclaration());
+        //else if (ctx.elementListDeclaration() != null) return visitElementListDeclaration(ctx.elementListDeclaration());
+        else return null;
+    }
+
+    @Override
+    public Expression visitMethodDeclaration(UnityGrammarParser.MethodDeclarationContext ctx) {
+        String methodName = visitFunction(ctx.function());
+        List<Expression> args = visitSimple_expression_list(ctx.simple_expression_list());
+        return new Function(methodName, args);
+    }
+
+    @Override
+    public Expression visitExpressionDeclaration(UnityGrammarParser.ExpressionDeclarationContext ctx) {
+        return visitExpression(ctx.expression());
+    }
+
+    @Override
+    public Expression visitQuantificationDeclaration(UnityGrammarParser.QuantificationDeclarationContext ctx) {
+        Object operator = visitQuantification_operator(ctx.quantification_operator());
+        Quantification quantification = visitQuantification(ctx.quantification());
+        Expression expression = visitExpression(ctx.expression());
+        return new QuantifiedExpression(operator, quantification, expression);
+    }
+
+    @Override
+    public List<Expression> visitElementListDeclaration(UnityGrammarParser.ElementListDeclarationContext ctx) {
+        return visitElement_list(ctx.element_list());
+    }
+
+    @Override
+    public String visitFunction(UnityGrammarParser.FunctionContext ctx) {
+        StringBuilder func = new StringBuilder();
+        boolean first = true;
+        for (UnityGrammarParser.TextContext textC : ctx.text()){
+            if (!first) func.append(".");
+            first = false;
+            func.append(visitText(textC));
+        }
+        return func.toString();
+    }
+
+    @Override
+    public List<Expression> visitElement_list(UnityGrammarParser.Element_listContext ctx) {
+        return visitSimple_expression_list(ctx.simple_expression_list());
+    }
+
+    @Override
+    public BinaryOperator visitRelational_operator(UnityGrammarParser.Relational_operatorContext ctx) {
+        if (ctx.EQUAL() != null) return BinaryOperator.EQUAL;
+        if (ctx.NOT_EQUAL() != null) return BinaryOperator.NOT_EQUAL;
+        if (ctx.GREATER_OR_EQUAL() != null) return BinaryOperator.GREATER_OR_EQUAL;
+        if (ctx.GREATER_THAN() != null) return BinaryOperator.GREATER_THAN;
+        if (ctx.LESS_OR_EQUAL() != null) return BinaryOperator.LESS_OR_EQUAL;
+        if (ctx.LESS_THAN() != null) return BinaryOperator.LESS_THAN;
+        return null;
+    }
+
+    @Override
+    public BinaryOperator visitAdd_minus_or_operator(UnityGrammarParser.Add_minus_or_operatorContext ctx) {
+        if (ctx.PLUS() != null) return BinaryOperator.PLUS;
+        if (ctx.MINUS() != null) return BinaryOperator.MINUS;
+        if (ctx.OR() != null) return BinaryOperator.OR;
+        else return null;    }
+
+    @Override
+    public BinaryOperator visitTimes_div_mod_and_operator(UnityGrammarParser.Times_div_mod_and_operatorContext ctx) {
+        if (ctx.AND() != null) return BinaryOperator.AND;
+        if (ctx.DIV() != null) return BinaryOperator.DIV;
+        if (ctx.TIMES() != null) return BinaryOperator.TIMES;
+        else return null;
+    }
+
+    @Override
+    public UnaryOperator visitUnary_operator(UnityGrammarParser.Unary_operatorContext ctx) {
+        if (ctx.MINUS() != null) return UnaryOperator.MINUS;
+        if (ctx.PLUS() != null) return UnaryOperator.PLUS;
+        if (ctx.NOT() != null) return UnaryOperator.NOT;
+        else return null;
+    }
+
+    @Override
+    public Object visitQuantification_operator(UnityGrammarParser.Quantification_operatorContext ctx) {
+        if (ctx.function() != null) return visitFunction(ctx.function());
+        else {
+            if (ctx.PLUS() != null) return BinaryOperator.PLUS;
+            if (ctx.TIMES() != null) return BinaryOperator.TIMES;
+            if (ctx.AND() != null) return BinaryOperator.AND;
+            if (ctx.OR() != null) return BinaryOperator.OR;
+            else return null;
+        }
+    }
 
     //region others
 
@@ -262,5 +504,12 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
     public Integer visitNumber(UnityGrammarParser.NumberContext ctx){
         return Integer.valueOf(ctx.getText());
     }
+
+    @Override
+    public Boolean visitBooleanValue(UnityGrammarParser.BooleanValueContext ctx) {
+        return Boolean.getBoolean(ctx.BOOL().getText());
+    }
+
+
 
 }

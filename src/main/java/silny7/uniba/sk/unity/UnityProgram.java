@@ -19,7 +19,6 @@ public class UnityProgram {
     private static UnityProgram instance = null;
 
     private UnityProgram(){
-
     }
 
     public void interpret(){
@@ -35,7 +34,7 @@ public class UnityProgram {
 
     public void setProgramName(String programName) { this.programName = programName; }
     public String getProgramName() { return this.programName; }
-    public void setDeclareSection(DeclareSection visitDeclare_section) { }
+    public void setDeclareSection(DeclareSection declareSection) { this.declareSection = declareSection; }
     public DeclareSection getDeclareSection() { return declareSection; }
     public AlwaysSection getAlwaysSection() { return alwaysSection; }
     public void setAlwaysSection(AlwaysSection alwaysSection) { this.alwaysSection = alwaysSection; }

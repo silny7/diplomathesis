@@ -1,15 +1,16 @@
 package silny7.uniba.sk.unity.statements;
 
 import silny7.uniba.sk.unity.variables.BaseType;
-import silny7.uniba.sk.unity.variables.Variable;
+import silny7.uniba.sk.unity.expressions.Variable;
+import silny7.uniba.sk.unity.variables.DeclaredVariable;
 
 import java.util.List;
 
 public class VariableDeclaration {
-    List<Variable> variables;
+    List<DeclaredVariable> variables;
     BaseType type;
 
-    public VariableDeclaration(List<Variable> variables, BaseType type){
+    public VariableDeclaration(List<DeclaredVariable> variables, BaseType type){
         this.variables = variables;
         this.type = type;
     }

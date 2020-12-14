@@ -1,4 +1,4 @@
-// Generated from C:/Users/boris/OneDrive/Poèítaè/mAIN 2019-20/Diplomová práca/unityToJava/src/main/antlr4\UnityGrammar.g4 by ANTLR 4.7
+// Generated from C:/Users/boris/OneDrive/Poèítaè/mAIN 2019-20/Diplomová práca/unityToJava/src/main/antlr4\UnityGrammar.g4 by ANTLR 4.9
 package silny7.uniba.sk;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -278,6 +278,36 @@ public interface UnityGrammarListener extends ParseTreeListener {
 	 */
 	void exitExpression(UnityGrammarParser.ExpressionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link UnityGrammarParser#simple_value_expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterSimple_value_expression(UnityGrammarParser.Simple_value_expressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link UnityGrammarParser#simple_value_expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitSimple_value_expression(UnityGrammarParser.Simple_value_expressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link UnityGrammarParser#relational_operator_expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterRelational_operator_expression(UnityGrammarParser.Relational_operator_expressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link UnityGrammarParser#relational_operator_expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitRelational_operator_expression(UnityGrammarParser.Relational_operator_expressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link UnityGrammarParser#complex_relational_operator_expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterComplex_relational_operator_expression(UnityGrammarParser.Complex_relational_operator_expressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link UnityGrammarParser#complex_relational_operator_expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitComplex_relational_operator_expression(UnityGrammarParser.Complex_relational_operator_expressionContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link UnityGrammarParser#boolean_expression}.
 	 * @param ctx the parse tree
 	 */
@@ -288,15 +318,15 @@ public interface UnityGrammarListener extends ParseTreeListener {
 	 */
 	void exitBoolean_expression(UnityGrammarParser.Boolean_expressionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link UnityGrammarParser#value_expression}.
+	 * Enter a parse tree produced by {@link UnityGrammarParser#add_minus_or_expression}.
 	 * @param ctx the parse tree
 	 */
-	void enterValue_expression(UnityGrammarParser.Value_expressionContext ctx);
+	void enterAdd_minus_or_expression(UnityGrammarParser.Add_minus_or_expressionContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link UnityGrammarParser#value_expression}.
+	 * Exit a parse tree produced by {@link UnityGrammarParser#add_minus_or_expression}.
 	 * @param ctx the parse tree
 	 */
-	void exitValue_expression(UnityGrammarParser.Value_expressionContext ctx);
+	void exitAdd_minus_or_expression(UnityGrammarParser.Add_minus_or_expressionContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link UnityGrammarParser#mul_div_mod_and_expression}.
 	 * @param ctx the parse tree
@@ -467,16 +497,6 @@ public interface UnityGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitNumber(UnityGrammarParser.NumberContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link UnityGrammarParser#integerValue}.
-	 * @param ctx the parse tree
-	 */
-	void enterIntegerValue(UnityGrammarParser.IntegerValueContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link UnityGrammarParser#integerValue}.
-	 * @param ctx the parse tree
-	 */
-	void exitIntegerValue(UnityGrammarParser.IntegerValueContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link UnityGrammarParser#booleanValue}.
 	 * @param ctx the parse tree
