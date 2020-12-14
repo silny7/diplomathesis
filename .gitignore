@@ -1,0 +1,5 @@
+.idea/
+target
+/unityToJava.iml
+/gen/silny7/uniba/sk/UnityGrammar.interp
+/gen/silny7/uniba/sk/UnityGrammarLexer.interp
