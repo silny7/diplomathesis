@@ -6,4 +6,8 @@ public class DeclaredVariable {
     public DeclaredVariable(String varName){
         this.varName = varName;
     }
+
+    public String getVarName() {
+        return varName;
+    }
 }

@@ -15,6 +15,14 @@ public class VariableDeclaration {
         this.type = type;
     }
 
+    public List<DeclaredVariable> getVariables() {
+        return variables;
+    }
+
+    public BaseType getType() {
+        return type;
+    }
+
     /**
      * saves variableName and type to program memory
      */

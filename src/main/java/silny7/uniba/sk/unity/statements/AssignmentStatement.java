@@ -9,6 +9,10 @@ public class AssignmentStatement extends Statement {
         this.assignments = assignments;
     }
 
+    public List<Assignment> getAssignments() {
+        return assignments;
+    }
+
     @Override
     public void execute() {
 

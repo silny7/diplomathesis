@@ -42,4 +42,6 @@ public class Unity {
     private void startProgram(){
         //
     }
+
+    public UnityProgram getUnityProgram() { return this.unityProgram; }
 }

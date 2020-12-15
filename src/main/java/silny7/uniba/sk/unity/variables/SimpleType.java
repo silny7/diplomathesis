@@ -7,6 +7,10 @@ public class SimpleType extends BaseType {
     public SimpleType(){
     }
 
+    public Type getType() {
+        return this.valueType;
+    }
+
     public void setValueTypeToBoolean(){
         this.valueType = Type.Bool;
     }
@@ -15,7 +19,7 @@ public class SimpleType extends BaseType {
         this.valueType = Type.Integer;
     }
 
-    private enum Type {
+    public enum Type {
         Bool,
         Integer
     }

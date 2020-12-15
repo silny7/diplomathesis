@@ -3,7 +3,7 @@ package silny7.uniba.sk.unity.expressions;
 public class SimpleVariable extends Variable{
 
     public SimpleVariable(String varName){
-        this.variableName = varName;
+        super(varName);
     }
 
     @Override

@@ -9,7 +9,10 @@ public class UnityGrammarException extends Exception {
     public List<UnityGrammarError> getErrors() { return errors; }
 
     public UnityGrammarException(List<UnityGrammarError> errors){
-        super("There are " + String.format("%d errors", errors.size()));
+        System.out.println("There are " + String.format("%d errors", errors.size()));
         this.errors = errors;
+        for (UnityGrammarError error : errors){
+            System.out.println(error.toString());
+        }
     }
 }

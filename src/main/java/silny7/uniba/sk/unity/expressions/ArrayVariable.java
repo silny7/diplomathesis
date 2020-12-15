@@ -6,8 +6,8 @@ public class ArrayVariable extends Variable{
     List<Expression> elements;
 
     public ArrayVariable(String varName, List<Expression> elements){
+        super(varName);
         this.elements = elements;
-        this.variableName = varName;
     }
 
     @Override

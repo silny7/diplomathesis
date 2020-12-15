@@ -14,4 +14,12 @@ public class EnumeratedAssignment extends Assignment {
         this.vars = vars;
         this.exprs = exprs;
     }
+
+    public List<Variable> getVars() {
+        return vars;
+    }
+
+    public List<Expression> getExprs() {
+        return exprs;
+    }
 }

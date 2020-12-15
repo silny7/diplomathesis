@@ -58,9 +58,11 @@ assign_component: enumerated_assignment | quantified_assignment;
 //always section + innitially section uses = sign, assign_section uses := sign
 enumerated_assignment: variable_list (ASSIGN_SIGN | EQUAL) (simple_expression_list | conditional_expression_list);
 
-variable_list: variable (COMMA variable)*;
+variable_list: variable |
+               (variable COMMA variable_list);
 
-simple_expression_list: expression (COMMA expression)*;
+simple_expression_list: expression |
+                        (expression COMMA simple_expression_list);
 
 
 conditional_expression_list: simple_expression_list IF boolean_expression (TILDE simple_expression_list IF boolean_expression)*;
