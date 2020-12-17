@@ -200,7 +200,7 @@ MOD: 'MOD' | 'mod';
 fragment DIGIT		: '0'..'9' ;
 fragment LETTER	: 'a'..'z' | 'A'..'Z' | '_' ;
 
-INT                     : '-'? DIGIT+;
+INT                     : DIGIT+;
 BOOL                    : 'true' | 'false' | 'TRUE' | 'FALSE';
 IDENTIFIER              : LETTER (LETTER | DIGIT)*;
 

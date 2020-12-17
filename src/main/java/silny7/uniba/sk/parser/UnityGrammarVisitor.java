@@ -405,7 +405,7 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
         else if (ctx.methodDeclaration() != null) return visitMethodDeclaration(ctx.methodDeclaration());
         else if (ctx.expressionDeclaration() != null) return visitExpressionDeclaration(ctx.expressionDeclaration());
         else if (ctx.quantificationDeclaration() != null) return visitQuantificationDeclaration(ctx.quantificationDeclaration());
-        //else if (ctx.elementListDeclaration() != null) return visitElementListDeclaration(ctx.elementListDeclaration());
+        else if (ctx.elementListDeclaration() != null) return visitElementListDeclaration(ctx.elementListDeclaration());
 
         errors.add(new UnityGrammarError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Invalid primary expression definition"));
         throw new ParseCancellationException(new InvalidExpressionException(ctx.getText()));
@@ -432,8 +432,8 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
     }
 
     @Override
-    public List<Expression> visitElementListDeclaration(UnityGrammarParser.ElementListDeclarationContext ctx) {
-        return visitElement_list(ctx.element_list());
+    public Expression visitElementListDeclaration(UnityGrammarParser.ElementListDeclarationContext ctx) {
+        return new ExpressionListExpression(visitElement_list(ctx.element_list()));
     }
 
     @Override

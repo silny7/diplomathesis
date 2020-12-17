@@ -1,7 +1,5 @@
 package silny7.uniba.sk.parser;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import silny7.uniba.sk.unity.Unity;
 import silny7.uniba.sk.unity.UnityProgram;
@@ -11,10 +9,10 @@ import silny7.uniba.sk.unity.sections.DeclareSection;
 import silny7.uniba.sk.unity.statements.AssignmentStatement;
 import silny7.uniba.sk.unity.statements.EnumeratedAssignment;
 import silny7.uniba.sk.unity.statements.VariableDeclaration;
-import silny7.uniba.sk.unity.variables.BaseType;
 import silny7.uniba.sk.unity.variables.SimpleType;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ParserTest {
 
@@ -62,12 +60,13 @@ public class ParserTest {
         assertNotNull(unity.getUnityProgram());
     }
 
-    @Disabled("Disabled until error fixed")
+    //@Disabled("Disabled until error fixed")
     @Test
     public void binomicalUnityTest() throws UnityGrammarException {
         String program = "Program binomical \n \n declare N:integer; c: array[0..10] of array[0..10] of integer; \n " +
                          "initially N := 10 \n " +
-                         "assign << [] n : 0<=n<N :: c[n,0]  := 1 ||  c[n,n] := 1 [] <<|| k: 0<k<n :: c[n,k] := c[n-1,k-1]+c[n-1,k] >> >> \n " +
+                         "assign << [] n : 0<=n<N :: c[n,0]  := 1 ||  c[n,n] := 1 [] " +
+                         "<<|| k: 0<k<n :: c[n,k] := c[n-1,k-1]+c[n-1,k] >> >> \n " +
                          "END";
 
         Unity unity = new Unity();
