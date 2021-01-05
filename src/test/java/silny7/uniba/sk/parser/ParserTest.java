@@ -60,7 +60,6 @@ public class ParserTest {
         assertNotNull(unity.getUnityProgram());
     }
 
-    //@Disabled("Disabled until error fixed")
     @Test
     public void binomicalUnityTest() throws UnityGrammarException {
         String program = "Program binomical \n \n declare N:integer; c: array[0..10] of array[0..10] of integer; \n " +
@@ -73,4 +72,18 @@ public class ParserTest {
         unity.createProgramFromString(program);
         assertNotNull(unity.getUnityProgram());
     }
+
+    @Test
+    public void shortestPathFloydTest() throws UnityGrammarException {
+        String program = "Program shortestPath \n declare n,k: integer; D: array [0..9, 0..9] of integer; \n " +
+                         "initially n:= 10 [] k := 0 [] <<|| i, j : (0<=i<=n) and (0<=j<n) :: D[i,j] = Random(0, 20) >> \n " +
+                         "assign <<|| i, j : (0<=i<n) and (0<=j<n) :: D[i,j] := Min(D[i,j], D[i, k] + D[k, j]) >> || k := k + 1 if k < n - 1 \n " +
+                         "end";
+
+        Unity unity = new Unity();
+        unity.createProgramFromString(program);
+        assertNotNull(unity.getUnityProgram());
+    }
+
+
 }
