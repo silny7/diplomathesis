@@ -22,4 +22,9 @@ public class EnumeratedAssignment extends Assignment {
     public List<Expression> getExprs() {
         return exprs;
     }
+
+    @Override
+    public String toString() {
+        return null;
+    }
 }

@@ -22,4 +22,8 @@ public class RangeElement {
         }
 
     }
+
+    public String toString(){
+        return (String) value;
+    }
 }

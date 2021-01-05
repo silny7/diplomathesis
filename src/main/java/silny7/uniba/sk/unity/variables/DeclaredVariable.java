@@ -10,4 +10,8 @@ public class DeclaredVariable {
     public String getVarName() {
         return varName;
     }
+
+    public String toString(){
+        return getVarName();
+    }
 }

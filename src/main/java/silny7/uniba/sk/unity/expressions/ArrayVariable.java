@@ -19,4 +19,18 @@ public class ArrayVariable extends Variable{
     public Object resolve() {
         return null;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder arrayVar = new StringBuilder();
+        arrayVar.append(getVariableName() + "[");
+        boolean first = true;
+        for (Expression element : elements){
+            if (!first) arrayVar.append(", ");
+            else first = false;
+            arrayVar.append(element.toString());
+        }
+        arrayVar.append("]");
+        return arrayVar.toString();
+    }
 }

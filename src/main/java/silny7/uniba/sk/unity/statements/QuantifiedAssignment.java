@@ -8,4 +8,9 @@ public class QuantifiedAssignment extends Assignment {
         this.quantification = quantification;
         this.assignmentStatement = assignmentStatement;
     }
+
+    @Override
+    public String toString() {
+        return null;
+    }
 }

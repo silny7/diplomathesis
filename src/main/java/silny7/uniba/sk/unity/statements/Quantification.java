@@ -15,4 +15,17 @@ public class Quantification {
         this.boundedVars = boundedVars;
     }
 
+    public String toString(){
+        StringBuilder string = new StringBuilder();
+        boolean first = true;
+        for (Variable var : boundedVars){
+            if (!first) string.append(", ");
+            else first = false;
+            string.append(var.toString());
+        }
+        string.append(" ");
+        string.append(boolExpr.toString());
+        return string.toString();
+    }
+
 }

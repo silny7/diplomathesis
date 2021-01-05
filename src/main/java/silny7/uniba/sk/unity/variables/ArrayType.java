@@ -24,5 +24,17 @@ public class ArrayType extends BaseType {
         }
     }
 
+    public String toString(){
+        StringBuilder string = new StringBuilder();
+        string.append("array [");
+        boolean first = true;
+        for (ArrayRange range : arrayRange){
+            if (!first) string.append(", ");
+            else first = false;
+            string.append(range.toString());
+        }
+        string.append("] of ").append(valuesType.toString());
+        return string.toString();
+    }
 
 }

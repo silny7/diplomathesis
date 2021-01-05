@@ -18,4 +18,17 @@ public class Function extends Expression{
     public Object resolve() {
         return null;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder string = new StringBuilder();
+        string.append(methodName);
+        boolean first = true;
+        for (Expression arg : args){
+            if (!first) string.append(", ");
+            else first = false;
+            string.append(arg.toString());
+        }
+        return string.toString();
+    }
 }

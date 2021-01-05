@@ -19,4 +19,9 @@ public class QuantifiedExpression extends Expression{
     public Object resolve() {
         return null;
     }
+
+    @Override
+    public String toString() {
+        return operator.toString() + " " + quantification.toString() + " " + expression.toString();
+    }
 }

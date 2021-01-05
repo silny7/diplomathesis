@@ -11,6 +11,10 @@ public class SimpleType extends BaseType {
         return this.valueType;
     }
 
+    public String toString(){
+        return valueType.toString();
+    }
+
     public void setValueTypeToBoolean(){
         this.valueType = Type.Bool;
     }

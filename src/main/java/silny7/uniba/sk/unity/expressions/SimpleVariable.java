@@ -15,4 +15,9 @@ public class SimpleVariable extends Variable{
     public Object resolve() {
         return null;
     }
+
+    @Override
+    public String toString() {
+        return getVariableName();
+    }
 }

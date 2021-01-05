@@ -28,4 +28,17 @@ public class VariableDeclaration {
      */
     public void declare() {
     }
+
+    public String toString(){
+        StringBuilder string = new StringBuilder();
+        boolean first = true;
+        for (DeclaredVariable variable : variables){
+            if (!first) string.append(", ");
+            else first = false;
+            string.append(variable.toString());
+        }
+        string.append(" : ");
+        string.append(type.toString());
+        return string.toString();
+    }
 }

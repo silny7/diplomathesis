@@ -1,5 +1,7 @@
 package silny7.uniba.sk.unity.expressions;
 
+import silny7.uniba.sk.unity.exceptions.IllegalArgumentTypeException;
+
 public class Constant extends Expression{
     private Object constantValue;
 
@@ -16,8 +18,13 @@ public class Constant extends Expression{
     }
 
     @Override
-    public Object resolve() {
-        return this.constantValue;
+    public Object resolve() throws IllegalArgumentTypeException {
+        return objectToInteger(constantValue);
+    }
+
+    @Override
+    public String toString() {
+        return "" + constantValue;
     }
 }
 

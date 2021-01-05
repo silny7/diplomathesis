@@ -35,4 +35,8 @@ public class ConditionalEnumeratedAssignment extends Assignment {
         this.variableList = vars;
     }
 
+    @Override
+    public String toString() {
+        return null;
+    }
 }

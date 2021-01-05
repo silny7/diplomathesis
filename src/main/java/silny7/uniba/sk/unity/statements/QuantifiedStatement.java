@@ -17,4 +17,9 @@ public class QuantifiedStatement extends Statement {
     public void execute() {
 
     }
+
+    @Override
+    public String toString() {
+        return null;
+    }
 }

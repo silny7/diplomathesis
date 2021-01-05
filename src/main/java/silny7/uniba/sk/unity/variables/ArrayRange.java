@@ -23,4 +23,8 @@ public class ArrayRange  {
     public void setUpperBound(RangeElement upperBound) {
         this.upperBound = upperBound;
     }
+
+    public String toString(){
+        return lowerBound.toString() + ".." + upperBound.toString();
+    }
 }
