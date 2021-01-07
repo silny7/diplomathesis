@@ -10,4 +10,7 @@ public class AlwaysSection {
     public AlwaysSection(List<Statement> statements) {
         this.statements = statements;
     }
+
+    public void execute() {
+    }
 }

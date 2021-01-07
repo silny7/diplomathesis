@@ -2,8 +2,8 @@
 package silny7.uniba.sk.gui;
 
 import silny7.uniba.sk.parser.UnityGrammarException;
-import silny7.uniba.sk.unity.Unity;
-import silny7.uniba.sk.unity.UnityProgram;
+import silny7.uniba.sk.unity.program.Unity;
+import silny7.uniba.sk.unity.program.UnityProgram;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,10 +12,11 @@ import java.awt.event.ActionListener;
 
 /**
  *
- * @author boris
+ * @author boris.silny
  */
 public class ProgramGUI extends JFrame {
-    private UnityProgram unityProgram;
+
+    private Unity unityProgramHolder;
 
 
     //GUI components:
@@ -24,7 +25,7 @@ public class ProgramGUI extends JFrame {
     private JTextArea inputCodeTA;
     private JTextArea outputTA;
 
-    private JButton compileButton;
+    private JButton loadButton;
     private JButton runButton;
 
     private JScrollPane scrollPaneError;
@@ -79,7 +80,7 @@ public class ProgramGUI extends JFrame {
                                         .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                                 .addComponent(runButton, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
                                                 .addGap(18, 18, 18)
-                                                .addComponent(compileButton, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(loadButton, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
                                                 .addContainerGap())
                                         .addComponent(scrollPaneOutput)))
         );
@@ -93,7 +94,7 @@ public class ProgramGUI extends JFrame {
                                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
                                         .addComponent(scrollPaneError, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE)
                                         .addComponent(runButton, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(compileButton, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(loadButton, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE))
                                 .addContainerGap())
         );
     }
@@ -113,7 +114,7 @@ public class ProgramGUI extends JFrame {
         scrollPaneError = new JScrollPane(errorTA);
 
         runButton = new JButton();
-        compileButton = new JButton();
+        loadButton = new JButton();
 
         scrollPaneInput.setViewportBorder(BorderFactory.createTitledBorder("Input"));
         inputCodeTA.setColumns(20);
@@ -135,32 +136,18 @@ public class ProgramGUI extends JFrame {
         errorTA.setLineWrap(true);
         errorTA.setColumns(20);
         errorTA.setRows(8);
-        errorTA.setText(" Syntax error at line: 1, index: 15 \n Syntax error at line: 1, index: 15 \n Syntax error at line: 1, index: 15 \n Syntax error at line: 1, index: 15 \n Syntax error at line: 1, index: 15 \n Syntax error at line: 1, index: 15 \n Syntax error at line: 1, index: 15 \n Syntax error at line: 1, index: 15 \n Syntax error at line: 1, index: 15 \n Syntax error at line: 1, index: 15 \n ");
+        //errorTA.setText();
 
         runButton.setText("Run");
-        compileButton.setText("Compile");
+        loadButton.setText("Load");
 
-        runButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                //read the whole
-                JOptionPane.showMessageDialog(null, inputCodeTA.getText(), "InfoBox: ", JOptionPane.INFORMATION_MESSAGE);
-                String programToParse = inputCodeTA.getText();
-                //unityProgram = new UnityProgram();
-                //unityProgram.createProgramFromString(programToParse);
-
-                Unity unity = new Unity();
-                try {
-                    unity.createProgramFromString(programToParse);
-                } catch (UnityGrammarException unityGrammarException) {
-                    unityGrammarException.printStackTrace();
-                }
-
-            }
-        });
+        createRunButtonListener();
+        craeteLoadButtonListener();
 
 
     }
+
+
 
     /**
      * returns screenSize as a dimension
@@ -174,6 +161,48 @@ public class ProgramGUI extends JFrame {
         int width = (int) (gd.getDisplayMode().getWidth() * 0.75);
         int height = (int) (gd.getDisplayMode().getHeight() * 0.75);
         return new Dimension(width, height);
+    }
+
+
+    private void createRunButtonListener(){
+        runButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (unityProgramHolder == null) {
+                    //load the program
+                    loadUnityProgram();
+                }
+
+                unityProgramHolder.startProgram();
+            }
+        });
+    }
+
+    private void craeteLoadButtonListener() {
+        loadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadUnityProgram();
+            }
+        });
+    }
+
+    private UnityProgram loadUnityProgram(){
+        String programToParse = inputCodeTA.getText();
+        try {
+            eraseTextArea(errorTA);
+            unityProgramHolder = new Unity(errorTA);
+            unityProgramHolder.createProgramFromString(programToParse);
+            unityProgramHolder.getLogger().log("Unity program loaded successfully");
+        } catch (UnityGrammarException unityGrammarException) {
+            unityProgramHolder.getLogger().log(unityGrammarException);
+        }
+        return unityProgramHolder.getUnityProgram();
+    }
+
+    private void eraseTextArea(JTextArea textArea){
+        textArea.selectAll();
+        textArea.replaceSelection("");
     }
 
 }

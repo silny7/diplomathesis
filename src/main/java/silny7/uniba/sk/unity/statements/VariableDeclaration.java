@@ -27,6 +27,7 @@ public class VariableDeclaration {
      * saves variableName and type to program memory
      */
     public void declare() {
+
     }
 
     public String toString(){

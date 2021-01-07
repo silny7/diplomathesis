@@ -14,4 +14,7 @@ public class AssignSection {
     public List<Statement> getStatements() {
         return statements;
     }
+
+    public void execute() {
+    }
 }

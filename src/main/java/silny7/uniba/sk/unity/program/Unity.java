@@ -1,4 +1,4 @@
-package silny7.uniba.sk.unity;
+package silny7.uniba.sk.unity.program;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -10,8 +10,15 @@ import silny7.uniba.sk.parser.UnityGrammarErrorListener;
 import silny7.uniba.sk.parser.UnityGrammarException;
 import silny7.uniba.sk.parser.UnityGrammarVisitor;
 
+import javax.swing.*;
+
 public class Unity {
     UnityProgram unityProgram;
+    UnityLogger logger;
+
+    public Unity(JTextArea errorTA) {
+        this.logger = new UnityLogger(errorTA);
+    }
 
     public void createProgramFromString(String programToParse) throws UnityGrammarException {
         this.unityProgram = createProgram(CharStreams.fromString(programToParse));
@@ -39,9 +46,11 @@ public class Unity {
         return unityProgram;
     }
 
-    private void startProgram(){
-        //
+    public void startProgram(){
+        unityProgram.interpret();
     }
 
     public UnityProgram getUnityProgram() { return this.unityProgram; }
+
+    public UnityLogger getLogger() { return this.logger; }
 }

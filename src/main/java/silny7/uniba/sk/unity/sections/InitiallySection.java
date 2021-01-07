@@ -10,4 +10,7 @@ public class InitiallySection {
     public InitiallySection(List<Statement> statements) {
         this.statements = statements;
     }
+
+    public void execute() {
+    }
 }

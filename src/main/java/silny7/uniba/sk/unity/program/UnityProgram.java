@@ -1,4 +1,4 @@
-package silny7.uniba.sk.unity;
+package silny7.uniba.sk.unity.program;
 
 import silny7.uniba.sk.unity.sections.AlwaysSection;
 import silny7.uniba.sk.unity.sections.AssignSection;
@@ -10,11 +10,16 @@ import silny7.uniba.sk.unity.sections.InitiallySection;
  */
 public class UnityProgram {
 
+    //program structure
     private String programName;
     private DeclareSection declareSection;
     private AlwaysSection alwaysSection;
     private InitiallySection initiallySection;
     private AssignSection assignSection;
+
+    //flags
+    private boolean fixedPoint = false;
+
 
     private static UnityProgram instance = null;
 
@@ -22,7 +27,10 @@ public class UnityProgram {
     }
 
     public void interpret(){
-
+        if (declareSection != null) declareSection.declareVariables();
+        if (alwaysSection != null) alwaysSection.execute();
+        if (initiallySection != null) initiallySection.execute();
+        assignSection.execute();
     }
 
     public static UnityProgram getUnityProgram(){

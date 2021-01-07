@@ -8,7 +8,7 @@ import silny7.uniba.sk.parser.exceptions.InvalidExpressionException;
 import silny7.uniba.sk.parser.exceptions.InvalidOperatorException;
 import silny7.uniba.sk.parser.exceptions.InvalidStatementException;
 import silny7.uniba.sk.parser.exceptions.InvalidVariableTypeException;
-import silny7.uniba.sk.unity.UnityProgram;
+import silny7.uniba.sk.unity.program.UnityProgram;
 import silny7.uniba.sk.unity.expressions.*;
 import silny7.uniba.sk.unity.expressions.operators.BinaryOperator;
 import silny7.uniba.sk.unity.expressions.UnaryExpression;

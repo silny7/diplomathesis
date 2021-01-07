@@ -1,8 +1,8 @@
 package silny7.uniba.sk.parser;
 
 import org.junit.jupiter.api.Test;
-import silny7.uniba.sk.unity.Unity;
-import silny7.uniba.sk.unity.UnityProgram;
+import silny7.uniba.sk.unity.program.Unity;
+import silny7.uniba.sk.unity.program.UnityProgram;
 import silny7.uniba.sk.unity.expressions.SimpleVariable;
 import silny7.uniba.sk.unity.sections.AssignSection;
 import silny7.uniba.sk.unity.sections.DeclareSection;
@@ -19,7 +19,7 @@ public class ParserTest {
 
     @Test
     public void simpleInputTest() throws UnityGrammarException {
-        Unity unity = new Unity();
+        Unity unity = new Unity(null);
         String program = "Program testProgram \n declare A:integer; \n assign A = 5 + 5 \n END";
         unity.createProgramFromString(program);
         assertNotNull(unity.getUnityProgram());
@@ -55,7 +55,7 @@ public class ParserTest {
                          "assign << [] i : 0 <=i<N :: A[i],A[i+1] := A[i+1], A[i] if A[i] > A[i+1] >> \n " +
                          "END";
 
-        Unity unity = new Unity();
+        Unity unity = new Unity(null);
         unity.createProgramFromString(program);
         assertNotNull(unity.getUnityProgram());
     }
@@ -68,7 +68,7 @@ public class ParserTest {
                          "<<|| k: 0<k<n :: c[n,k] := c[n-1,k-1]+c[n-1,k] >> >> \n " +
                          "END";
 
-        Unity unity = new Unity();
+        Unity unity = new Unity(null);
         unity.createProgramFromString(program);
         assertNotNull(unity.getUnityProgram());
     }
@@ -80,7 +80,7 @@ public class ParserTest {
                          "assign <<|| i, j : (0<=i<n) and (0<=j<n) :: D[i,j] := Min(D[i,j], D[i, k] + D[k, j]) >> || k := k + 1 if k < n - 1 \n " +
                          "end";
 
-        Unity unity = new Unity();
+        Unity unity = new Unity(null);
         unity.createProgramFromString(program);
         assertNotNull(unity.getUnityProgram());
     }
