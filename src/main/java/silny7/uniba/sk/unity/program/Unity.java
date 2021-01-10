@@ -9,15 +9,18 @@ import silny7.uniba.sk.UnityGrammarParser;
 import silny7.uniba.sk.parser.UnityGrammarErrorListener;
 import silny7.uniba.sk.parser.UnityGrammarException;
 import silny7.uniba.sk.parser.UnityGrammarVisitor;
+import silny7.uniba.sk.unity.exceptions.ProgramRunException;
 
 import javax.swing.*;
 
 public class Unity {
     UnityProgram unityProgram;
-    UnityLogger logger;
+    UnityErrorLogger errorLogger;
+    UnityProgramLogger programLogger;
 
-    public Unity(JTextArea errorTA) {
-        this.logger = new UnityLogger(errorTA);
+    public Unity(JTextArea errorTA, JTextArea programOutputTA) {
+        this.errorLogger = new UnityErrorLogger(errorTA);
+        this.programLogger = new UnityProgramLogger(programOutputTA);
     }
 
     public void createProgramFromString(String programToParse) throws UnityGrammarException {
@@ -47,10 +50,14 @@ public class Unity {
     }
 
     public void startProgram(){
+        unityProgram.setUnityProgramLogger(getProgramLogger());
+        unityProgram.setUnityErrorLogger(getErrorLogger());
         unityProgram.interpret();
     }
 
     public UnityProgram getUnityProgram() { return this.unityProgram; }
 
-    public UnityLogger getLogger() { return this.logger; }
+    public UnityErrorLogger getErrorLogger() { return this.errorLogger; }
+
+    public UnityProgramLogger getProgramLogger() { return this.programLogger; }
 }

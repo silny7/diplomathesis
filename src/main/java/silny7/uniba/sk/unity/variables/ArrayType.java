@@ -1,5 +1,6 @@
 package silny7.uniba.sk.unity.variables;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,6 +23,11 @@ public class ArrayType extends BaseType {
         for (ArrayRange range : arrayRange){
             this.arrayRange.add(0, range);
         }
+    }
+
+    @Override
+    public Object getNewTypeObject() {
+        return new Integer[5];
     }
 
     public String toString(){

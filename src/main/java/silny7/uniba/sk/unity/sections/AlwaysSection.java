@@ -1,5 +1,6 @@
 package silny7.uniba.sk.unity.sections;
 
+import silny7.uniba.sk.unity.program.UnityProgramMemory;
 import silny7.uniba.sk.unity.statements.Statement;
 
 import java.util.List;
@@ -11,6 +12,6 @@ public class AlwaysSection {
         this.statements = statements;
     }
 
-    public void execute() {
+    public void execute(UnityProgramMemory memory) {
     }
 }

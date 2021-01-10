@@ -167,10 +167,9 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
 
     @Override
     public RangeElement visitRangeElement(UnityGrammarParser.RangeElementContext ctx){
-        if (ctx.IDENTIFIER() != null) return new RangeElement(ctx.IDENTIFIER().getText());
-        if (ctx.number() != null) return new RangeElement(visitNumber(ctx.number()));
-        errors.add(new UnityGrammarError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Invalid range element"));
-        throw new ParseCancellationException(new InvalidVariableTypeException(ctx.getText()));
+        return new RangeElement(visitExpression(ctx.expression()));
+//        errors.add(new UnityGrammarError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Invalid range element"));
+//        throw new ParseCancellationException(new InvalidVariableTypeException(ctx.getText()));
     }
 
 
@@ -414,7 +413,8 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
     @Override
     public Expression visitMethodDeclaration(UnityGrammarParser.MethodDeclarationContext ctx) {
         String methodName = visitFunction(ctx.function());
-        List<Expression> args = visitSimple_expression_list(ctx.simple_expression_list());
+        List<Expression> args = new ArrayList<Expression>();
+        if (ctx.simple_expression_list() != null) args = visitSimple_expression_list(ctx.simple_expression_list());
         return new Function(methodName, args);
     }
 
@@ -481,6 +481,7 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
         if (ctx.AND() != null) return BinaryOperator.AND;
         if (ctx.DIV() != null) return BinaryOperator.DIV;
         if (ctx.TIMES() != null) return BinaryOperator.TIMES;
+        if (ctx.MOD() != null) return BinaryOperator.MOD;
 
         errors.add(new UnityGrammarError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Invalid relational operator"));
         throw new ParseCancellationException(new InvalidOperatorException(ctx.getText()));

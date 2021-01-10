@@ -1,5 +1,7 @@
 package silny7.uniba.sk.unity.variables;
 
+import silny7.uniba.sk.unity.exceptions.ProgramRunException;
+
 public class ArrayRange  {
 
     private RangeElement lowerBound;
@@ -10,6 +12,10 @@ public class ArrayRange  {
     public ArrayRange(RangeElement lowerBound, RangeElement upperBound){
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
+    }
+
+    public Integer getArrayLength() throws ProgramRunException {
+        return upperBound.evaluate() - lowerBound.evaluate() + 1;
     }
 
     public RangeElement getLowerBound() { return lowerBound; }

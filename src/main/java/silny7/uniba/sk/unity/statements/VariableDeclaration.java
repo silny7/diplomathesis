@@ -1,5 +1,9 @@
 package silny7.uniba.sk.unity.statements;
 
+import silny7.uniba.sk.unity.exceptions.MultipleDeclarationException;
+import silny7.uniba.sk.unity.exceptions.ProgramRunException;
+import silny7.uniba.sk.unity.program.UnityProgram;
+import silny7.uniba.sk.unity.program.UnityProgramMemory;
 import silny7.uniba.sk.unity.variables.BaseType;
 import silny7.uniba.sk.unity.expressions.Variable;
 import silny7.uniba.sk.unity.variables.DeclaredVariable;
@@ -25,9 +29,18 @@ public class VariableDeclaration {
 
     /**
      * saves variableName and type to program memory
+     * @param memory
      */
-    public void declare() {
-
+    public void declare(UnityProgramMemory memory) throws ProgramRunException {
+        for (DeclaredVariable variable : variables) {
+            if (memory.unboundedVariableExists(variable.getVarName())) {
+                throw new MultipleDeclarationException(variable.getVarName(), "Variable " + variable.getVarName() + " is already declared");
+            }
+            else {
+                UnityProgram.programLog("Declaring variable: " + variable.getVarName() + " with type: " + type.toString());
+                memory.addNewUnboundedVariableWithValue(variable.getVarName(), type.getNewTypeObject());
+            }
+        }
     }
 
     public String toString(){

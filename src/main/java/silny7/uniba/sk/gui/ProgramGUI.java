@@ -120,7 +120,7 @@ public class ProgramGUI extends JFrame {
         inputCodeTA.setColumns(20);
         inputCodeTA.setLineWrap(true);
         inputCodeTA.setRows(5);
-
+        inputCodeTA.setFont(inputCodeTA.getFont().deriveFont(20f));
 
 
         scrollPaneOutput.setViewportBorder(BorderFactory.createTitledBorder("Output"));
@@ -191,11 +191,12 @@ public class ProgramGUI extends JFrame {
         String programToParse = inputCodeTA.getText();
         try {
             eraseTextArea(errorTA);
-            unityProgramHolder = new Unity(errorTA);
+            eraseTextArea(outputTA);
+            unityProgramHolder = new Unity(errorTA, outputTA);
             unityProgramHolder.createProgramFromString(programToParse);
-            unityProgramHolder.getLogger().log("Unity program loaded successfully");
+            unityProgramHolder.getErrorLogger().log("Unity program loaded successfully");
         } catch (UnityGrammarException unityGrammarException) {
-            unityProgramHolder.getLogger().log(unityGrammarException);
+            unityProgramHolder.getErrorLogger().log(unityGrammarException);
         }
         return unityProgramHolder.getUnityProgram();
     }

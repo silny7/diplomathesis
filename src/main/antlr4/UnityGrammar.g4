@@ -36,7 +36,7 @@ listRange: range=rangeDeclaration (COMMA range=rangeDeclaration)*;
 rangeDeclaration: rangeElement DOUBLE_DOT rangeElement;
 
 //range element in [x..x] may be INT, or VARIABLE
-rangeElement: number | IDENTIFIER;
+rangeElement: expression;
 
 
 //other sections:
@@ -89,7 +89,7 @@ expression: simple_value_expression |
 
 simple_value_expression: add_minus_or_expression;
 relational_operator_expression: add_minus_or_expression relational_operator add_minus_or_expression;
-complex_relational_operator_expression: add_minus_or_expression relational_operator add_minus_or_expression relational_operator add_minus_or_expression;
+complex_relational_operator_expression: add_minus_or_expression relational_operator add_minus_or_expression relational_operator add_minus_or_expression (relational_operator add_minus_or_expression)?;
 
 
 boolean_expression: expression;
@@ -111,7 +111,7 @@ primary_expression: variable |
                     elementListDeclaration;
 
 //methodName(inputArgs);
-methodDeclaration: function OPEN_PARENTHESES simple_expression_list CLOSE_PARENTHESES;
+methodDeclaration: function OPEN_PARENTHESES simple_expression_list? CLOSE_PARENTHESES;
 
 expressionDeclaration: OPEN_PARENTHESES expression CLOSE_PARENTHESES;
 
@@ -192,7 +192,7 @@ MINUS: '-';
 TIMES: '*';
 DIV: '/' | 'DIV' | 'div';
 POWER: '^';
-MOD: 'MOD' | 'mod';
+MOD: 'MOD' | 'mod' | '%';
 
 
 

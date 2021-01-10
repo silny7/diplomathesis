@@ -1,5 +1,6 @@
 package silny7.uniba.sk.unity.program;
 
+import silny7.uniba.sk.unity.exceptions.ProgramRunException;
 import silny7.uniba.sk.unity.sections.AlwaysSection;
 import silny7.uniba.sk.unity.sections.AssignSection;
 import silny7.uniba.sk.unity.sections.DeclareSection;
@@ -20,17 +21,27 @@ public class UnityProgram {
     //flags
     private boolean fixedPoint = false;
 
+    //program memory
+    private static UnityProgramMemory memory;
 
     private static UnityProgram instance = null;
+    private static UnityProgramLogger unityProgramLogger;
+    private static UnityErrorLogger unityErrorLogger;
 
     private UnityProgram(){
     }
 
     public void interpret(){
-        if (declareSection != null) declareSection.declareVariables();
-        if (alwaysSection != null) alwaysSection.execute();
-        if (initiallySection != null) initiallySection.execute();
-        assignSection.execute();
+        if (memory == null) memory = new UnityProgramMemory();
+
+        try {
+            if (declareSection != null) declareSection.declareVariables(memory);
+            if (alwaysSection != null) alwaysSection.execute(memory);
+            if (initiallySection != null) initiallySection.execute(memory);
+            assignSection.execute();
+        } catch (ProgramRunException programRunException) {
+            errorLog(programRunException);
+        }
     }
 
     public static UnityProgram getUnityProgram(){
@@ -38,8 +49,17 @@ public class UnityProgram {
         return instance;
     }
 
+    public static void programLog(String message){
+        unityProgramLogger.log(message);
+    }
+
+    private static void errorLog(ProgramRunException programRunException){
+        unityErrorLogger.log(programRunException);
+    }
 
 
+
+    //GETTER, SETTER region
     public void setProgramName(String programName) { this.programName = programName; }
     public String getProgramName() { return this.programName; }
     public void setDeclareSection(DeclareSection declareSection) { this.declareSection = declareSection; }
@@ -50,4 +70,9 @@ public class UnityProgram {
     public void setInitiallySection(InitiallySection initiallySection) { this.initiallySection = initiallySection; }
     public AssignSection getAssignSection() { return assignSection; }
     public void setAssignSection(AssignSection assignSection) { this.assignSection = assignSection; }
+
+    public void setUnityProgramLogger(UnityProgramLogger programLogger) { this.unityProgramLogger = programLogger; }
+    public void setUnityErrorLogger(UnityErrorLogger errorLogger) { this.unityErrorLogger = errorLogger; }
+
+    public UnityProgramMemory getMemory() { return this.memory; }
 }

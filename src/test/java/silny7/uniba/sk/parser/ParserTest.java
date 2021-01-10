@@ -19,7 +19,7 @@ public class ParserTest {
 
     @Test
     public void simpleInputTest() throws UnityGrammarException {
-        Unity unity = new Unity(null);
+        Unity unity = new Unity(null, null);
         String program = "Program testProgram \n declare A:integer; \n assign A = 5 + 5 \n END";
         unity.createProgramFromString(program);
         assertNotNull(unity.getUnityProgram());
@@ -55,7 +55,7 @@ public class ParserTest {
                          "assign << [] i : 0 <=i<N :: A[i],A[i+1] := A[i+1], A[i] if A[i] > A[i+1] >> \n " +
                          "END";
 
-        Unity unity = new Unity(null);
+        Unity unity = new Unity(null, null);
         unity.createProgramFromString(program);
         assertNotNull(unity.getUnityProgram());
     }
@@ -68,7 +68,7 @@ public class ParserTest {
                          "<<|| k: 0<k<n :: c[n,k] := c[n-1,k-1]+c[n-1,k] >> >> \n " +
                          "END";
 
-        Unity unity = new Unity(null);
+        Unity unity = new Unity(null, null);
         unity.createProgramFromString(program);
         assertNotNull(unity.getUnityProgram());
     }
@@ -76,11 +76,28 @@ public class ParserTest {
     @Test
     public void shortestPathFloydTest() throws UnityGrammarException {
         String program = "Program shortestPath \n declare n,k: integer; D: array [0..9, 0..9] of integer; \n " +
-                         "initially n:= 10 [] k := 0 [] <<|| i, j : (0<=i<=n) and (0<=j<n) :: D[i,j] = Random(0, 20) >> \n " +
+                         "initially n:= 10 [] k := 0 [] <<|| i, j : (0<=i<=n) and (0<=j<n) :: D[i,j] = Random(0, 20) * 2 >> \n " +
                          "assign <<|| i, j : (0<=i<n) and (0<=j<n) :: D[i,j] := Min(D[i,j], D[i, k] + D[k, j]) >> || k := k + 1 if k < n - 1 \n " +
                          "end";
 
-        Unity unity = new Unity(null);
+        Unity unity = new Unity(null, null);
+        unity.createProgramFromString(program);
+        assertNotNull(unity.getUnityProgram());
+    }
+
+    @Test
+    public void bubbleSortTest() throws UnityGrammarException {
+        String program = "Program bubbleSort \n" +
+                "declare n: integer; A: array[0..n-1] of integer\n" +
+                "initially\n" +
+                "n = 20 [] <<||i: 0<= i and i < n :: A[i] = Random() % 100 >>\n" +
+                "assign\n" +
+                "<<[] k : 0 <= k < 2 :: \n" +
+                "<<|| i : (i % 2 = k) and (0 <= i < n - 1) :: A[i], A[i+1] := A[i+1], A[i] if A[i] > A[i+1] >>\n" +
+                ">>\n" +
+                "end;";
+
+        Unity unity = new Unity(null, null);
         unity.createProgramFromString(program);
         assertNotNull(unity.getUnityProgram());
     }
