@@ -19,7 +19,7 @@ program : PROGRAM program_name=text?
 //declare section:
 declare_section: DECLARE COLON? declare_component+;
 
-declare_component: variable_declaration_list COLON baseType SEMI_COLON?;
+declare_component: variable_declaration_list COLON baseType (SEMI_COLON | COMMA)?;
 
 variable_declaration_list: variableID (COMMA variableID)*;
 

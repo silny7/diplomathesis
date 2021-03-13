@@ -5,5 +5,7 @@ public abstract class Statement {
 
     public abstract void execute();
 
+    public abstract void evaluateQuantifiers();
+
     public abstract String toString();
 }

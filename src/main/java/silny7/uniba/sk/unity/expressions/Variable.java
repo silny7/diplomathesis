@@ -1,5 +1,7 @@
 package silny7.uniba.sk.unity.expressions;
 
+import silny7.uniba.sk.unity.exceptions.ProgramRunException;
+
 public abstract class Variable extends Expression{
 
     private String variableName;
@@ -8,5 +10,5 @@ public abstract class Variable extends Expression{
 
     public String getVariableName() {return this.variableName;}
 
-    public abstract boolean setValue(Object variableValue);
+    public abstract void setValue(Object variableValue) throws ProgramRunException;
 }

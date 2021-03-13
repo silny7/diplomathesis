@@ -37,6 +37,40 @@ public class ConditionalEnumeratedAssignment extends Assignment {
 
     @Override
     public String toString() {
-        return null;
+        StringBuilder string = new StringBuilder();
+        //variables:
+        boolean first = true;
+        for (Variable variable : variableList){
+            string.append(variable.toString());
+            if (!first) string.append(", ");
+            first = false;
+        }
+
+        string.append(" := ");
+
+        //expressions in format: expression_list if boolean expression
+        for (Expression boolean_expr : bool_expr_list){
+            for (List<Expression> simpleExpressionList : expressionsList) {
+                for (Expression simpleExpression : simpleExpressionList){
+                    string.append(simpleExpression.toString() + " ");
+                }
+            }
+            string.append("if ");
+            string.append(boolean_expr.toString()).append(" ");
+        }
+        return string.toString();
+    }
+
+    /**
+     * does nothing
+     */
+    @Override
+    public void evaluateQuantifiers() {
+
+    }
+
+    @Override
+    public void assign() {
+
     }
 }

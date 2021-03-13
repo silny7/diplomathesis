@@ -36,8 +36,8 @@ public class UnityProgram {
 
         try {
             if (declareSection != null) declareSection.declareVariables(memory);
-            if (alwaysSection != null) alwaysSection.execute(memory);
-            if (initiallySection != null) initiallySection.execute(memory);
+            if (alwaysSection != null) alwaysSection.execute();
+            if (initiallySection != null) initiallySection.execute();
             assignSection.execute();
         } catch (ProgramRunException programRunException) {
             errorLog(programRunException);
@@ -59,6 +59,7 @@ public class UnityProgram {
 
 
 
+
     //GETTER, SETTER region
     public void setProgramName(String programName) { this.programName = programName; }
     public String getProgramName() { return this.programName; }
@@ -75,4 +76,8 @@ public class UnityProgram {
     public void setUnityErrorLogger(UnityErrorLogger errorLogger) { this.unityErrorLogger = errorLogger; }
 
     public UnityProgramMemory getMemory() { return this.memory; }
+
+    public boolean isFixedPoint() { return fixedPoint; }
+
+    public void setFixedPoint(boolean fixedPoint) { this.fixedPoint = fixedPoint; }
 }

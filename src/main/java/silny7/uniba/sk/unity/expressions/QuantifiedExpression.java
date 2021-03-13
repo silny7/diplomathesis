@@ -17,11 +17,16 @@ public class QuantifiedExpression extends Expression{
 
     @Override
     public Object resolve() {
+        quantification.initVariables();
+        quantification.evaluate();
+
+
+        quantification.destroyVariables();
         return null;
     }
 
     @Override
     public String toString() {
-        return operator.toString() + " " + quantification.toString() + " " + expression.toString();
+        return "<<" + operator.toString() + " " + quantification.toString() + " " + expression.toString() + ">>";
     }
 }

@@ -43,8 +43,8 @@ public class ParserTest {
         AssignmentStatement assignmentStatement = (AssignmentStatement) assignSection.getStatements().get(0);
         assertEquals(assignmentStatement.getAssignments().size(), 1);
         EnumeratedAssignment enumeratedAssignment = (EnumeratedAssignment) assignmentStatement.getAssignments().get(0);
-        assertEquals(enumeratedAssignment.getVars().size(), 1);
-        SimpleVariable variable = (SimpleVariable) enumeratedAssignment.getVars().get(0);
+        assertEquals(enumeratedAssignment.getVariables().size(), 1);
+        SimpleVariable variable = (SimpleVariable) enumeratedAssignment.getVariables().get(0);
         assertEquals(variable.getVariableName(), "A");
     }
 

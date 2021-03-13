@@ -2,6 +2,9 @@ package silny7.uniba.sk.unity.variables;
 
 import silny7.uniba.sk.unity.exceptions.IllegalArgumentTypeException;
 import silny7.uniba.sk.unity.exceptions.ProgramRunException;
+import silny7.uniba.sk.unity.expressions.functions.Functions;
+
+import static silny7.uniba.sk.unity.expressions.functions.Functions.*;
 
 public class SimpleType extends BaseType {
 
@@ -16,8 +19,8 @@ public class SimpleType extends BaseType {
 
     public Object getNewTypeObject() throws ProgramRunException {
         switch (valueType){
-            case Bool: return Boolean.FALSE;
-            case Integer: return 0;
+            case Bool: return randomBool();
+            case Integer: return random(0, 100);
         }
         throw new IllegalArgumentTypeException("Illegal SimpleType " + valueType.toString());
     }

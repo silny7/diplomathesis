@@ -12,6 +12,6 @@ public class AlwaysSection {
         this.statements = statements;
     }
 
-    public void execute(UnityProgramMemory memory) {
+    public void execute() {
     }
 }

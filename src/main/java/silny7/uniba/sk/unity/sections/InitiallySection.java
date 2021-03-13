@@ -12,6 +12,10 @@ public class InitiallySection {
         this.statements = statements;
     }
 
-    public void execute(UnityProgramMemory memory) {
+    public void execute() {
+        for (Statement statement : statements){
+            statement.evaluateQuantifiers();
+            statement.execute();
+        }
     }
 }

@@ -2,38 +2,100 @@ package silny7.uniba.sk.unity.program;
 
 import silny7.uniba.sk.unity.exceptions.NonExistingVariableException;
 import silny7.uniba.sk.unity.exceptions.ProgramRunException;
+import silny7.uniba.sk.unity.program.memory.GlobalMemory;
+import silny7.uniba.sk.unity.program.memory.LocalMemory;
+import silny7.uniba.sk.unity.program.memory.MemoryCopy;
+import silny7.uniba.sk.unity.program.memory.MemoryType;
 
 import java.util.Hashtable;
 import java.util.Map;
 
 public class UnityProgramMemory {
 
-    //unbounded variables
-    Map<String, Object> varsTableUnbounded = new Hashtable<String, Object>();
+    //global memory
+    GlobalMemory globalMemory;
 
-    //bounded variables (quantified statements and assigns)
-    Map<String, Object> varsTableBounded = new Hashtable<String, Object>();
+    //bounded memory
+    LocalMemory boundedMemory;
 
-    public boolean unboundedVariableExists(String varName){
-        return varsTableUnbounded.containsKey(varName);
+    public UnityProgramMemory() {
+        globalMemory = new GlobalMemory();
+        boundedMemory = new LocalMemory();
     }
 
-    public boolean boundedVariableExists(String varName){
-        return varsTableBounded.containsKey(varName);
+    public void initGlobalVariable(String varName, Object value){
+        globalMemory.initVariable(varName, value);
     }
 
-    public void addNewUnboundedVariableWithValue(String varName, Object value){
-        varsTableUnbounded.put(varName, value);
+    public void destroyGlobalVariable(String varName){
+        globalMemory.destroyVariable(varName);
+    }
+
+    public void initBoundedVariable(String varName, Object value){
+        boundedMemory.initVariable(varName, value);
+    }
+
+    public void destroyBoundedVariable(String varName){
+        boundedMemory.destroyVariable(varName);
+    }
+
+    public boolean variableExists(String varName) {
+        return globalMemory.containsVariable(varName) || boundedMemory.containsVariable(varName);
     }
 
 
-    public Map<String, Object> getVarsTableUnbounded() { return varsTableUnbounded; }
-
-    public Map<String, Object> getVarsTableBounded() { return varsTableBounded; }
-
-    public Object getUnboundedVariable(String varName) throws ProgramRunException {
-        Object variableValue = varsTableUnbounded.get(varName);
-        if (variableValue == null) throw new NonExistingVariableException("Variable " + varName + " does not exists");
-        return varsTableUnbounded.get(varName);
+    public boolean isBoundedVariable(String varName){
+        return boundedMemory.containsVariable(varName);
     }
+
+    public boolean isGlobalVariable(String varName) {
+        return globalMemory.containsVariable(varName);
+    }
+
+    public Object getVariableValue(String varName) throws NonExistingVariableException {
+        //first check bounded memory
+        if (isBoundedVariable(varName)) {
+            return boundedMemory.getVariable(varName);
+        } else if (isGlobalVariable(varName)){
+            return globalMemory.getVariable(varName);
+        } else {
+            throw new NonExistingVariableException("Variable " + varName + " does not exists");
+        }
+    }
+
+    public void setVariable(String variableName, Object variableValue) {
+        if (isBoundedVariable(variableName)) {
+            boundedMemory.setVariable(variableName, variableValue);
+        }
+    }
+
+    public MemoryCopy createMemoryCopy(MemoryType memoryType){
+        switch (memoryType){
+            case READ:
+                return new MemoryCopy(globalMemory.getReadMemoryCopy(), memoryType);
+            case WRITE:
+                return new MemoryCopy(globalMemory.getWriteMemoryCopy(), memoryType);
+            case LOCAL:
+                return new MemoryCopy(boundedMemory.getMemoryCopy(), memoryType);
+            default:
+                //todo better throw some exception
+                return null;
+        }
+    }
+
+    public void loadMemoryCopy(MemoryCopy memoryCopy){
+        switch (memoryCopy.getMemoryType()){
+            case READ:
+            case WRITE:
+                globalMemory.loadMemoryCopy(memoryCopy);
+                break;
+            case LOCAL:
+                boundedMemory.loadMemoryCopy(memoryCopy);
+                break;
+            default:
+                //todo better throw some exception
+                break;
+        }
+    }
+
 }

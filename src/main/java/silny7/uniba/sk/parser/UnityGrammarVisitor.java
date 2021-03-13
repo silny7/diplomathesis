@@ -106,7 +106,7 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
     }
 
     @Override
-    public BaseType visitSimpleType(UnityGrammarParser.SimpleTypeContext ctx){
+    public SimpleType visitSimpleType(UnityGrammarParser.SimpleTypeContext ctx){
         if (ctx.BOOLEAN() != null) {
             SimpleType simpleType = new SimpleType();
             simpleType.setValueTypeToBoolean();
@@ -126,7 +126,7 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
 
         //ak je simple type, vyber ranges a vrat sa
         if (ctx.simpleType() != null) {
-            BaseType valuesType = visitSimpleType(ctx.simpleType());
+            SimpleType valuesType = visitSimpleType(ctx.simpleType());
             List<ArrayRange> arrayRange = visitListRange(ctx.listRange());
             return new ArrayType(valuesType, arrayRange);
         }

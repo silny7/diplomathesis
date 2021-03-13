@@ -36,8 +36,8 @@ public class BinaryExpression extends Expression{
             case GREATER_THAN: return objectToInteger(value1) > objectToInteger(value2);
             case LESS_OR_EQUAL: return objectToInteger(value1) <= objectToInteger(value2);
             case LESS_THAN: return objectToInteger(value1) < objectToInteger(value2);
-            case EQUAL: return objectToInteger(value1) == objectToInteger(value2);
-            case NOT_EQUAL: return objectToInteger(value1) != objectToInteger(value2);
+            case EQUAL: return objectToInteger(value1).equals(objectToInteger(value2));
+            case NOT_EQUAL: return !objectToInteger(value1).equals(objectToInteger(value2));
             default: throw new IllegalOperatorException("Illegal operator type: " + operator.toString());
         }
     }

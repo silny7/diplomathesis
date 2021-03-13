@@ -19,6 +19,11 @@ public class QuantifiedStatement extends Statement {
     }
 
     @Override
+    public void evaluateQuantifiers() {
+
+    }
+
+    @Override
     public String toString() {
         return null;
     }
