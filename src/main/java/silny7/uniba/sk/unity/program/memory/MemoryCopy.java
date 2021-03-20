@@ -26,4 +26,9 @@ public class MemoryCopy {
     public void setMemoryType(MemoryType memoryType) {
         this.memoryType = memoryType;
     }
+
+    public void loadIntoProgramMemory(){
+        UnityProgramMemory programMemory = UnityProgram.getUnityProgram().getMemory();
+        programMemory.loadMemoryCopy(this);
+    }
 }

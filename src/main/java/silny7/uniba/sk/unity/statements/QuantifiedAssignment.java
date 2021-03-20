@@ -1,5 +1,9 @@
 package silny7.uniba.sk.unity.statements;
 
+import silny7.uniba.sk.unity.exceptions.ProgramRunException;
+import silny7.uniba.sk.unity.program.memory.Memory;
+import silny7.uniba.sk.unity.program.memory.MemoryCopy;
+
 public class QuantifiedAssignment extends Assignment {
     Quantification quantification;
     AssignmentStatement assignmentStatement;
@@ -15,7 +19,7 @@ public class QuantifiedAssignment extends Assignment {
     }
 
     @Override
-    public void evaluateQuantifiers() {
+    public void evaluateQuantifiers() throws ProgramRunException {
         quantification.initVariables();
         quantification.evaluate();
 
@@ -24,16 +28,32 @@ public class QuantifiedAssignment extends Assignment {
         //load them into memory
         //evaluate statements
 
-        quantification.destroyVariables();
+        quantification.destroy();
     }
 
     @Override
-    public void assign() {
+    public void assign() throws ProgramRunException {
         quantification.initVariables();
         quantification.evaluate();
 
-        //todo
-
-        quantification.destroyVariables();
+        if (quantification.getMemorySnapshots().isEmpty()){
+            quantification.destroy();
+            //there are not values for boundedVals for which boolExpr in quantification is true
+        } else {
+            for (MemoryCopy memCopy : quantification.getMemorySnapshots()){
+                memCopy.loadIntoProgramMemory();
+                for (Assignment assignment : assignmentStatement.getAssignments()){
+                    if (!(assignment instanceof QuantifiedAssignment)){
+                        assignment.assign();
+                    }
+                }
+            }
+            for (Assignment assignment : assignmentStatement.getAssignments()){
+                if (assignment instanceof QuantifiedAssignment){
+                    assignment.assign();
+                }
+            }
+            quantification.destroy();
+        }
     }
 }

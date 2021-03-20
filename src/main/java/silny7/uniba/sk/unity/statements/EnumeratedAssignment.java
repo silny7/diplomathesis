@@ -1,7 +1,9 @@
 package silny7.uniba.sk.unity.statements;
 
+import silny7.uniba.sk.unity.exceptions.IllegalProgramStateException;
+import silny7.uniba.sk.unity.exceptions.ProgramRunException;
 import silny7.uniba.sk.unity.expressions.Expression;
-import silny7.uniba.sk.unity.expressions.Variable;
+import silny7.uniba.sk.unity.expressions.variables.Variable;
 
 import java.util.List;
 
@@ -47,10 +49,16 @@ public class EnumeratedAssignment extends Assignment {
      * does nothing
      */
     @Override
-    public void evaluateQuantifiers() {
-
-    }
+    public void evaluateQuantifiers() {}
 
     @Override
-    public void assign() {}
+    public void assign() throws ProgramRunException {
+        if (variables.size() != expressions.size()){
+            throw new IllegalProgramStateException("Size of expressionsList (" + expressions.size() +") is not the same as variableList (" + variables.size() +")");
+        }
+
+        for (int index = 0; index < variables.size(); index++){
+            variables.get(index).setValue(expressions.get(index).resolve());
+        }
+    }
 }

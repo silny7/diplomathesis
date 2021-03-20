@@ -1,5 +1,6 @@
 package silny7.uniba.sk.unity.sections;
 
+import silny7.uniba.sk.unity.exceptions.ProgramRunException;
 import silny7.uniba.sk.unity.statements.Statement;
 
 import java.util.List;
@@ -15,6 +16,10 @@ public class AssignSection {
         return statements;
     }
 
-    public void execute() {
+    public void execute() throws ProgramRunException {
+        for (Statement statement : statements){
+            statement.evaluateQuantifiers();
+            statement.execute();
+        }
     }
 }

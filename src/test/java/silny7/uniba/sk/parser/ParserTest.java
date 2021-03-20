@@ -3,7 +3,7 @@ package silny7.uniba.sk.parser;
 import org.junit.jupiter.api.Test;
 import silny7.uniba.sk.unity.program.Unity;
 import silny7.uniba.sk.unity.program.UnityProgram;
-import silny7.uniba.sk.unity.expressions.SimpleVariable;
+import silny7.uniba.sk.unity.expressions.variables.SimpleVariable;
 import silny7.uniba.sk.unity.sections.AssignSection;
 import silny7.uniba.sk.unity.sections.DeclareSection;
 import silny7.uniba.sk.unity.statements.AssignmentStatement;

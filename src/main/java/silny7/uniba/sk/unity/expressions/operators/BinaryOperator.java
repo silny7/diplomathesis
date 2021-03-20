@@ -1,5 +1,7 @@
 package silny7.uniba.sk.unity.expressions.operators;
 
+import silny7.uniba.sk.unity.exceptions.IllegalProgramStateException;
+
 public enum BinaryOperator {
 
     MINUS("-"),
@@ -25,6 +27,30 @@ public enum BinaryOperator {
     @Override
     public String toString() {
         return operator;
+    }
+
+    public static Object getDefaultOperatorValue(BinaryOperator operator) throws IllegalProgramStateException {
+        switch (operator){
+            case TIMES:
+            case POWER:
+            case MINUS:
+                return 1;
+            case PLUS:
+            case DIV:
+            case MOD:
+                return 0;
+            case LESS_OR_EQUAL:
+            case LESS_THAN:
+            case GREATER_OR_EQUAL:
+            case GREATER_THAN:
+            case EQUAL:
+            case AND:
+                return true;
+            case OR:
+            case NOT_EQUAL:
+                return false;
+        }
+        throw new IllegalProgramStateException("Illegal binary operator: " + operator);
     }
 
 

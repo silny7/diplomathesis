@@ -1,4 +1,4 @@
-package silny7.uniba.sk.unity.expressions;
+package silny7.uniba.sk.unity.expressions.variables;
 
 import silny7.uniba.sk.unity.exceptions.ProgramRunException;
 import silny7.uniba.sk.unity.program.UnityProgram;

@@ -29,16 +29,18 @@ public class UnityProgram {
     private static UnityErrorLogger unityErrorLogger;
 
     private UnityProgram(){
+        memory = new UnityProgramMemory();
     }
 
-    public void interpret(){
-        if (memory == null) memory = new UnityProgramMemory();
-
+    public void interpret() {
         try {
             if (declareSection != null) declareSection.declareVariables(memory);
-            if (alwaysSection != null) alwaysSection.execute();
             if (initiallySection != null) initiallySection.execute();
-            assignSection.execute();
+            while (!fixedPoint){
+                assignSection.execute();
+                //after every run of assignSection, execute alwaysSection
+                if (alwaysSection != null) alwaysSection.execute();
+            }
         } catch (ProgramRunException programRunException) {
             errorLog(programRunException);
         }
