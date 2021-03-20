@@ -37,10 +37,12 @@ public class UnityProgram {
             if (declareSection != null) declareSection.declareVariables(memory);
             if (initiallySection != null) initiallySection.execute();
             while (!fixedPoint){
+                fixedPoint = true;
                 assignSection.execute();
                 //after every run of assignSection, execute alwaysSection
                 if (alwaysSection != null) alwaysSection.execute();
             }
+            unityProgramLogger.log(memory.print());
         } catch (ProgramRunException programRunException) {
             errorLog(programRunException);
         }
@@ -59,7 +61,12 @@ public class UnityProgram {
         unityErrorLogger.log(programRunException);
     }
 
-
+    /**
+     * only used for testing
+     */
+    protected static void discardProgram() {
+        instance = null;
+    }
 
 
     //GETTER, SETTER region

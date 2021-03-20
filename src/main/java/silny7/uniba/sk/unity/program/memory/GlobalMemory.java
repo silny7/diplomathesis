@@ -1,5 +1,6 @@
 package silny7.uniba.sk.unity.program.memory;
 
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -48,21 +49,40 @@ public class GlobalMemory implements Memory{
         }
     }
 
-    private void loadMemoryCopyIntoWriteMemory(Map<String, Object> memoryCopy) {
-        for (Map.Entry<String, Object> variable : memoryCopy.entrySet()){
-            memoryRead.put(variable.getKey(), variable.getValue());
+    @Override
+    public String print() {
+        StringBuilder string = new StringBuilder();
+        if (memoryRead.isEmpty()) {
+            string.append("PROGRAM MEMORY IS EMPTY");
+        } else {
+            string.append("PROGRAM MEMORY: ").append("\n");
+            for (Map.Entry mapEntry : memoryRead.entrySet()){
+                String variableName = (String) mapEntry.getKey();
+                Object variableValue = mapEntry.getValue();
+                if (variableValue.getClass().isArray()){
+                    variableValue = "\n" + Arrays.deepToString((Object[]) variableValue).replace("]",  "]\n");
+                }
+                string.append("VariableName: " + variableName + " variableValue: " + variableValue).append("\n");
+            }
         }
+        return string.toString();
     }
 
-    private void loadMemoryCopyIntoReadMemory(Map<String, Object> memoryCopy) {
+    private void loadMemoryCopyIntoWriteMemory(Map<String, Object> memoryCopy) {
         for (Map.Entry<String, Object> variable : memoryCopy.entrySet()){
             memoryWrite.put(variable.getKey(), variable.getValue());
         }
     }
 
+    private void loadMemoryCopyIntoReadMemory(Map<String, Object> memoryCopy) {
+        for (Map.Entry<String, Object> variable : memoryCopy.entrySet()){
+            memoryRead.put(variable.getKey(), variable.getValue());
+        }
+    }
+
     public Map<String, Object> getWriteMemoryCopy() {
         Map<String, Object> map = new Hashtable<String, Object>();
-        for (Map.Entry<String, Object> variable : memoryRead.entrySet()){
+        for (Map.Entry<String, Object> variable : memoryWrite.entrySet()){
             map.put(variable.getKey(), variable.getValue());
         }
         return map;
@@ -70,7 +90,7 @@ public class GlobalMemory implements Memory{
 
     public Map<String, Object> getReadMemoryCopy() {
         Map<String, Object> map = new Hashtable<String, Object>();
-        for (Map.Entry<String, Object> variable : memoryWrite.entrySet()){
+        for (Map.Entry<String, Object> variable : memoryRead.entrySet()){
             map.put(variable.getKey(), variable.getValue());
         }
         return map;

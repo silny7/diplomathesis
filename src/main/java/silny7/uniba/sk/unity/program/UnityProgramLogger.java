@@ -11,7 +11,11 @@ public class UnityProgramLogger {
     }
 
     public void log(String logText){
-        if (!programLogArea.getText().isEmpty()) this.programLogArea.append("\n");
-        this.programLogArea.append(logText);
+        if (programLogArea == null) {
+            System.out.println(logText);
+        } else {
+            if (!programLogArea.getText().isEmpty()) this.programLogArea.append("\n");
+            this.programLogArea.append(logText);
+        }
     }
 }

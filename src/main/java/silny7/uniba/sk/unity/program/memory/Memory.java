@@ -9,4 +9,6 @@ public interface Memory {
     void setVariable(String variableName, Object variableValue);
 
     void loadMemoryCopy(MemoryCopy memoryCopy);
+
+    String print();
 }

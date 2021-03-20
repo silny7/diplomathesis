@@ -62,10 +62,14 @@ public class ParserTest {
 
     @Test
     public void binomicalUnityTest() throws UnityGrammarException {
-        String program = "Program binomical \n \n declare N:integer; c: array[0..10] of array[0..10] of integer; \n " +
-                         "initially N := 10 \n " +
-                         "assign << [] n : 0<=n<N :: c[n,0]  := 1 ||  c[n,n] := 1 [] " +
-                         "<<|| k: 0<k<n :: c[n,k] := c[n-1,k-1]+c[n-1,k] >> >> \n " +
+        String program = "Program binomical \n" +
+                            "declare \n" +
+                            "    N:integer; \n" +
+                            "    c: array[0..9] of array[0..9] of integer; \n" +
+                            "initially \n" +
+                            "    N := 10 \n" +
+                            "assign \n" +
+                            "    << [] n : 0<=n<N :: c[n,0]  := 1 ||  c[n,n] := 1 [] <<|| k: 0<k<n :: c[n,k] := c[n-1,k-1]+c[n-1,k] >> >> \n" +
                          "END";
 
         Unity unity = new Unity(null, null);

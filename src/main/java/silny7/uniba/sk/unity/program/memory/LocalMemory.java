@@ -42,6 +42,21 @@ public class LocalMemory implements Memory{
         }
     }
 
+    @Override
+    public String print() {
+        StringBuilder string = new StringBuilder();
+        if (boundedMemory.isEmpty()) {
+            string.append("BOUNDED VARIABLES MEMORY IS EMPTY");
+        } else {
+            string.append("BOUNDED VARIABLES MEMORY: ").append("\n");
+            for (Map.Entry mapEntry : boundedMemory.entrySet()){
+                string.append("VariableName: " + mapEntry.getKey() + " variableValue: " + mapEntry.getValue().toString()).append("\n");
+            }
+        }
+
+        return string.toString();
+    }
+
     public Map<String, Object> getMemoryCopy() {
         Map<String, Object> map = new Hashtable<String, Object>();
         for (Map.Entry<String, Object> variable : boundedMemory.entrySet()){

@@ -16,7 +16,7 @@ public class Quantification {
 
     List<Variable> boundedVars;
     Expression booleanExpr;
-    List<MemoryCopy> memorySnapshots;
+    List<MemoryCopy> memorySnapshots = new ArrayList<MemoryCopy>();
 
     public Quantification(List<Variable> boundedVars, Expression boolExpr) {
         this.booleanExpr = boolExpr;

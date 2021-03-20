@@ -28,11 +28,13 @@ public class ArrayVariable extends Variable{
             if (!currentValue.equals(variableValue)) {
                 UnityProgram.getUnityProgram().setFixedPoint(false);
             }
-            memory.setVariable(getVariableName(), variableValue);
+            Object[] array = setArrayElementAtIndexes(arrayVariable, arrayIndexes, variableValue);
+            memory.setVariable(getVariableName(), array);
         } else {
             throw new NonExistingVariableException("Array variable " + getVariableName() + " does not exists!");
         }
     }
+
 
     @Override
     public Object resolve() throws ProgramRunException {
@@ -73,6 +75,24 @@ public class ArrayVariable extends Variable{
             return arrayElement;
         } catch (IndexOutOfBoundsException ex) {
             throw new NonExistingVariableException("Index out of bounds of variable " + getVariableName());
+        }
+    }
+
+    private Object[] setArrayElementAtIndexes(Object[] arrayVariable, int[] arrayIndexes, Object variableValue) throws NonExistingVariableException {
+        Object[] array = arrayVariable;
+        try {
+            Object arrayElement;
+            for (int i = 0; i < arrayIndexes.length - 1; i++){
+                int index = arrayIndexes[i];
+                arrayElement = array[index];
+                if (arrayElement.getClass().isArray()) {
+                    array = (Object[]) arrayElement;
+                }
+            }
+            array[arrayIndexes[arrayIndexes.length - 1]] = variableValue;
+            return arrayVariable;
+        } catch (IndexOutOfBoundsException ex) {
+            throw new NonExistingVariableException("Index " + arrayIndexes.toString() + " out of bounds of variable " + getVariableName());
         }
     }
 

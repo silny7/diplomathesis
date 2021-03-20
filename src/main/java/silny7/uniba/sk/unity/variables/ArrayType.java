@@ -29,17 +29,43 @@ public class ArrayType extends BaseType {
 
     @Override
     public Object getNewTypeObject() throws ProgramRunException {
-        //Collections.reverse(arrayRanges);
         int[] arrayLength = new int[arrayRanges.size()];
         for (int i = 0; i < arrayRanges.size(); i++) {
             ArrayRange range = arrayRanges.get(i);
             arrayLength[i] = range.getUpperBound().evaluate() - range.getLowerBound().evaluate() + 1;
         }
         if (valuesType.getType().equals(SimpleType.Type.Integer)) {
-            return Array.newInstance(Integer.class, arrayLength);
+            Object array = Array.newInstance(Integer.class, arrayLength);
+            fillArrayWithValues(array, 0, arrayLength);
+            return array;
         } else {
-            return Array.newInstance(Boolean.class, arrayLength);
+            Object array = Array.newInstance(Boolean.class, arrayLength);
+            fillArrayWithValues(array, false, arrayLength);
+            return array;
         }
+    }
+
+    /**
+     * fills multidimensional array with value
+     * @param array
+     * @param value
+     * @param lengths
+     */
+    private void fillArrayWithValues(Object array, Object value, int... lengths) {
+        for (int i = 0; i < lengths[0]; i++)
+        if (lengths.length == 1){
+            if (value instanceof Integer){
+                ((Integer[]) array)[i] = (Integer) value;
+            } else if (value instanceof Boolean){
+                ((Boolean[]) array)[i] = (Boolean) value;
+            }
+        } else {
+            fillArrayWithValues(Array.get(array, i), value, tail(lengths));
+        }
+    }
+
+    private int[] tail(int[] array) {
+        return Arrays.copyOfRange(array, 1, array.length);
     }
 
     public String toString(){

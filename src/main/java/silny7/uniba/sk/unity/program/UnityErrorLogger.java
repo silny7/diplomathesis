@@ -14,8 +14,12 @@ public class UnityErrorLogger {
     }
 
     public void log(String logText){
-        if (!logTextArea.getText().isEmpty()) this.logTextArea.append("\n");
-        this.logTextArea.append(logText);
+        if (logTextArea == null) {
+            System.out.println(logText);
+        } else {
+            if (!logTextArea.getText().isEmpty()) this.logTextArea.append("\n");
+            this.logTextArea.append(logText);
+        }
     }
 
     public void log(UnityGrammarException unityGrammarException) {

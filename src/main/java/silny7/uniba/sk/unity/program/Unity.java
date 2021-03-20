@@ -14,9 +14,9 @@ import silny7.uniba.sk.unity.exceptions.ProgramRunException;
 import javax.swing.*;
 
 public class Unity {
-    UnityProgram unityProgram;
-    UnityErrorLogger errorLogger;
-    UnityProgramLogger programLogger;
+    private UnityProgram unityProgram;
+    private UnityErrorLogger errorLogger;
+    private UnityProgramLogger programLogger;
 
     public Unity(JTextArea errorTA, JTextArea programOutputTA) {
         this.errorLogger = new UnityErrorLogger(errorTA);

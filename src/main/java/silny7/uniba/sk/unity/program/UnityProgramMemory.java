@@ -66,6 +66,8 @@ public class UnityProgramMemory {
     public void setVariable(String variableName, Object variableValue) {
         if (isBoundedVariable(variableName)) {
             boundedMemory.setVariable(variableName, variableValue);
+        } else {
+            globalMemory.setVariable(variableName, variableValue);
         }
     }
 
@@ -98,4 +100,9 @@ public class UnityProgramMemory {
         }
     }
 
+    public String print() {
+        StringBuilder string = new StringBuilder();
+        string.append(globalMemory.print());
+        return string.toString();
+    }
 }

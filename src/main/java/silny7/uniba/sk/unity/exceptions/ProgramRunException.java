@@ -6,4 +6,9 @@ public class ProgramRunException extends Exception{
     public ProgramRunException(String message){
         this.message = message;
     }
+
+    @Override
+    public String getMessage(){
+        return this.message;
+    }
 }
