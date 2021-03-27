@@ -6,6 +6,8 @@ import silny7.uniba.sk.unity.program.Unity;
 import silny7.uniba.sk.unity.program.UnityProgram;
 
 import javax.swing.*;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,6 +33,8 @@ public class ProgramGUI extends JFrame {
     private JScrollPane scrollPaneError;
     private JScrollPane scrollPaneInput;
     private JScrollPane scrollPaneOutput;
+
+    private JMenu settings;
 
     private Dimension guiScreenSize;
 
@@ -142,12 +146,19 @@ public class ProgramGUI extends JFrame {
         loadButton.setText("Load");
 
         createRunButtonListener();
-        craeteLoadButtonListener();
+        createLoadButtonListener();
 
-
+        createMenu();
     }
 
+    private void createMenu() {
+        JMenuBar menuBar = new JMenuBar();
+        settings = new JMenu("Settings");
+        menuBar.add(settings);
+        this.setJMenuBar(menuBar);
 
+        createSettingsListener();
+    }
 
     /**
      * returns screenSize as a dimension
@@ -172,17 +183,35 @@ public class ProgramGUI extends JFrame {
                     //load the program
                     loadUnityProgram();
                 }
-
                 unityProgramHolder.startProgram();
             }
         });
     }
 
-    private void craeteLoadButtonListener() {
+    private void createLoadButtonListener() {
         loadButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 loadUnityProgram();
+            }
+        });
+    }
+
+    private void createSettingsListener() {
+        settings.addMenuListener(new MenuListener() {
+            @Override
+            public void menuSelected(MenuEvent e) {
+                new SettingsGui();
+            }
+
+            @Override
+            public void menuDeselected(MenuEvent e) {
+
+            }
+
+            @Override
+            public void menuCanceled(MenuEvent e) {
+
             }
         });
     }
