@@ -64,7 +64,7 @@ public class UnityProgram {
     /**
      * only used for testing
      */
-    protected static void discardProgram() {
+    public static void discardProgram() {
         instance = null;
     }
 

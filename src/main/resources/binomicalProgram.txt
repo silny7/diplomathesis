@@ -1,0 +1,9 @@
+Program binomical 
+declare 
+    N:integer; 
+    c: array[0..9] of array[0..9] of integer; 
+initially 
+    N := 10 
+assign 
+    << [] n : 0<=n<N :: c[n,0]  := 1 ||  c[n,n] := 1 [] <<|| k: 0<k<n :: c[n,k] := c[n-1,k-1]+c[n-1,k] >> >> 
+END

@@ -11,6 +11,11 @@ import javax.swing.event.MenuListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 /**
  *
@@ -35,8 +40,15 @@ public class ProgramGUI extends JFrame {
     private JScrollPane scrollPaneOutput;
 
     private JMenu settings;
+    private JMenu programs;
+    private JMenuItem programSort;
+    private JMenuItem programBinomical;
+    private JMenuItem programBubbleSort;
+    private JMenuItem programShortestPath;
+
 
     private Dimension guiScreenSize;
+
 
     /**
      * calls methods to setup GUI
@@ -154,10 +166,70 @@ public class ProgramGUI extends JFrame {
     private void createMenu() {
         JMenuBar menuBar = new JMenuBar();
         settings = new JMenu("Settings");
+        createSettingsListener();
+
+
+        createProgramsMenu();
+        menuBar.add(programs);
         menuBar.add(settings);
         this.setJMenuBar(menuBar);
 
-        createSettingsListener();
+    }
+
+    private void createProgramsMenu() {
+        programs = new JMenu("Programs");
+        programBinomical = new JMenuItem("Binomical");
+        programSort = new JMenuItem("Sort");
+        programBubbleSort = new JMenuItem("Bubble sort");
+        programShortestPath = new JMenuItem("Shortest path");
+
+        programs.add(programSort);
+        programs.add(programBubbleSort);
+        programs.add(programBinomical);
+        programs.add(programShortestPath);
+
+        programBinomical.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadUnityProgramFromFile("binomicalProgram.txt");
+            }
+        });
+
+        programSort.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadUnityProgramFromFile("sortProgram.txt");
+            }
+        });
+
+        programShortestPath.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadUnityProgramFromFile("floydShortestPathProgram.txt");
+            }
+        });
+
+        programBubbleSort.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadUnityProgramFromFile("bubbleSortProgram.txt");
+            }
+        });
+    }
+
+    private void loadUnityProgramFromFile(String programFileName) {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(programFileName);
+             InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+             BufferedReader reader = new BufferedReader(streamReader)){
+             StringBuilder programCode = new StringBuilder();
+             String line;
+             while ((line = reader.readLine()) != null){
+                 programCode.append(line).append("\n");
+             }
+             inputCodeTA.setText(programCode.toString());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Could not load program from file: " + programFileName);
+        }
     }
 
     /**

@@ -43,6 +43,7 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
 
     @Override
     public Object visitProgram(UnityGrammarParser.ProgramContext ctx) {
+        UnityProgram.discardProgram();
         UnityProgram unityProgram = UnityProgram.getUnityProgram();
 
         if (ctx.program_name != null) unityProgram.setProgramName(visitText(ctx.program_name));
