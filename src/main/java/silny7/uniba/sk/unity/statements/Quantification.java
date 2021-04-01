@@ -10,6 +10,7 @@ import silny7.uniba.sk.unity.program.memory.MemoryCopy;
 import silny7.uniba.sk.unity.program.memory.MemoryType;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Quantification {
@@ -100,6 +101,7 @@ public class Quantification {
     }
 
     public List<MemoryCopy> getMemorySnapshots() {
+        Collections.shuffle(memorySnapshots);
         return memorySnapshots;
     }
 
