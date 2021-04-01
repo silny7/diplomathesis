@@ -24,7 +24,7 @@ public class DeclareSection {
 
     public void declareVariables(UnityProgramMemory memory) throws ProgramRunException {
         //for each variable, register it to memory with correct type
-        UnityProgram.programLog("Starting declare section: ");
+        UnityProgram.programLog("Starting declare section: ", Section.DECLARE);
         for (VariableDeclaration variableDeclaration : declarations){
             variableDeclaration.declare(memory);
         }

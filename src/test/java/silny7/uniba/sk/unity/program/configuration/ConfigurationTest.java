@@ -15,9 +15,9 @@ public class ConfigurationTest {
 
     @Test
     public void getDefaultConfiguration(){
-        Assertions.assertFalse(Configuration.logDeclarations());
-        Assertions.assertFalse(Configuration.logInitializations());
-        Assertions.assertFalse(Configuration.logAssignments());
+        Assertions.assertFalse(Configuration.isLogDeclarations());
+        Assertions.assertFalse(Configuration.isLogInitializations());
+        Assertions.assertFalse(Configuration.isLogAssignments());
 
         Assertions.assertTrue(Configuration.isLogAll());
 

@@ -58,7 +58,9 @@ public class EnumeratedAssignment extends Assignment {
         }
 
         for (int index = 0; index < variables.size(); index++){
-            variables.get(index).setValue(expressions.get(index).resolve());
+            Object value = expressions.get(index).resolve();
+            variables.get(index).setValue(value);
+            log(variables.get(index).toString() + " = " + value);
         }
     }
 }

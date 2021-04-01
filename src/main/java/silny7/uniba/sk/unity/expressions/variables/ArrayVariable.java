@@ -3,6 +3,7 @@ package silny7.uniba.sk.unity.expressions.variables;
 import silny7.uniba.sk.unity.exceptions.NonExistingVariableException;
 import silny7.uniba.sk.unity.exceptions.ProgramRunException;
 import silny7.uniba.sk.unity.expressions.Expression;
+import silny7.uniba.sk.unity.program.Unity;
 import silny7.uniba.sk.unity.program.UnityProgram;
 import silny7.uniba.sk.unity.program.UnityProgramMemory;
 
@@ -57,7 +58,11 @@ public class ArrayVariable extends Variable{
         for (Expression element : elements){
             if (!first) arrayVar.append(", ");
             else first = false;
-            arrayVar.append(element.toString());
+            try {
+                arrayVar.append(element.resolve());
+            } catch (ProgramRunException programRunException) {
+                UnityProgram.errorLog(programRunException);
+            }
         }
         arrayVar.append("]");
         return arrayVar.toString();

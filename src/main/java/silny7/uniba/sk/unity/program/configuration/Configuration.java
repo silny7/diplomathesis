@@ -14,9 +14,9 @@ public class Configuration {
 
     //LOGGING
     public static boolean isLogAll(){ return getBoolean(LOG_ALL, true); }
-    public static boolean logDeclarations(){ return getBoolean(LOG_DECLARATIONS, false); }
-    public static boolean logInitializations(){ return getBoolean(LOG_INITIALIZATIONS, false); }
-    public static boolean logAssignments(){ return getBoolean(LOG_ASSIGNMENTS, false); }
+    public static boolean isLogDeclarations(){ return getBoolean(LOG_DECLARATIONS, false); }
+    public static boolean isLogInitializations(){ return getBoolean(LOG_INITIALIZATIONS, false); }
+    public static boolean isLogAssignments(){ return getBoolean(LOG_ASSIGNMENTS, false); }
 
     //THREADS
     public static boolean isMultithreading() {return getBoolean(MULTITHREAD, false); }

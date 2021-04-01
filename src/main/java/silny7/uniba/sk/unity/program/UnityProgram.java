@@ -1,10 +1,10 @@
 package silny7.uniba.sk.unity.program;
 
 import silny7.uniba.sk.unity.exceptions.ProgramRunException;
-import silny7.uniba.sk.unity.sections.AlwaysSection;
-import silny7.uniba.sk.unity.sections.AssignSection;
-import silny7.uniba.sk.unity.sections.DeclareSection;
-import silny7.uniba.sk.unity.sections.InitiallySection;
+import silny7.uniba.sk.unity.program.logger.UnityLogger;
+import silny7.uniba.sk.unity.sections.*;
+
+import static silny7.uniba.sk.unity.sections.Section.*;
 
 /**
  * singleton class
@@ -25,24 +25,33 @@ public class UnityProgram {
     private static UnityProgramMemory memory;
 
     private static UnityProgram instance = null;
-    private static UnityProgramLogger unityProgramLogger;
-    private static UnityErrorLogger unityErrorLogger;
+    private static UnityLogger unityLogger;
+    private static Section currentSection;
 
     private UnityProgram(){
         memory = new UnityProgramMemory();
+        currentSection = DECLARE;
     }
 
     public void interpret() {
         try {
             if (declareSection != null) declareSection.declareVariables(memory);
-            if (initiallySection != null) initiallySection.execute();
-            while (!fixedPoint){
+            if (initiallySection != null) {
+                setCurrentSection(INITIALLY);
+                initiallySection.execute();
+            }
+            UnityProgram.programLog("Starting assign section: ", ASSIGN);
+            while (!isFixedPoint()){
+                setCurrentSection(ASSIGN);
                 fixedPoint = true;
                 assignSection.execute();
                 //after every run of assignSection, execute alwaysSection
-                if (alwaysSection != null) alwaysSection.execute();
+                if (alwaysSection != null) {
+                    setCurrentSection(ALWAYS);
+                    alwaysSection.execute();
+                }
             }
-            unityProgramLogger.log(memory.print());
+            unityLogger.logMemory(memory);
         } catch (ProgramRunException programRunException) {
             errorLog(programRunException);
         }
@@ -53,17 +62,30 @@ public class UnityProgram {
         return instance;
     }
 
-    public static void programLog(String message){
-        unityProgramLogger.log(message);
+    public static Section getCurrentSection(){
+        return currentSection;
     }
 
-    private static void errorLog(ProgramRunException programRunException){
-        unityErrorLogger.log(programRunException);
+    public static void setCurrentSection(Section section){
+        currentSection = section;
     }
 
-    /**
-     * only used for testing
-     */
+    public static void programLog(String message, Section section){
+        switch (section){
+            case DECLARE: unityLogger.logDeclaration(message); break;
+            case INITIALLY: unityLogger.logInitialization(message); break;
+            case ALWAYS:
+            case ASSIGN:
+                unityLogger.logAssignment(message); break;
+            default: unityLogger.logProgramMessage(message);
+        }
+    }
+
+    public static void errorLog(ProgramRunException programRunException){
+        unityLogger.logError(programRunException);
+    }
+
+
     public static void discardProgram() {
         instance = null;
     }
@@ -81,12 +103,13 @@ public class UnityProgram {
     public AssignSection getAssignSection() { return assignSection; }
     public void setAssignSection(AssignSection assignSection) { this.assignSection = assignSection; }
 
-    public void setUnityProgramLogger(UnityProgramLogger programLogger) { this.unityProgramLogger = programLogger; }
-    public void setUnityErrorLogger(UnityErrorLogger errorLogger) { this.unityErrorLogger = errorLogger; }
-
     public UnityProgramMemory getMemory() { return this.memory; }
 
     public boolean isFixedPoint() { return fixedPoint; }
 
     public void setFixedPoint(boolean fixedPoint) { this.fixedPoint = fixedPoint; }
+
+    public void setUnityLogger(UnityLogger unityLogger) {
+        this.unityLogger = unityLogger;
+    }
 }

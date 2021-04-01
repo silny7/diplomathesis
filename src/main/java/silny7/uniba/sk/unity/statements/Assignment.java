@@ -1,6 +1,7 @@
 package silny7.uniba.sk.unity.statements;
 
 import silny7.uniba.sk.unity.exceptions.ProgramRunException;
+import silny7.uniba.sk.unity.program.UnityProgram;
 
 public abstract class Assignment {
 
@@ -10,5 +11,8 @@ public abstract class Assignment {
 
     public abstract void assign() throws ProgramRunException;
 
+    public void log(String logMessage){
+        UnityProgram.programLog(logMessage, UnityProgram.getCurrentSection());
+    }
 
 }

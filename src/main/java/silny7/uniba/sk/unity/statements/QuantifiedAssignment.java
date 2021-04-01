@@ -1,7 +1,6 @@
 package silny7.uniba.sk.unity.statements;
 
 import silny7.uniba.sk.unity.exceptions.ProgramRunException;
-import silny7.uniba.sk.unity.program.memory.Memory;
 import silny7.uniba.sk.unity.program.memory.MemoryCopy;
 
 public class QuantifiedAssignment extends Assignment {
@@ -22,12 +21,12 @@ public class QuantifiedAssignment extends Assignment {
     public void evaluateQuantifiers() throws ProgramRunException {
         quantification.initVariables();
         quantification.evaluate();
-
-        //todo
-        //check all the memoryCopies created in quantifiaction
-        //load them into memory
-        //evaluate statements
-
+        for (MemoryCopy memoryCopy : quantification.getMemorySnapshots()){
+            memoryCopy.loadIntoProgramMemory();
+            for (Assignment assignment : assignmentStatement.getAssignments()){
+                assignment.evaluateQuantifiers();
+            }
+        }
         quantification.destroy();
     }
 

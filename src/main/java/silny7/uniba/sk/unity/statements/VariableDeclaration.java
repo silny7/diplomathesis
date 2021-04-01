@@ -4,6 +4,7 @@ import silny7.uniba.sk.unity.exceptions.MultipleDeclarationException;
 import silny7.uniba.sk.unity.exceptions.ProgramRunException;
 import silny7.uniba.sk.unity.program.UnityProgram;
 import silny7.uniba.sk.unity.program.UnityProgramMemory;
+import silny7.uniba.sk.unity.sections.Section;
 import silny7.uniba.sk.unity.variables.BaseType;
 import silny7.uniba.sk.unity.variables.DeclaredVariable;
 
@@ -36,7 +37,7 @@ public class VariableDeclaration {
                 throw new MultipleDeclarationException(variable.getVarName(), "Variable " + variable.getVarName() + " is already declared");
             }
             else {
-                UnityProgram.programLog("Declaring variable: " + variable.getVarName() + " with type: " + type.toString());
+                UnityProgram.programLog("Declaring variable: " + variable.getVarName() + " with type: " + type.toString(), Section.DECLARE);
                 memory.initGlobalVariable(variable.getVarName(), type.getNewTypeObject());
             }
         }

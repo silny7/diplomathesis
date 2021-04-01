@@ -2,6 +2,10 @@ package silny7.uniba.sk.unity.expressions;
 
 import java.util.List;
 
+/*
+todo delete
+not used anywhere
+ */
 public class ExpressionListExpression extends Expression{
     List<Expression> expressionList;
 

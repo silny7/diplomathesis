@@ -4,6 +4,7 @@ import silny7.uniba.sk.unity.exceptions.IllegalProgramStateException;
 import silny7.uniba.sk.unity.exceptions.ProgramRunException;
 import silny7.uniba.sk.unity.expressions.Expression;
 import silny7.uniba.sk.unity.expressions.variables.Variable;
+import silny7.uniba.sk.unity.program.UnityProgram;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,6 +96,7 @@ public class ConditionalEnumeratedAssignment extends Assignment {
                 //assign resolved values to variable list
                 for (int i = 0; i < variableList.size(); i++) {
                     variableList.get(i).setValue(resolvedValues.get(i));
+                    log(variableList.get(i).toString() + " = " + resolvedValues.get(i));
                 }
             }
         }

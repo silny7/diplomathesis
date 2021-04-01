@@ -290,9 +290,9 @@ public class ProgramGUI extends JFrame {
             eraseTextArea(outputTA);
             unityProgramHolder = new Unity(errorTA, outputTA);
             unityProgramHolder.createProgramFromString(programToParse);
-            unityProgramHolder.getErrorLogger().log("Unity program loaded successfully");
+            unityProgramHolder.getUnityLogger().logInfo("Unity program loaded successfully");
         } catch (UnityGrammarException unityGrammarException) {
-            unityProgramHolder.getErrorLogger().log(unityGrammarException);
+            unityProgramHolder.getUnityLogger().logError(unityGrammarException);
         }
         return unityProgramHolder.getUnityProgram();
     }

@@ -1,6 +1,7 @@
 package silny7.uniba.sk.unity.sections;
 
 import silny7.uniba.sk.unity.exceptions.ProgramRunException;
+import silny7.uniba.sk.unity.program.UnityProgram;
 import silny7.uniba.sk.unity.statements.Statement;
 
 import java.util.List;
