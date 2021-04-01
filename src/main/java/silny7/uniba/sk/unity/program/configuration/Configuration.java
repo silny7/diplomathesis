@@ -11,12 +11,12 @@ public class Configuration {
 
     private static final String CONFIG_FILE = "src/system.properties";
 
+
     //LOGGING
     public static boolean isLogAll(){ return getBoolean(LOG_ALL, true); }
-    public static boolean isLogDeclare(){ return getBoolean(LOG_DECLARE, false); }
-    public static boolean isLogInitially(){ return getBoolean(LOG_INITIALLY, false); }
-    public static boolean isLogAlways(){ return getBoolean(LOG_ALWAYS, false); }
-    public static boolean isLogAssign(){ return getBoolean(LOG_ASSIGN, false); }
+    public static boolean logDeclarations(){ return getBoolean(LOG_DECLARATIONS, false); }
+    public static boolean logInitializations(){ return getBoolean(LOG_INITIALIZATIONS, false); }
+    public static boolean logAssignments(){ return getBoolean(LOG_ASSIGNMENTS, false); }
 
     //THREADS
     public static boolean isMultithreading() {return getBoolean(MULTITHREAD, false); }
@@ -53,21 +53,16 @@ public class Configuration {
     public static void loadConfiguration() throws IOException {
         try (InputStream inputProps = new FileInputStream(CONFIG_FILE)){
             properties = new Properties();
-            if (inputProps == null) {
-                loadDefaultConfig();
-            } else {
-                properties.load(inputProps);
-            }
+            properties.load(inputProps);
         }
     }
 
     private static void loadDefaultConfig() {
         properties = new Properties();
         properties.setProperty(LOG_ALL, "true");
-        properties.setProperty(LOG_DECLARE, "false");
-        properties.setProperty(LOG_INITIALLY, "false");
-        properties.setProperty(LOG_ALWAYS, "false");
-        properties.setProperty(LOG_ASSIGN, "false");
+        properties.setProperty(LOG_DECLARATIONS, "false");
+        properties.setProperty(LOG_INITIALIZATIONS, "false");
+        properties.setProperty(LOG_ASSIGNMENTS, "false");
         properties.setProperty(MULTITHREAD, "false");
     }
 

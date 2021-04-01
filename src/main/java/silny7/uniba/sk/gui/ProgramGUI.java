@@ -56,14 +56,8 @@ public class ProgramGUI extends JFrame {
     public ProgramGUI(){
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException e) {
+            JOptionPane.showMessageDialog(this, "Something went wrong while GUI initialization!");
         }
 
         guiScreenSize = getScreenSize();
@@ -291,6 +285,7 @@ public class ProgramGUI extends JFrame {
     private UnityProgram loadUnityProgram(){
         String programToParse = inputCodeTA.getText();
         try {
+            UnityProgram.discardProgram();
             eraseTextArea(errorTA);
             eraseTextArea(outputTA);
             unityProgramHolder = new Unity(errorTA, outputTA);
