@@ -35,12 +35,14 @@ public class UnityProgram {
 
     public void interpret() {
         try {
+            infoLog("Unity program" + (programName != null ? programName : "") + " started");
+            long startMillis = System.currentTimeMillis();
             if (declareSection != null) declareSection.declareVariables(memory);
             if (initiallySection != null) {
                 setCurrentSection(INITIALLY);
                 initiallySection.execute();
             }
-            UnityProgram.programLog("Starting assign section: ", ASSIGN);
+            programLog("Starting assign section: ", ASSIGN);
             while (!isFixedPoint()){
                 setCurrentSection(ASSIGN);
                 fixedPoint = true;
@@ -51,6 +53,8 @@ public class UnityProgram {
                     alwaysSection.execute();
                 }
             }
+            long programTime = System.currentTimeMillis() - startMillis;
+            infoLog("Unity program" + (programName != null ? programName : "") + " finished in " + programTime + " miliseconds");
             unityLogger.logMemory(memory);
         } catch (ProgramRunException programRunException) {
             errorLog(programRunException);
@@ -83,6 +87,10 @@ public class UnityProgram {
 
     public static void errorLog(ProgramRunException programRunException){
         unityLogger.logError(programRunException);
+    }
+
+    public static void infoLog(String logText){
+        unityLogger.logInfo(logText);
     }
 
 

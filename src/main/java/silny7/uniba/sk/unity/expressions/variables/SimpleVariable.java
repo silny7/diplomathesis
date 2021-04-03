@@ -1,5 +1,7 @@
 package silny7.uniba.sk.unity.expressions.variables;
 
+import silny7.uniba.sk.parser.exceptions.InvalidVariableTypeException;
+import silny7.uniba.sk.unity.exceptions.IllegalArgumentTypeException;
 import silny7.uniba.sk.unity.exceptions.ProgramRunException;
 import silny7.uniba.sk.unity.program.UnityProgram;
 import silny7.uniba.sk.unity.program.UnityProgramMemory;
@@ -20,8 +22,7 @@ public class SimpleVariable extends Variable{
 
         //check if new value is the same type as recent value
         if (!recentValue.getClass().equals(variableValue.getClass())) {
-            //todo
-            //throw exception
+            throw new IllegalArgumentTypeException("Error while assigning " + variableValue.getClass() + " value to variable " + getVariableName() + " of type " + recentValue.getClass());
         }
         if (!isBounded && !recentValue.equals(variableValue)) {
             //value changes, fixedPoints not reached
