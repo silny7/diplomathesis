@@ -68,6 +68,16 @@ public class ArrayVariable extends Variable{
         return arrayVar.toString();
     }
 
+    @Override
+    public Integer lowestAcceptableValue() throws ProgramRunException {
+        return 0;
+    }
+
+    @Override
+    public Integer highestAcceptableValue() throws ProgramRunException {
+        return 0;
+    }
+
     private Object getArrayElementAtIndexes(Object[] array, int... indexes) throws NonExistingVariableException {
         try {
             Object arrayElement = null;

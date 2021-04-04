@@ -1,6 +1,7 @@
 package silny7.uniba.sk.unity.expressions;
 
 import silny7.uniba.sk.unity.exceptions.IllegalArgumentTypeException;
+import silny7.uniba.sk.unity.exceptions.ProgramRunException;
 
 public class Constant extends Expression{
     private Object constantValue;
@@ -25,6 +26,16 @@ public class Constant extends Expression{
     @Override
     public String toString() {
         return "" + constantValue;
+    }
+
+    @Override
+    public Integer lowestAcceptableValue() throws ProgramRunException {
+        return objectToInteger(constantValue);
+    }
+
+    @Override
+    public Integer highestAcceptableValue() throws ProgramRunException {
+        return objectToInteger(constantValue);
     }
 }
 

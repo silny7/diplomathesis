@@ -33,4 +33,14 @@ public class UnaryExpression extends Expression {
     public String toString() {
         return operator.toString() + expr.toString();
     }
+
+    @Override
+    public Integer lowestAcceptableValue() throws ProgramRunException {
+        return expr.lowestAcceptableValue();
+    }
+
+    @Override
+    public Integer highestAcceptableValue() throws ProgramRunException {
+        return expr.highestAcceptableValue();
+    }
 }

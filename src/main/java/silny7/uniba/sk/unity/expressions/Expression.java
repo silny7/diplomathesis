@@ -24,5 +24,8 @@ public abstract class Expression {
         return (Boolean) object;
     }
 
+    public abstract Integer lowestAcceptableValue() throws ProgramRunException;
+    public abstract Integer highestAcceptableValue() throws ProgramRunException;
+
 
 }

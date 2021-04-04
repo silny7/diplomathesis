@@ -21,10 +21,13 @@ public class Configuration {
     //THREADS
     public static boolean isMultithreading() {return getBoolean(MULTITHREAD, false); }
 
+    //QUANTIFICATION
+    public static Integer getMinValue() { return getInteger(MIN_VALUE, -50); }
+    public static Integer getMaxValue() { return getInteger(MAX_VALUE, 50); }
 
 
     private static boolean getBoolean(String propertyName, boolean defaultValue) {
-        String propertyValue = properties.getProperty(propertyName);
+        String propertyValue = getProperty(propertyName);
         if (propertyValue == null) {
             return defaultValue;
         } else {
@@ -33,7 +36,7 @@ public class Configuration {
     }
 
     private static Integer getInteger(String propertyName, Integer defaultValue) {
-        String propertyValue = properties.getProperty(propertyName);
+        String propertyValue = getProperty(propertyName);
         if (propertyValue == null) {
             return defaultValue;
         } else {
@@ -42,7 +45,7 @@ public class Configuration {
     }
 
     private static Long getLong(String propertyName, Long defaultValue) {
-        String propertyValue = properties.getProperty(propertyName);
+        String propertyValue = getProperty(propertyName);
         if (propertyValue == null) {
             return defaultValue;
         } else {
@@ -64,6 +67,8 @@ public class Configuration {
         properties.setProperty(LOG_INITIALIZATIONS, "false");
         properties.setProperty(LOG_ASSIGNMENTS, "false");
         properties.setProperty(MULTITHREAD, "false");
+        properties.setProperty(MIN_VALUE, "-50");
+        properties.setProperty(MAX_VALUE, "50");
     }
 
     public static void setProperty(String propertyName, String value){

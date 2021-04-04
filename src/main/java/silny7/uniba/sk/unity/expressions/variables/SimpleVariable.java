@@ -1,6 +1,5 @@
 package silny7.uniba.sk.unity.expressions.variables;
 
-import silny7.uniba.sk.parser.exceptions.InvalidVariableTypeException;
 import silny7.uniba.sk.unity.exceptions.IllegalArgumentTypeException;
 import silny7.uniba.sk.unity.exceptions.ProgramRunException;
 import silny7.uniba.sk.unity.program.UnityProgram;
@@ -40,5 +39,15 @@ public class SimpleVariable extends Variable{
     @Override
     public String toString() {
         return getVariableName();
+    }
+
+    @Override
+    public Integer lowestAcceptableValue() throws ProgramRunException {
+        return objectToInteger(resolve());
+    }
+
+    @Override
+    public Integer highestAcceptableValue() throws ProgramRunException {
+        return objectToInteger(resolve());
     }
 }

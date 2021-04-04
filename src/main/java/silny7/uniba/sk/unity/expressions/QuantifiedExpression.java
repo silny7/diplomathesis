@@ -72,4 +72,14 @@ public class QuantifiedExpression extends Expression{
     public String toString() {
         return "<<" + operator.toString() + " " + quantification.toString() + " " + expression.toString() + ">>";
     }
+
+    @Override
+    public Integer lowestAcceptableValue() throws ProgramRunException {
+        return expression.lowestAcceptableValue();
+    }
+
+    @Override
+    public Integer highestAcceptableValue() throws ProgramRunException {
+        return expression.highestAcceptableValue();
+    }
 }

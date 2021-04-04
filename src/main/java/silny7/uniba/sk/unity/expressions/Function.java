@@ -1,9 +1,7 @@
 package silny7.uniba.sk.unity.expressions;
 
-import silny7.uniba.sk.unity.exceptions.IllegalArgumentTypeException;
-import silny7.uniba.sk.unity.exceptions.IllegalMethodCallException;
-import silny7.uniba.sk.unity.exceptions.NonExistingFunctionException;
-import silny7.uniba.sk.unity.exceptions.ProgramRunException;
+import silny7.uniba.sk.unity.exceptions.*;
+import silny7.uniba.sk.unity.exceptions.UnsupportedOperationException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +46,7 @@ public class Function extends Expression{
 
     private void resolveArgs() throws ProgramRunException {
         if (!args.isEmpty()){
-            argsValues = new ArrayList<Object>();
+            argsValues = new ArrayList<>();
             for (Expression arg : args){
                 argsValues.add(arg.resolve());
             }
@@ -66,6 +64,16 @@ public class Function extends Expression{
             string.append(arg.toString());
         }
         return string.toString();
+    }
+
+    @Override
+    public Integer lowestAcceptableValue() throws ProgramRunException {
+        throw new UnsupportedOperationException("Unsupported operation");
+    }
+
+    @Override
+    public Integer highestAcceptableValue() throws ProgramRunException {
+        throw new UnsupportedOperationException("Unsupported operation");
     }
 
     private Object resolveRandom() throws IllegalArgumentTypeException, IllegalMethodCallException {

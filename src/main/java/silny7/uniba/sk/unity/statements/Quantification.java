@@ -2,12 +2,16 @@ package silny7.uniba.sk.unity.statements;
 
 import silny7.uniba.sk.unity.exceptions.IllegalProgramStateException;
 import silny7.uniba.sk.unity.exceptions.ProgramRunException;
+import silny7.uniba.sk.unity.exceptions.UnsupportedOperationException;
 import silny7.uniba.sk.unity.expressions.Expression;
 import silny7.uniba.sk.unity.expressions.variables.Variable;
 import silny7.uniba.sk.unity.program.UnityProgram;
 import silny7.uniba.sk.unity.program.UnityProgramMemory;
+import silny7.uniba.sk.unity.program.configuration.Configuration;
+import silny7.uniba.sk.unity.program.configuration.ConfigurationFields;
 import silny7.uniba.sk.unity.program.memory.MemoryCopy;
 import silny7.uniba.sk.unity.program.memory.MemoryType;
+import sun.security.krb5.Config;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,8 +38,7 @@ public class Quantification {
     public void evaluate() throws ProgramRunException {
         List<BoundedVariable> boundedVarsWithRanges = new ArrayList<BoundedVariable>();
         for (Variable variable : boundedVars){
-            String variableName = variable.getVariableName();
-            boundedVarsWithRanges.add(new BoundedVariable(variable.getVariableName(), searchVariableMinValue(variableName), searchVariableMaxValue(variableName)));
+            boundedVarsWithRanges.add(new BoundedVariable(variable.getVariableName(), searchVariableMinValue(), searchVariableMaxValue()));
         }
 
         /**
@@ -106,22 +109,26 @@ public class Quantification {
     }
 
 
-    //TODO
     /**
-     * @param variableName
-     * @return maximum int value of variableName at which booleanExpr is satisfied
+     * @return maximum int value at which booleanExpr is satisfied
      */
-    private int searchVariableMaxValue(String variableName) {
-        return 50;
+    private int searchVariableMaxValue() throws ProgramRunException {
+        try {
+            return booleanExpr.highestAcceptableValue();
+        } catch (UnsupportedOperationException e) {
+            return Configuration.getMaxValue();
+        }
     }
 
-    //TODO
     /**
-     * @param variableName
-     * @return minimum int value of variableName at which booleanExpr is satisfied
+     * @return minimum int value at which booleanExpr is satisfied
      */
-    private int searchVariableMinValue(String variableName) {
-        return -50;
+    private int searchVariableMinValue() throws ProgramRunException {
+        try {
+            return booleanExpr.lowestAcceptableValue();
+        } catch (UnsupportedOperationException e) {
+            return Configuration.getMinValue();
+        }
     }
 
     /**

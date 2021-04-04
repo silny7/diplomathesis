@@ -6,6 +6,8 @@ import silny7.uniba.sk.unity.program.Unity;
 import silny7.uniba.sk.unity.program.UnityProgram;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import java.awt.*;
@@ -147,6 +149,7 @@ public class ProgramGUI extends JFrame {
         errorTA.setColumns(20);
         errorTA.setRows(8);
         //errorTA.setText();
+
 
         runButton.setText("Run");
         loadButton.setText("Load");

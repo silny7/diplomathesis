@@ -1,6 +1,5 @@
 package silny7.uniba.sk.gui;
 
-import javafx.scene.control.ComboBox;
 import silny7.uniba.sk.unity.program.configuration.Configuration;
 import silny7.uniba.sk.unity.program.configuration.ConfigurationFields;
 
@@ -14,7 +13,7 @@ import java.util.List;
 public class SettingsGui extends JFrame {
 
     private List<JLabel> labels;
-    private List<JComboBox> comboBoxes;
+    private List<JComponent> components;
     private String[] comboBoxOptionsBoolean = {"true", "false"};
 
 
@@ -40,7 +39,7 @@ public class SettingsGui extends JFrame {
         getContentPane().setLayout(new SpringLayout());
         for (int i = 0; i < labels.size(); i++){
             add(labels.get(i));
-            add(comboBoxes.get(i));
+            add(components.get(i));
         }
         add(saveButton);
         add(loadButton);
@@ -54,24 +53,39 @@ public class SettingsGui extends JFrame {
         setTitle("UnityToJava");
 
         setResizable(false);
-        setSize(300, 250);
+        setSize(300, 350);
 
     }
 
+
     private void setupComponents() {
         labels = new ArrayList<>();
-        comboBoxes = new ArrayList<>();
+        components = new ArrayList<>();
 
         saveButton = new JButton("Save configuration");
         loadButton = new JButton("Load configuration");
-        for (String configurationField : ConfigurationFields.CONFIGURATION_FIELDS){
+        for (String configurationField : ConfigurationFields.ALL_FIELDS){
             labels.add(new JLabel(configurationField, JLabel.TRAILING));
-            JComboBox comboBox = new JComboBox(comboBoxOptionsBoolean);
-            comboBox.setSelectedIndex(Configuration.getProperty(configurationField).equalsIgnoreCase("true") ? 0 : 1);
-            comboBoxes.add(comboBox);
+            if (ConfigurationFields.BOOLEAN_FIELDS.contains(configurationField)) {
+                createComboBox(configurationField);
+            } else {
+                createSpinner(configurationField);
+            }
         }
 
         createButtonListeners();
+    }
+
+    private void createSpinner(String configurationField) {
+        int value = Integer.parseInt(Configuration.getProperty(configurationField));
+        SpinnerModel model = new SpinnerNumberModel(value, value - 1000, value + 1000, 1);
+        components.add(new JSpinner(model));
+    }
+
+    private void createComboBox(String configurationField) {
+        JComboBox comboBox = new JComboBox(comboBoxOptionsBoolean);
+        comboBox.setSelectedIndex(Configuration.getProperty(configurationField).equalsIgnoreCase("true") ? 0 : 1);
+        components.add(comboBox);
     }
 
     private void createButtonListeners() {
@@ -79,8 +93,13 @@ public class SettingsGui extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 for (int i = 0; i < labels.size(); i++){
-                    String fieldName = ConfigurationFields.CONFIGURATION_FIELDS.get(i);
-                    String propertyValue = comboBoxes.get(i).getSelectedIndex() == 0 ? "true" : "false";
+                    String fieldName = ConfigurationFields.ALL_FIELDS.get(i);
+                    String propertyValue;
+                    if (ConfigurationFields.BOOLEAN_FIELDS.contains(fieldName)) {
+                        propertyValue = ((JComboBox) components.get(i)).getSelectedIndex() == 0 ? "true" : "false";
+                    } else {
+                        propertyValue = String.valueOf(((JSpinner) components.get(i)).getValue());
+                    }
                     Configuration.setProperty(fieldName, propertyValue);
                 }
                 try {
@@ -95,8 +114,12 @@ public class SettingsGui extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 for (int i = 0; i < labels.size(); i++){
-                    String fieldName = ConfigurationFields.CONFIGURATION_FIELDS.get(i);
-                    comboBoxes.get(i).setSelectedIndex(Configuration.getProperty(fieldName).equalsIgnoreCase("true") ? 0 : 1);
+                    String fieldName = ConfigurationFields.ALL_FIELDS.get(i);
+                    if (ConfigurationFields.BOOLEAN_FIELDS.contains(fieldName)) {
+                        ((JComboBox) components.get(i)).setSelectedIndex(Configuration.getProperty(fieldName).equalsIgnoreCase("true") ? 0 : 1);
+                    } else {
+                        ((JSpinner) components.get(i)).setValue(Integer.parseInt(Configuration.getProperty(fieldName)));
+                    }
                 }
                 revalidate();
             }

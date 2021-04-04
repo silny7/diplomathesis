@@ -54,7 +54,7 @@ public class UnityProgram {
                 }
             }
             long programTime = System.currentTimeMillis() - startMillis;
-            infoLog("Unity program" + (programName != null ? programName : "") + " finished in " + programTime + " miliseconds");
+            infoLog("Unity program " + (programName != null ? programName : "") + " finished in " + programTime + " miliseconds");
             unityLogger.logMemory(memory);
         } catch (ProgramRunException programRunException) {
             errorLog(programRunException);

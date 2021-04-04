@@ -18,12 +18,12 @@ public class UnityLogger {
     }
 
     //region GUI output window
-    private void logProgram(String logText){
+    private void logProgram(final String logText){
         if (programLogArea == null) {
             System.out.println(logText);
         } else {
-            if (!programLogArea.getText().isEmpty()) this.programLogArea.append("\n");
-            this.programLogArea.append(logText);
+            if (!programLogArea.getText().isEmpty()) programLogArea.append("\n");
+            programLogArea.append(logText);
         }
     }
 
@@ -61,6 +61,7 @@ public class UnityLogger {
         } else {
             if (!errorLogArea.getText().isEmpty()) this.errorLogArea.append("\n");
             this.errorLogArea.append(createLogMessage(messageType, logText));
+            this.errorLogArea.update(this.errorLogArea.getGraphics());
         }
     }
 
@@ -101,5 +102,7 @@ public class UnityLogger {
         deleteErrorLogs();
         deleteProgramLogs();
     }
+
+
 
 }

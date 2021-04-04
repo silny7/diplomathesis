@@ -46,4 +46,14 @@ public class BinaryExpression extends Expression{
     public String toString() {
         return expr1.toString() + " " + operator.toString() + " " + expr2.toString();
     }
+
+    @Override
+    public Integer lowestAcceptableValue() throws ProgramRunException {
+        return Math.min(expr1.lowestAcceptableValue(), expr2.lowestAcceptableValue());
+    }
+
+    @Override
+    public Integer highestAcceptableValue() throws ProgramRunException {
+        return Math.max(expr1.highestAcceptableValue(), expr2.highestAcceptableValue());
+    }
 }
