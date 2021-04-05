@@ -15,4 +15,15 @@ public class UnityGrammarException extends Exception {
             System.out.println(error.toString());
         }
     }
+
+    public String getErrorMessages(){
+        StringBuilder string = new StringBuilder();
+        boolean first = true;
+        for (UnityGrammarError error : errors){
+            if (!first) string.append("\n");
+            else first = false;
+            string.append(error.toString());
+        }
+        return string.toString();
+    }
 }

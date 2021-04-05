@@ -1,29 +1,22 @@
 package silny7.uniba.sk.unity.variables;
 
+import silny7.uniba.sk.unity.exceptions.ProgramRunException;
+import silny7.uniba.sk.unity.expressions.Expression;
+
 public class RangeElement {
 
-    Object value;
+    private Expression value;
 
-    public RangeElement(Object value){
+    public RangeElement(Expression value){
         this.value = value;
     }
 
-    public int evaluate(){
-        if (Integer.class.isInstance(this.value)) {
-            return ((Integer) this.value);
-        }
-        if (String.class.isInstance(this.value)) {
-            //is a variable
-            //get value from memory
-            return 0;
-        }
-        else {
-            return 0; //throw exception
-        }
-
+    public Integer evaluate() throws ProgramRunException {
+        return (Integer) value.resolve();
     }
 
     public String toString(){
-        return (String) value;
+        return value.toString();
     }
+
 }

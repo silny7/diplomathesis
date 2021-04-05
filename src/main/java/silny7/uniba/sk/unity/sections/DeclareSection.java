@@ -1,5 +1,8 @@
 package silny7.uniba.sk.unity.sections;
 
+import silny7.uniba.sk.unity.exceptions.ProgramRunException;
+import silny7.uniba.sk.unity.program.UnityProgram;
+import silny7.uniba.sk.unity.program.UnityProgramMemory;
 import silny7.uniba.sk.unity.statements.VariableDeclaration;
 
 import java.util.ArrayList;
@@ -19,10 +22,11 @@ public class DeclareSection {
     public List<VariableDeclaration> getDeclarations() { return declarations; }
     public void setDeclarations(List<VariableDeclaration> declarations) { this.declarations = declarations; }
 
-    public void declareVariables(){
+    public void declareVariables(UnityProgramMemory memory) throws ProgramRunException {
         //for each variable, register it to memory with correct type
+        UnityProgram.programLog("Starting declare section: ", Section.DECLARE);
         for (VariableDeclaration variableDeclaration : declarations){
-            variableDeclaration.declare();
+            variableDeclaration.declare(memory);
         }
     }
 

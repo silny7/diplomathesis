@@ -2,20 +2,30 @@
 package silny7.uniba.sk.gui;
 
 import silny7.uniba.sk.parser.UnityGrammarException;
-import silny7.uniba.sk.unity.Unity;
-import silny7.uniba.sk.unity.UnityProgram;
+import silny7.uniba.sk.unity.program.Unity;
+import silny7.uniba.sk.unity.program.UnityProgram;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 /**
  *
- * @author boris
+ * @author boris.silny
  */
 public class ProgramGUI extends JFrame {
-    private UnityProgram unityProgram;
+
+    private Unity unityProgramHolder;
 
 
     //GUI components:
@@ -24,14 +34,23 @@ public class ProgramGUI extends JFrame {
     private JTextArea inputCodeTA;
     private JTextArea outputTA;
 
-    private JButton compileButton;
+    private JButton loadButton;
     private JButton runButton;
 
     private JScrollPane scrollPaneError;
     private JScrollPane scrollPaneInput;
     private JScrollPane scrollPaneOutput;
 
+    private JMenu settings;
+    private JMenu programs;
+    private JMenuItem programSort;
+    private JMenuItem programBinomical;
+    private JMenuItem programBubbleSort;
+    private JMenuItem programShortestPath;
+
+
     private Dimension guiScreenSize;
+
 
     /**
      * calls methods to setup GUI
@@ -39,14 +58,8 @@ public class ProgramGUI extends JFrame {
     public ProgramGUI(){
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException e) {
+            JOptionPane.showMessageDialog(this, "Something went wrong while GUI initialization!");
         }
 
         guiScreenSize = getScreenSize();
@@ -79,7 +92,7 @@ public class ProgramGUI extends JFrame {
                                         .addGroup(GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                                 .addComponent(runButton, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
                                                 .addGap(18, 18, 18)
-                                                .addComponent(compileButton, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(loadButton, GroupLayout.PREFERRED_SIZE, 110, GroupLayout.PREFERRED_SIZE)
                                                 .addContainerGap())
                                         .addComponent(scrollPaneOutput)))
         );
@@ -93,7 +106,7 @@ public class ProgramGUI extends JFrame {
                                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.TRAILING, false)
                                         .addComponent(scrollPaneError, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE)
                                         .addComponent(runButton, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(compileButton, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(loadButton, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE))
                                 .addContainerGap())
         );
     }
@@ -113,13 +126,13 @@ public class ProgramGUI extends JFrame {
         scrollPaneError = new JScrollPane(errorTA);
 
         runButton = new JButton();
-        compileButton = new JButton();
+        loadButton = new JButton();
 
         scrollPaneInput.setViewportBorder(BorderFactory.createTitledBorder("Input"));
         inputCodeTA.setColumns(20);
         inputCodeTA.setLineWrap(true);
         inputCodeTA.setRows(5);
-
+        inputCodeTA.setFont(inputCodeTA.getFont().deriveFont(20f));
 
 
         scrollPaneOutput.setViewportBorder(BorderFactory.createTitledBorder("Output"));
@@ -135,31 +148,85 @@ public class ProgramGUI extends JFrame {
         errorTA.setLineWrap(true);
         errorTA.setColumns(20);
         errorTA.setRows(8);
-        errorTA.setText(" Syntax error at line: 1, index: 15 \n Syntax error at line: 1, index: 15 \n Syntax error at line: 1, index: 15 \n Syntax error at line: 1, index: 15 \n Syntax error at line: 1, index: 15 \n Syntax error at line: 1, index: 15 \n Syntax error at line: 1, index: 15 \n Syntax error at line: 1, index: 15 \n Syntax error at line: 1, index: 15 \n Syntax error at line: 1, index: 15 \n ");
+        //errorTA.setText();
+
 
         runButton.setText("Run");
-        compileButton.setText("Compile");
+        loadButton.setText("Load");
 
-        runButton.addActionListener(new ActionListener() {
+        createRunButtonListener();
+        createLoadButtonListener();
+
+        createMenu();
+    }
+
+    private void createMenu() {
+        JMenuBar menuBar = new JMenuBar();
+        settings = new JMenu("Settings");
+        createSettingsListener();
+
+
+        createProgramsMenu();
+        menuBar.add(programs);
+        menuBar.add(settings);
+        this.setJMenuBar(menuBar);
+
+    }
+
+    private void createProgramsMenu() {
+        programs = new JMenu("Programs");
+        programBinomical = new JMenuItem("Binomical");
+        programSort = new JMenuItem("Sort");
+        programBubbleSort = new JMenuItem("Bubble sort");
+        programShortestPath = new JMenuItem("Shortest path");
+
+        programs.add(programSort);
+        programs.add(programBubbleSort);
+        programs.add(programBinomical);
+        programs.add(programShortestPath);
+
+        programBinomical.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //read the whole
-                JOptionPane.showMessageDialog(null, inputCodeTA.getText(), "InfoBox: ", JOptionPane.INFORMATION_MESSAGE);
-                String programToParse = inputCodeTA.getText();
-                //unityProgram = new UnityProgram();
-                //unityProgram.createProgramFromString(programToParse);
-
-                Unity unity = new Unity();
-                try {
-                    unity.createProgramFromString(programToParse);
-                } catch (UnityGrammarException unityGrammarException) {
-                    unityGrammarException.printStackTrace();
-                }
-
+                loadUnityProgramFromFile("binomicalProgram.txt");
             }
         });
 
+        programSort.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadUnityProgramFromFile("sortProgram.txt");
+            }
+        });
 
+        programShortestPath.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadUnityProgramFromFile("floydShortestPathProgram.txt");
+            }
+        });
+
+        programBubbleSort.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadUnityProgramFromFile("bubbleSortProgram.txt");
+            }
+        });
+    }
+
+    private void loadUnityProgramFromFile(String programFileName) {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(programFileName);
+             InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+             BufferedReader reader = new BufferedReader(streamReader)){
+             StringBuilder programCode = new StringBuilder();
+             String line;
+             while ((line = reader.readLine()) != null){
+                 programCode.append(line).append("\n");
+             }
+             inputCodeTA.setText(programCode.toString());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Could not load program from file: " + programFileName);
+        }
     }
 
     /**
@@ -174,6 +241,68 @@ public class ProgramGUI extends JFrame {
         int width = (int) (gd.getDisplayMode().getWidth() * 0.75);
         int height = (int) (gd.getDisplayMode().getHeight() * 0.75);
         return new Dimension(width, height);
+    }
+
+
+    private void createRunButtonListener(){
+        runButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (unityProgramHolder == null) {
+                    //load the program
+                    loadUnityProgram();
+                }
+                unityProgramHolder.startProgram();
+            }
+        });
+    }
+
+    private void createLoadButtonListener() {
+        loadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                loadUnityProgram();
+            }
+        });
+    }
+
+    private void createSettingsListener() {
+        settings.addMenuListener(new MenuListener() {
+            @Override
+            public void menuSelected(MenuEvent e) {
+                new SettingsGui();
+            }
+
+            @Override
+            public void menuDeselected(MenuEvent e) {
+
+            }
+
+            @Override
+            public void menuCanceled(MenuEvent e) {
+
+            }
+        });
+    }
+
+    private UnityProgram loadUnityProgram(){
+        String programToParse = inputCodeTA.getText();
+        try {
+            UnityProgram.discardProgram();
+            eraseTextArea(errorTA);
+            eraseTextArea(outputTA);
+            unityProgramHolder = new Unity(errorTA, outputTA);
+            unityProgramHolder.createProgramFromString(programToParse);
+            unityProgramHolder.getUnityLogger().logInfo("Unity program loaded successfully");
+        } catch (UnityGrammarException unityGrammarException) {
+            unityProgramHolder.getUnityLogger().logError(unityGrammarException);
+        }
+        return unityProgramHolder.getUnityProgram();
+    }
+
+    private void eraseTextArea(JTextArea textArea){
+        textArea.selectAll();
+        textArea.replaceSelection("");
     }
 
 }

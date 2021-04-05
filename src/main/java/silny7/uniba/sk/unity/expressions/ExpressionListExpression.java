@@ -1,7 +1,14 @@
 package silny7.uniba.sk.unity.expressions;
 
+import silny7.uniba.sk.unity.exceptions.ProgramRunException;
+import silny7.uniba.sk.unity.exceptions.UnsupportedOperationException;
+
 import java.util.List;
 
+/*
+todo delete
+not used anywhere
+ */
 public class ExpressionListExpression extends Expression{
     List<Expression> expressionList;
 
@@ -27,5 +34,15 @@ public class ExpressionListExpression extends Expression{
         }
         string.append("]");
         return string.toString();
+    }
+
+    @Override
+    public Integer lowestAcceptableValue() throws ProgramRunException {
+        throw new UnsupportedOperationException("Unsupported operation");
+    }
+
+    @Override
+    public Integer highestAcceptableValue() throws ProgramRunException {
+        throw new UnsupportedOperationException("Unsupported operation");
     }
 }

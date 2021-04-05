@@ -8,7 +8,10 @@ import silny7.uniba.sk.parser.exceptions.InvalidExpressionException;
 import silny7.uniba.sk.parser.exceptions.InvalidOperatorException;
 import silny7.uniba.sk.parser.exceptions.InvalidStatementException;
 import silny7.uniba.sk.parser.exceptions.InvalidVariableTypeException;
-import silny7.uniba.sk.unity.UnityProgram;
+import silny7.uniba.sk.unity.expressions.variables.ArrayVariable;
+import silny7.uniba.sk.unity.expressions.variables.SimpleVariable;
+import silny7.uniba.sk.unity.expressions.variables.Variable;
+import silny7.uniba.sk.unity.program.UnityProgram;
 import silny7.uniba.sk.unity.expressions.*;
 import silny7.uniba.sk.unity.expressions.operators.BinaryOperator;
 import silny7.uniba.sk.unity.expressions.UnaryExpression;
@@ -106,7 +109,7 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
     }
 
     @Override
-    public BaseType visitSimpleType(UnityGrammarParser.SimpleTypeContext ctx){
+    public SimpleType visitSimpleType(UnityGrammarParser.SimpleTypeContext ctx){
         if (ctx.BOOLEAN() != null) {
             SimpleType simpleType = new SimpleType();
             simpleType.setValueTypeToBoolean();
@@ -126,7 +129,7 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
 
         //ak je simple type, vyber ranges a vrat sa
         if (ctx.simpleType() != null) {
-            BaseType valuesType = visitSimpleType(ctx.simpleType());
+            SimpleType valuesType = visitSimpleType(ctx.simpleType());
             List<ArrayRange> arrayRange = visitListRange(ctx.listRange());
             return new ArrayType(valuesType, arrayRange);
         }
@@ -167,10 +170,9 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
 
     @Override
     public RangeElement visitRangeElement(UnityGrammarParser.RangeElementContext ctx){
-        if (ctx.IDENTIFIER() != null) return new RangeElement(ctx.IDENTIFIER().getText());
-        if (ctx.number() != null) return new RangeElement(visitNumber(ctx.number()));
-        errors.add(new UnityGrammarError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Invalid range element"));
-        throw new ParseCancellationException(new InvalidVariableTypeException(ctx.getText()));
+        return new RangeElement(visitExpression(ctx.expression()));
+//        errors.add(new UnityGrammarError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Invalid range element"));
+//        throw new ParseCancellationException(new InvalidVariableTypeException(ctx.getText()));
     }
 
 
@@ -414,7 +416,8 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
     @Override
     public Expression visitMethodDeclaration(UnityGrammarParser.MethodDeclarationContext ctx) {
         String methodName = visitFunction(ctx.function());
-        List<Expression> args = visitSimple_expression_list(ctx.simple_expression_list());
+        List<Expression> args = new ArrayList<Expression>();
+        if (ctx.simple_expression_list() != null) args = visitSimple_expression_list(ctx.simple_expression_list());
         return new Function(methodName, args);
     }
 
@@ -481,6 +484,7 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
         if (ctx.AND() != null) return BinaryOperator.AND;
         if (ctx.DIV() != null) return BinaryOperator.DIV;
         if (ctx.TIMES() != null) return BinaryOperator.TIMES;
+        if (ctx.MOD() != null) return BinaryOperator.MOD;
 
         errors.add(new UnityGrammarError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Invalid relational operator"));
         throw new ParseCancellationException(new InvalidOperatorException(ctx.getText()));
