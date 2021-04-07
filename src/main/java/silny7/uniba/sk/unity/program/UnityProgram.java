@@ -1,7 +1,7 @@
 package silny7.uniba.sk.unity.program;
 
 import silny7.uniba.sk.unity.exceptions.ProgramRunException;
-import silny7.uniba.sk.unity.program.logger.UnityLogger;
+import silny7.uniba.sk.unity.program.logger.LogManager;
 import silny7.uniba.sk.unity.sections.*;
 
 import static silny7.uniba.sk.unity.sections.Section.*;
@@ -25,7 +25,7 @@ public class UnityProgram {
     private static UnityProgramMemory memory;
 
     private static UnityProgram instance = null;
-    private static UnityLogger unityLogger;
+    private static LogManager logManager;
     private static Section currentSection;
 
     private UnityProgram(){
@@ -35,7 +35,7 @@ public class UnityProgram {
 
     public void interpret() {
         try {
-            infoLog("Unity program" + (programName != null ? programName : "") + " started");
+            infoLog("Unity program " + (programName != null ? programName : "") + " started");
             long startMillis = System.currentTimeMillis();
             if (declareSection != null) declareSection.declareVariables(memory);
             if (initiallySection != null) {
@@ -55,11 +55,12 @@ public class UnityProgram {
             }
             long programTime = System.currentTimeMillis() - startMillis;
             infoLog("Unity program " + (programName != null ? programName : "") + " finished in " + programTime + " miliseconds");
-            unityLogger.logMemory(memory);
+            logManager.logMemory(memory);
         } catch (ProgramRunException programRunException) {
             errorLog(programRunException);
         }
     }
+
 
     public static UnityProgram getUnityProgram(){
         if (instance == null) instance = new UnityProgram();
@@ -76,21 +77,21 @@ public class UnityProgram {
 
     public static void programLog(String message, Section section){
         switch (section){
-            case DECLARE: unityLogger.logDeclaration(message); break;
-            case INITIALLY: unityLogger.logInitialization(message); break;
+            case DECLARE: logManager.logDeclaration(message); break;
+            case INITIALLY: logManager.logInitialization(message); break;
             case ALWAYS:
             case ASSIGN:
-                unityLogger.logAssignment(message); break;
-            default: unityLogger.logProgramMessage(message);
+                logManager.logAssignment(message); break;
+            default: logManager.logProgramMessage(message);
         }
     }
 
     public static void errorLog(ProgramRunException programRunException){
-        unityLogger.logError(programRunException);
+        logManager.logError(programRunException);
     }
 
     public static void infoLog(String logText){
-        unityLogger.logInfo(logText);
+        logManager.logInfo(logText);
     }
 
 
@@ -117,7 +118,7 @@ public class UnityProgram {
 
     public void setFixedPoint(boolean fixedPoint) { this.fixedPoint = fixedPoint; }
 
-    public void setUnityLogger(UnityLogger unityLogger) {
-        this.unityLogger = unityLogger;
+    public void setUnityLogger(LogManager logManager) {
+        UnityProgram.logManager = logManager;
     }
 }

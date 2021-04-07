@@ -1,6 +1,8 @@
 package silny7.uniba.sk.unity.program;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import silny7.uniba.sk.parser.UnityGrammarException;
 import silny7.uniba.sk.unity.exceptions.NonExistingVariableException;
@@ -9,6 +11,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class UnityProgramTest {
 
+    @BeforeEach
+    private void discardProgram(){
+        UnityProgram.discardProgram();
+    }
 
     @Test
     public void sort1_unityProgram_test() throws UnityGrammarException, NonExistingVariableException {
@@ -26,7 +32,6 @@ public class UnityProgramTest {
         for (int i = 0; i < sortedArray.length - 1; i++){
             Assertions.assertTrue(sortedArray[i] <= sortedArray[i+1]);
         }
-        UnityProgram.discardProgram();
     }
 
     @Test
@@ -45,7 +50,6 @@ public class UnityProgramTest {
         unity.createProgramFromString(program);
         assertNotNull(unity.getUnityProgram());
         unity.startProgram();
-        UnityProgram.discardProgram();
     }
 
     @Test
@@ -63,7 +67,6 @@ public class UnityProgramTest {
         unity.createProgramFromString(program);
         assertNotNull(unity.getUnityProgram());
         unity.startProgram();
-        UnityProgram.discardProgram();
     }
 
     @Test
@@ -86,6 +89,5 @@ public class UnityProgramTest {
         unity.createProgramFromString(program);
         assertNotNull(unity.getUnityProgram());
         unity.startProgram();
-        UnityProgram.discardProgram();
     }
 }

@@ -60,7 +60,7 @@ public class Configuration {
         }
     }
 
-    private static void loadDefaultConfig() {
+    protected static void loadDefaultConfig() {
         properties = new Properties();
         properties.setProperty(LOG_ALL, "true");
         properties.setProperty(LOG_DECLARATIONS, "false");

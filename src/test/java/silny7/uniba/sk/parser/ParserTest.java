@@ -1,9 +1,10 @@
 package silny7.uniba.sk.parser;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import silny7.uniba.sk.unity.expressions.variables.SimpleVariable;
 import silny7.uniba.sk.unity.program.Unity;
 import silny7.uniba.sk.unity.program.UnityProgram;
-import silny7.uniba.sk.unity.expressions.variables.SimpleVariable;
 import silny7.uniba.sk.unity.sections.AssignSection;
 import silny7.uniba.sk.unity.sections.DeclareSection;
 import silny7.uniba.sk.unity.statements.AssignmentStatement;
@@ -16,6 +17,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ParserTest {
 
+    @BeforeEach
+    private void discardProgram(){
+        UnityProgram.discardProgram();
+    }
 
     @Test
     public void simpleInputTest() throws UnityGrammarException {

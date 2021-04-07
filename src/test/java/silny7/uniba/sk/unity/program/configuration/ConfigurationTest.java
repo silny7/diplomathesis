@@ -9,8 +9,8 @@ import java.io.IOException;
 public class ConfigurationTest {
 
     @BeforeAll
-    public static void setup() throws IOException {
-        Configuration.loadConfiguration();
+    public static void setup() {
+        Configuration.loadDefaultConfig();
     }
 
     @Test
@@ -18,9 +18,7 @@ public class ConfigurationTest {
         Assertions.assertFalse(Configuration.isLogDeclarations());
         Assertions.assertFalse(Configuration.isLogInitializations());
         Assertions.assertFalse(Configuration.isLogAssignments());
-
         Assertions.assertTrue(Configuration.isLogAll());
-
         Assertions.assertFalse(Configuration.isMultithreading());
     }
 

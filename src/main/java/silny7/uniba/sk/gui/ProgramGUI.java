@@ -6,15 +6,12 @@ import silny7.uniba.sk.unity.program.Unity;
 import silny7.uniba.sk.unity.program.UnityProgram;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -244,19 +241,6 @@ public class ProgramGUI extends JFrame {
     }
 
 
-    private void createRunButtonListener(){
-        runButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (unityProgramHolder == null) {
-                    //load the program
-                    loadUnityProgram();
-                }
-                unityProgramHolder.startProgram();
-            }
-        });
-    }
-
     private void createLoadButtonListener() {
         loadButton.addActionListener(new ActionListener() {
             @Override
@@ -265,6 +249,20 @@ public class ProgramGUI extends JFrame {
             }
         });
     }
+
+    private void createRunButtonListener(){
+        runButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (unityProgramHolder == null) {
+                    //load the program
+                    loadUnityProgram();
+                }
+                startProgram();
+            }
+        });
+    }
+
 
     private void createSettingsListener() {
         settings.addMenuListener(new MenuListener() {
@@ -285,6 +283,7 @@ public class ProgramGUI extends JFrame {
         });
     }
 
+
     private UnityProgram loadUnityProgram(){
         String programToParse = inputCodeTA.getText();
         try {
@@ -292,12 +291,18 @@ public class ProgramGUI extends JFrame {
             eraseTextArea(errorTA);
             eraseTextArea(outputTA);
             unityProgramHolder = new Unity(errorTA, outputTA);
+            //start errorLogging to catch parsing errors
+            unityProgramHolder.startErrorLogging();
             unityProgramHolder.createProgramFromString(programToParse);
-            unityProgramHolder.getUnityLogger().logInfo("Unity program loaded successfully");
+            unityProgramHolder.getLogManager().logInfo("Unity program loaded successfully");
         } catch (UnityGrammarException unityGrammarException) {
-            unityProgramHolder.getUnityLogger().logError(unityGrammarException);
+            unityProgramHolder.getLogManager().logError(unityGrammarException);
         }
         return unityProgramHolder.getUnityProgram();
+    }
+
+    private void startProgram() {
+        unityProgramHolder.startProgram();
     }
 
     private void eraseTextArea(JTextArea textArea){

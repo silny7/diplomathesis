@@ -7,62 +7,69 @@ import silny7.uniba.sk.unity.program.configuration.Configuration;
 
 import javax.swing.*;
 
-public class UnityLogger {
+public class LogManager {
 
-    JTextArea programLogArea;
-    JTextArea errorLogArea;
+    Logger programLogger;
+    Logger errorLogger;
 
-    public UnityLogger(JTextArea programLogArea, JTextArea errorLogArea) {
-        this.programLogArea = programLogArea;
-        this.errorLogArea = errorLogArea;
+    Thread programLoggerThread;
+    Thread errorLoggerThread;
+
+    private final Integer PROGRAM_LOG_QUEUE_CAP = 10000;
+    private final Integer ERROR_LOG_QUEUE_CAP = 100;
+
+    public LogManager(JTextArea programLog, JTextArea errorLog){
+        programLogger = new Logger(programLog, PROGRAM_LOG_QUEUE_CAP, 1);
+        errorLogger = new Logger(errorLog, ERROR_LOG_QUEUE_CAP, 0);
+
+        programLoggerThread = new Thread(programLogger);
+        errorLoggerThread = new Thread(errorLogger);
     }
 
-    //region GUI output window
+    public void startLogging(){
+        startProgramLogging();
+        startErrorLogging();
+    }
+
+    public void startProgramLogging() {
+        programLoggerThread.start();
+    }
+
+    public void startErrorLogging() {
+        errorLoggerThread.start();
+    }
+
+    //REGION PROGRAM LOGGING:
     private void logProgram(final String logText){
-        if (programLogArea == null) {
-            System.out.println(logText);
-        } else {
-            if (!programLogArea.getText().isEmpty()) programLogArea.append("\n");
-            programLogArea.append(logText);
-        }
+        programLogger.queueLog(logText);
     }
-
     public void logMemory(UnityProgramMemory memory) {
         //todo prettyPrint
         logProgram(memory.print());
     }
-
     public void logDeclaration(String declarationLog){
         if (Configuration.isLogAll() || Configuration.isLogDeclarations()){
             logProgram(declarationLog);
         }
     }
-
     public void logInitialization(String initializationLog) {
         if (Configuration.isLogAll() || Configuration.isLogInitializations()){
             logProgram(initializationLog);
         }
     }
-
     public void logAssignment(String assignmentLog){
         if (Configuration.isLogAll() || Configuration.isLogAssignments()){
             logProgram(assignmentLog);
         }
     }
-
     public void logProgramMessage(String logText){
         logProgram(logText);
     }
 
-    //region GUI error window
+
+    //REGION ERROR LOGGING
     private void log(MessageType messageType, String logText){
-        if (errorLogArea == null) {
-            System.out.println(createLogMessage(messageType, logText));
-        } else {
-            if (!errorLogArea.getText().isEmpty()) this.errorLogArea.append("\n");
-            this.errorLogArea.append(createLogMessage(messageType, logText));
-            this.errorLogArea.update(this.errorLogArea.getGraphics());
-        }
+        errorLogger.queueLog(createLogMessage(messageType, logText));
     }
 
     public void logInfo(String logText) {
@@ -85,24 +92,12 @@ public class UnityLogger {
         log(MessageType.WARN, logText);
     }
 
-
     private String createLogMessage(MessageType messageType, String logText) {
         return "[" + messageType + "] " + logText;
     }
 
-    private void deleteProgramLogs() {
-        this.programLogArea.setText("");
+    public void stopLogging() {
+        errorLogger.stop();
+        programLogger.stop();
     }
-
-    private void deleteErrorLogs() {
-        this.errorLogArea.setText("");
-    }
-
-    private void deleteLogs(){
-        deleteErrorLogs();
-        deleteProgramLogs();
-    }
-
-
-
 }

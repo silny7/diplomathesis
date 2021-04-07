@@ -9,17 +9,29 @@ import silny7.uniba.sk.UnityGrammarParser;
 import silny7.uniba.sk.parser.UnityGrammarErrorListener;
 import silny7.uniba.sk.parser.UnityGrammarException;
 import silny7.uniba.sk.parser.UnityGrammarVisitor;
-import silny7.uniba.sk.unity.program.logger.UnityLogger;
+import silny7.uniba.sk.unity.program.logger.LogManager;
 
 import javax.swing.*;
 
 public class Unity {
-    private final UnityLogger unityLogger;
+    private final LogManager logManager;
     private UnityProgram unityProgram;
 
 
     public Unity(JTextArea errorTA, JTextArea programOutputTA) {
-        this.unityLogger = new UnityLogger(programOutputTA, errorTA);
+        this.logManager = new LogManager(programOutputTA, errorTA);
+    }
+
+    public void startLogging(){
+        this.logManager.startLogging();
+    }
+
+    public void startErrorLogging() {
+        this.logManager.startErrorLogging();
+    }
+
+    public void startProgramLogging() {
+        this.logManager.startProgramLogging();
     }
 
     public void createProgramFromString(String programToParse) throws UnityGrammarException {
@@ -49,11 +61,14 @@ public class Unity {
     }
 
     public void startProgram(){
-        unityProgram.setUnityLogger(getUnityLogger());
+        unityProgram.setUnityLogger(getLogManager());
+        //start program logging
+        startProgramLogging();
         unityProgram.interpret();
     }
 
     public UnityProgram getUnityProgram() { return this.unityProgram; }
 
-    public UnityLogger getUnityLogger() {return this.unityLogger; }
+    public LogManager getLogManager() {return this.logManager; }
+
 }
