@@ -44,7 +44,8 @@ public class ProgramGUI extends JFrame {
     private JMenuItem programBinomical;
     private JMenuItem programBubbleSort;
     private JMenuItem programShortestPath;
-
+    private JMenuItem programTwoSorts;
+    private JMenuItem programGCD;
 
     private Dimension guiScreenSize;
 
@@ -59,10 +60,15 @@ public class ProgramGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "Something went wrong while GUI initialization!");
         }
 
-        guiScreenSize = getScreenSize();
-        setupComponents();
-        setupLayout();
-        setVisible(true);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                guiScreenSize = getScreenSize();
+                setupComponents();
+                setupLayout();
+                setVisible(true);
+            }
+        });
     }
 
     /**
@@ -176,39 +182,27 @@ public class ProgramGUI extends JFrame {
         programSort = new JMenuItem("Sort");
         programBubbleSort = new JMenuItem("Bubble sort");
         programShortestPath = new JMenuItem("Shortest path");
+        programTwoSorts = new JMenuItem("Sort + bubbleSort");
+        programGCD = new JMenuItem("Greatest common divisor");
 
         programs.add(programSort);
         programs.add(programBubbleSort);
         programs.add(programBinomical);
         programs.add(programShortestPath);
+        programs.add(programTwoSorts);
+        programs.add(programGCD);
 
-        programBinomical.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                loadUnityProgramFromFile("binomicalProgram.txt");
-            }
-        });
+        programBinomical.addActionListener(e -> loadUnityProgramFromFile("binomicalProgram.txt"));
 
-        programSort.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                loadUnityProgramFromFile("sortProgram.txt");
-            }
-        });
+        programSort.addActionListener(e -> loadUnityProgramFromFile("sortProgram.txt"));
 
-        programShortestPath.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                loadUnityProgramFromFile("floydShortestPathProgram.txt");
-            }
-        });
+        programShortestPath.addActionListener(e -> loadUnityProgramFromFile("floydShortestPathProgram.txt"));
 
-        programBubbleSort.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                loadUnityProgramFromFile("bubbleSortProgram.txt");
-            }
-        });
+        programBubbleSort.addActionListener(e -> loadUnityProgramFromFile("bubbleSortProgram.txt"));
+
+        programTwoSorts.addActionListener((e) -> { loadUnityProgramFromFile("twoSorts.txt"); });
+
+        programGCD.addActionListener((e) -> { loadUnityProgramFromFile("greatestCommonDivisor.txt"); });
     }
 
     private void loadUnityProgramFromFile(String programFileName) {

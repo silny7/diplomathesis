@@ -9,17 +9,23 @@ import silny7.uniba.sk.UnityGrammarParser;
 import silny7.uniba.sk.parser.UnityGrammarErrorListener;
 import silny7.uniba.sk.parser.UnityGrammarException;
 import silny7.uniba.sk.parser.UnityGrammarVisitor;
+import silny7.uniba.sk.unity.program.configuration.Configuration;
 import silny7.uniba.sk.unity.program.logger.LogManager;
+import silny7.uniba.sk.unity.thread.ThreadManager;
 
 import javax.swing.*;
 
 public class Unity {
     private final LogManager logManager;
     private UnityProgram unityProgram;
+    private ThreadManager threadManager;
 
 
     public Unity(JTextArea errorTA, JTextArea programOutputTA) {
         this.logManager = new LogManager(programOutputTA, errorTA);
+        if (Configuration.isMultithreading()) {
+            this.threadManager = new ThreadManager();
+        }
     }
 
     public void startLogging(){
@@ -62,9 +68,14 @@ public class Unity {
 
     public void startProgram(){
         unityProgram.setUnityLogger(getLogManager());
+        //unityProgram.setThreadManager(getThreadManager());
         //start program logging
         startProgramLogging();
         unityProgram.interpret();
+    }
+
+    private ThreadManager getThreadManager() {
+        return this.threadManager;
     }
 
     public UnityProgram getUnityProgram() { return this.unityProgram; }

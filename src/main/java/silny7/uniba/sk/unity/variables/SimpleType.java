@@ -19,7 +19,7 @@ public class SimpleType extends BaseType {
 
     public Object getNewTypeObject() throws ProgramRunException {
         switch (valueType){
-            case Bool: return randomBool();
+            case Bool: return true; //randomBool();
             case Integer: return random(0, 100);
         }
         throw new IllegalArgumentTypeException("Illegal SimpleType " + valueType.toString());

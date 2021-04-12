@@ -3,11 +3,12 @@ package silny7.uniba.sk.unity.program.memory;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GlobalMemory implements Memory{
 
-    Map<String, Object> memoryRead = new Hashtable<String, Object>();
-    Map<String, Object> memoryWrite = new Hashtable<String, Object>();
+    Map<String, Object> memoryRead = new ConcurrentHashMap<>();
+    Map<String, Object> memoryWrite = new ConcurrentHashMap<>();
 
     @Override
     public boolean containsVariable(String variableName){

@@ -18,7 +18,7 @@ public class UnityProgramTest {
 
     @Test
     public void sort1_unityProgram_test() throws UnityGrammarException, NonExistingVariableException {
-        String program = "Program Sort1 \n \n declare N:integer; \n A: array[0..9] of integer; B: array[0..10] of boolean; \n " +
+        String program = "Program Sort1 \n \n declare N:integer; \n A: array[0..9] of integer; \n " +
                 "initially N:= 10 [] <<|| i : 0<=i<N :: A[i]:= rand(0,20)>> \n " +
                 "assign << [] i : 0 <=i<N-1 :: A[i],A[i+1] := A[i+1], A[i] if A[i] > A[i+1] >> \n " +
                 "END";

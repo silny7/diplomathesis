@@ -30,9 +30,14 @@ public class SettingsGui extends JFrame {
             JOptionPane.showMessageDialog(this, "Something went wrong while Settings GUI initialization!");
         }
 
-        setupComponents();
-        setupLayout();
-        setVisible(true);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                setupComponents();
+                setupLayout();
+                setVisible(true);
+            }
+        });
     }
 
     private void setupLayout() {

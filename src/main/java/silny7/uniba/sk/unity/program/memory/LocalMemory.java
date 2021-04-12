@@ -2,13 +2,14 @@ package silny7.uniba.sk.unity.program.memory;
 
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Memory for bounded variables such as those in Quantified assignments
  */
 public class LocalMemory implements Memory{
 
-    Map<String, Object> boundedMemory = new Hashtable<String, Object>();
+    Map<String, Object> boundedMemory = new ConcurrentHashMap<>();
 
     @Override
     public boolean containsVariable(String variableName) {

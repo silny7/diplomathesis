@@ -19,7 +19,7 @@ public class LogManager {
     private final Integer ERROR_LOG_QUEUE_CAP = 100;
 
     public LogManager(JTextArea programLog, JTextArea errorLog){
-        programLogger = new Logger(programLog, PROGRAM_LOG_QUEUE_CAP, 1);
+        programLogger = new Logger(programLog, PROGRAM_LOG_QUEUE_CAP, 2);
         errorLogger = new Logger(errorLog, ERROR_LOG_QUEUE_CAP, 0);
 
         programLoggerThread = new Thread(programLogger);
@@ -32,11 +32,11 @@ public class LogManager {
     }
 
     public void startProgramLogging() {
-        programLoggerThread.start();
+        if (!programLoggerThread.isAlive()) programLoggerThread.start();
     }
 
     public void startErrorLogging() {
-        errorLoggerThread.start();
+        if (!errorLoggerThread.isAlive()) errorLoggerThread.start();
     }
 
     //REGION PROGRAM LOGGING:

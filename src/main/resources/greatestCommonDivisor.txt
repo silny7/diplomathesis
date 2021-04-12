@@ -1,0 +1,12 @@
+program GCD
+declare
+    x, y: integer;
+    decx, decy: boolean;
+always:
+    decx, decy := x > y, y > x
+initially:
+    x, y := 60, 48
+assign
+    x := x - y if decx []
+    y := y - x if decy
+end

@@ -3,6 +3,7 @@ package silny7.uniba.sk.unity.program;
 import silny7.uniba.sk.unity.exceptions.ProgramRunException;
 import silny7.uniba.sk.unity.program.logger.LogManager;
 import silny7.uniba.sk.unity.sections.*;
+import silny7.uniba.sk.unity.thread.ThreadManager;
 
 import static silny7.uniba.sk.unity.sections.Section.*;
 
@@ -28,6 +29,8 @@ public class UnityProgram {
     private static LogManager logManager;
     private static Section currentSection;
 
+    private ThreadManager threadManager;
+
     private UnityProgram(){
         memory = new UnityProgramMemory();
         currentSection = DECLARE;
@@ -37,32 +40,77 @@ public class UnityProgram {
         try {
             infoLog("Unity program " + (programName != null ? programName : "") + " started");
             long startMillis = System.currentTimeMillis();
-            if (declareSection != null) declareSection.declareVariables(memory);
-            if (initiallySection != null) {
-                setCurrentSection(INITIALLY);
-                initiallySection.execute();
-            }
+
+            executeDeclareSection();
+            executeInitiallySection();
+            executeAlwaysSection();
             programLog("Starting assign section: ", ASSIGN);
+            int cycleCount = 0;
             while (!isFixedPoint()){
-                setCurrentSection(ASSIGN);
                 fixedPoint = true;
-                assignSection.execute();
+                executeAssignSection();
+
                 //after every run of assignSection, execute alwaysSection
-                if (alwaysSection != null) {
-                    setCurrentSection(ALWAYS);
-                    alwaysSection.execute();
-                }
+                executeAlwaysSection();
+                //logManager.logMemory(memory);
+                cycleCount++;
+                //if (cycleCount == 100) setFixedPoint(true);
             }
-            long programTime = System.currentTimeMillis() - startMillis;
-            infoLog("Unity program " + (programName != null ? programName : "") + " finished in " + programTime + " miliseconds");
-            logManager.logMemory(memory);
+            //after program run
+            logProgramTime(startMillis);
+            logMemory();
+            shutdownThreadManager();
         } catch (ProgramRunException programRunException) {
             errorLog(programRunException);
         }
     }
 
+    private void logProgramTime(long startMillis) {
+        long programTime = System.currentTimeMillis() - startMillis;
+        infoLog("Unity program " + (programName != null ? programName : "") + " finished in " + programTime + " miliseconds");
+    }
 
-    public static UnityProgram getUnityProgram(){
+    private void executeAssignSection() throws ProgramRunException {
+        setCurrentSection(ASSIGN);
+        assignSection.execute();
+    }
+
+    private void executeAlwaysSection() throws ProgramRunException {
+        if (alwaysSection != null) {
+            setCurrentSection(ALWAYS);
+            alwaysSection.execute();
+        }
+    }
+
+    private void executeInitiallySection() throws ProgramRunException {
+        if (initiallySection != null) {
+            setCurrentSection(INITIALLY);
+            initiallySection.execute();
+        }
+    }
+
+    private void executeDeclareSection() throws ProgramRunException {
+        if (declareSection != null) {
+            declareSection.declareVariables(memory);
+        }
+    }
+
+    private void shutdownThreadManager() throws ProgramRunException {
+        if (threadManager != null) {
+            try {
+                threadManager.shutdown();
+            } catch (InterruptedException e) {
+                throw new ProgramRunException("Unable to stop threadManager " + e.getMessage());
+            }
+        }
+    }
+
+    private void logMemory() {
+        logManager.logMemory(memory);
+    }
+
+
+    public synchronized static UnityProgram getUnityProgram(){
         if (instance == null) instance = new UnityProgram();
         return instance;
     }
@@ -121,4 +169,8 @@ public class UnityProgram {
     public void setUnityLogger(LogManager logManager) {
         UnityProgram.logManager = logManager;
     }
+
+    public void setThreadManager(ThreadManager threadManager) { this.threadManager = threadManager; }
+
+    public ThreadManager getThreadManager() { return this.threadManager; }
 }
