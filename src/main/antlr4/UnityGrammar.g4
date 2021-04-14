@@ -46,6 +46,7 @@ assign_section: ASSIGN COLON? statement_list;
 
 //statement definition
 //todo split statements by section and by separator (DETERM/NONDETERM)
+
 statement_list: statement (NONDETERM_SEPARATOR statement)*;
 
 statement: assignment_statement | quantified_statement;
@@ -58,6 +59,9 @@ assign_component: enumerated_assignment | quantified_assignment;
 
 //always section + innitially section uses = sign, assign_section uses := sign
 enumerated_assignment: variable_list (ASSIGN_SIGN | EQUAL) (simple_expression_list | conditional_expression_list);
+
+quantified_assignment: QUANTIFICATION_OPEN DETERM_SEPARATOR quantification assignment_statement QUANTIFICATION_CLOSE;
+
 
 variable_list: variable |
                (variable COMMA variable_list);
@@ -72,8 +76,6 @@ conditional_expression_list: simple_expression_list IF boolean_expression (TILDE
 //QUANTIFIED STATEMENT
 
 quantified_statement: QUANTIFICATION_OPEN NONDETERM_SEPARATOR quantification statement_list QUANTIFICATION_CLOSE;
-
-quantified_assignment: QUANTIFICATION_OPEN DETERM_SEPARATOR quantification assignment_statement QUANTIFICATION_CLOSE;
 
 quantification: variable_list COLON boolean_expression DOUBLE_COLON;
 
