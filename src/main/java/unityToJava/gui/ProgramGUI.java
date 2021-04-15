@@ -2,6 +2,7 @@
 package unityToJava.gui;
 
 import unityToJava.parser.UnityGrammarException;
+import unityToJava.unity.exceptions.ProgramRunException;
 import unityToJava.unity.program.Unity;
 import unityToJava.unity.program.UnityProgram;
 
@@ -11,6 +12,8 @@ import javax.swing.event.MenuListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -60,14 +63,11 @@ public class ProgramGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "Something went wrong while GUI initialization!");
         }
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                guiScreenSize = getScreenSize();
-                setupComponents();
-                setupLayout();
-                setVisible(true);
-            }
+        SwingUtilities.invokeLater(() -> {
+            guiScreenSize = getScreenSize();
+            setupComponents();
+            setupLayout();
+            setVisible(true);
         });
     }
 
@@ -147,7 +147,7 @@ public class ProgramGUI extends JFrame {
 
         scrollPaneError.setViewportBorder(BorderFactory.createTitledBorder("Error log:"));
         errorTA.setEditable(false);
-        errorTA.setBackground(new Color(153, 153, 153));
+        errorTA.setBackground(new Color(208, 208, 208));
         errorTA.setLineWrap(true);
         errorTA.setColumns(20);
         errorTA.setRows(8);
@@ -159,8 +159,22 @@ public class ProgramGUI extends JFrame {
 
         createRunButtonListener();
         createLoadButtonListener();
+        createFrameListener();
 
         createMenu();
+    }
+
+    private void createFrameListener() {
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                try {
+                    UnityProgram.getUnityProgram().shutdownThreadManager();
+                } catch (ProgramRunException programRunException) {
+                    programRunException.printStackTrace();
+                }
+            }
+        });
     }
 
     private void createMenu() {

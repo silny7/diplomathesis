@@ -1,12 +1,13 @@
 package unityToJava.unity.statements;
 
 import unityToJava.unity.exceptions.ProgramRunException;
-import unityToJava.unity.program.UnityProgram;
 import unityToJava.unity.program.UnityProgramMemory;
 import unityToJava.unity.program.memory.MemoryCopy;
-import unityToJava.unity.program.memory.MemoryType;
+import unityToJava.unity.thread.ThreadManager;
 
 import java.util.List;
+
+import static unityToJava.unity.program.UnityProgram.getUnityProgram;
 
 public class QuantifiedStatement extends Statement {
 
@@ -21,7 +22,11 @@ public class QuantifiedStatement extends Statement {
 
     @Override
     public void execute() throws ProgramRunException {
+        ThreadManager threadManager = getUnityProgram().getThreadManager();
         quantification.initVariables();
+        if (!quantification.isEvaluated()) {
+            quantification.evaluate();
+        }
         for (MemoryCopy memCopy : quantification.getMemorySnapshots()){
             memCopy.loadIntoProgramMemory();
             for (Statement statement : statements){
@@ -37,23 +42,22 @@ public class QuantifiedStatement extends Statement {
             }
         }
 
+        waitForTaskToFinish(threadManager);
+
         //after execution copy writeMemory to readMemory
-        UnityProgramMemory memory = UnityProgram.getUnityProgram().getMemory();
-        MemoryCopy memoryCopy = memory.createMemoryCopy(MemoryType.WRITE);
-        memoryCopy.setMemoryType(MemoryType.READ);
-        memoryCopy.loadIntoProgramMemory();
+        UnityProgramMemory.getMemory().loadWriteToRead();
 
         quantification.destroyVariables();
     }
 
     @Override
-    public void evaluateQuantifiers() throws ProgramRunException {
+    public void prepareExecution() throws ProgramRunException {
         quantification.initVariables();
         quantification.evaluate();
         for (MemoryCopy memCopy : quantification.getMemorySnapshots()){
             memCopy.loadIntoProgramMemory();
             for (Statement statement : statements){
-                statement.evaluateQuantifiers();
+                statement.prepareExecution();
             }
         }
         quantification.destroyVariables();
@@ -61,6 +65,13 @@ public class QuantifiedStatement extends Statement {
 
     @Override
     public String toString() {
-        return null;
+        StringBuilder string = new StringBuilder();
+        string.append("<< [] ")
+              .append(quantification.toString());
+        for (Statement statement : statements){
+            string.append(statement.toString()).append(" ");
+        }
+        string.append(">>");
+        return string.toString();
     }
 }

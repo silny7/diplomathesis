@@ -16,7 +16,7 @@ public class InitiallySection {
     public void execute() throws ProgramRunException {
         UnityProgram.programLog("Starting initially section: ", Section.INITIALLY);
         for (Statement statement : statements){
-            statement.evaluateQuantifiers();
+            statement.prepareExecution();
             statement.execute();
         } 
     }

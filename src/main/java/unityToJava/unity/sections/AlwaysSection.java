@@ -16,7 +16,7 @@ public class AlwaysSection {
     public void execute() throws ProgramRunException {
         Randomizer.shuffleList(statements);
         for (Statement statement : statements){
-            statement.evaluateQuantifiers();
+            statement.prepareExecution();
             statement.execute();
         }
     }

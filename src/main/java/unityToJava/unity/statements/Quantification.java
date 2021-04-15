@@ -21,15 +21,16 @@ public class Quantification {
     Expression booleanExpr;
     List<MemoryCopy> memorySnapshots = new ArrayList<MemoryCopy>();
 
+    private volatile boolean evaluated = false;
+
     public Quantification(List<Variable> boundedVars, Expression boolExpr) {
         this.booleanExpr = boolExpr;
         this.boundedVars = boundedVars;
     }
 
     public void initVariables(){
-        UnityProgramMemory memory = UnityProgram.getUnityProgram().getMemory();
         for (Variable var : boundedVars){
-            memory.initBoundedVariable(var.getVariableName(), 0);
+            UnityProgramMemory.getMemory().initBoundedVariable(var.getVariableName(), 0);
         }
     }
 
@@ -44,10 +45,11 @@ public class Quantification {
          */
         int[] boundedVarsValues = new int[boundedVars.size()];
         createVarsValsCombs(boundedVarsWithRanges, boundedVarsValues, 0, memorySnapshots);
+
+        evaluated = true;
     }
 
     private void createVarsValsCombs(List<BoundedVariable> boundedVarsWithRanges, int[] boundedVarsValues, int currentVar, List<MemoryCopy> memorySnapshots) throws ProgramRunException {
-        UnityProgramMemory memory = UnityProgram.getUnityProgram().getMemory();
 
         //we have been thru all boundedVars
         if (currentVar == boundedVars.size()){
@@ -55,14 +57,14 @@ public class Quantification {
             //set variableName -> boundedVarsWithRanges.get(varialbeIndex) = boundedVarsValues[variableIndex]
             for (int variableIndex = 0; variableIndex < boundedVarsValues.length; variableIndex++){
                 String variableName = boundedVarsWithRanges.get(variableIndex).getVariableName();
-                if (memory.isBoundedVariable(variableName)){
-                    memory.setVariable(variableName, boundedVarsValues[variableIndex]);
+                if (UnityProgramMemory.getMemory().isBoundedVariable(variableName)){
+                    UnityProgramMemory.getMemory().setVariable(variableName, boundedVarsValues[variableIndex]);
                 } else {
                     throw new IllegalProgramStateException("Bounded variable " + variableName + " accessed before initialization");
                 }
                 Boolean boolExpResult = (Boolean) booleanExpr.resolve();
                 if (boolExpResult){
-                    MemoryCopy memCopy = memory.createMemoryCopy(MemoryType.LOCAL);
+                    MemoryCopy memCopy = UnityProgramMemory.getMemory().createMemoryCopy(MemoryType.LOCAL);
                     memorySnapshots.add(memCopy);
                 }
             }
@@ -77,15 +79,15 @@ public class Quantification {
     }
 
     public void destroyVariables(){
-        UnityProgramMemory memory = UnityProgram.getUnityProgram().getMemory();
         for (Variable var : boundedVars) {
-            memory.destroyBoundedVariable(var.getVariableName());
+            UnityProgramMemory.getMemory().destroyBoundedVariable(var.getVariableName());
         }
     }
 
     public void destroy() {
         memorySnapshots.clear();
         destroyVariables();
+        evaluated = false;
     }
 
     public String toString(){
@@ -127,6 +129,10 @@ public class Quantification {
         } catch (UnsupportedOperationException e) {
             return Configuration.getMinValue();
         }
+    }
+
+    public boolean isEvaluated() {
+        return evaluated;
     }
 
     /**

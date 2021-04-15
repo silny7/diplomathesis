@@ -22,7 +22,7 @@ public class UnityProgramMemoryTest {
     @BeforeAll
     public static void setup_test_vars(){
         program = UnityProgram.getUnityProgram();
-        memory = program.getMemory();
+        memory = UnityProgramMemory.getMemory();
     }
 
     @Test

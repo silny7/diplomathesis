@@ -19,8 +19,9 @@ public class AssignSection {
 
     public void execute() throws ProgramRunException {
         Randomizer.shuffleList(statements);
+
         for (Statement statement : statements){
-            statement.evaluateQuantifiers();
+            statement.prepareExecution();
             statement.execute();
         }
     }

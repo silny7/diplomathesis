@@ -28,7 +28,6 @@ public class MemoryCopy {
     }
 
     public void loadIntoProgramMemory(){
-        UnityProgramMemory programMemory = UnityProgram.getUnityProgram().getMemory();
-        programMemory.loadMemoryCopy(this);
+        UnityProgramMemory.getMemory().loadMemoryCopy(this);
     }
 }

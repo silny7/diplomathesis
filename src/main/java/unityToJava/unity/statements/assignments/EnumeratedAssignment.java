@@ -1,4 +1,4 @@
-package unityToJava.unity.statements;
+package unityToJava.unity.statements.assignments;
 
 import unityToJava.unity.exceptions.IllegalProgramStateException;
 import unityToJava.unity.exceptions.ProgramRunException;
@@ -31,16 +31,19 @@ public class EnumeratedAssignment extends Assignment {
         //variables:
         boolean first = true;
         for (Variable variable : variables){
-            string.append(variable.toString());
             if (!first) string.append(", ");
+            string.append(variable.toString());
             first = false;
         }
 
         string.append(" := ");
 
         //expressions in format: expression_list if boolean expression
+        first = true;
         for (Expression expression : expressions){
+            if (!first) string.append(", ");
             string.append(expression.toString());
+            first = false;
         }
         return string.toString();
     }
@@ -49,7 +52,7 @@ public class EnumeratedAssignment extends Assignment {
      * does nothing
      */
     @Override
-    public void evaluateQuantifiers() {}
+    public void prepareExecution() {}
 
     @Override
     public void assign() throws ProgramRunException {

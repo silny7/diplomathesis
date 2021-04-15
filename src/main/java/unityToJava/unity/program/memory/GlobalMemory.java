@@ -82,7 +82,7 @@ public class GlobalMemory implements Memory{
     }
 
     public Map<String, Object> getWriteMemoryCopy() {
-        Map<String, Object> map = new Hashtable<String, Object>();
+        Map<String, Object> map = new ConcurrentHashMap<String, Object>();
         for (Map.Entry<String, Object> variable : memoryWrite.entrySet()){
             map.put(variable.getKey(), variable.getValue());
         }
@@ -90,7 +90,7 @@ public class GlobalMemory implements Memory{
     }
 
     public Map<String, Object> getReadMemoryCopy() {
-        Map<String, Object> map = new Hashtable<String, Object>();
+        Map<String, Object> map = new ConcurrentHashMap<String, Object>();
         for (Map.Entry<String, Object> variable : memoryRead.entrySet()){
             map.put(variable.getKey(), variable.getValue());
         }

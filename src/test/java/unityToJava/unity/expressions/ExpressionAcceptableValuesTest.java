@@ -31,7 +31,7 @@ public class ExpressionAcceptableValuesTest {
     @BeforeAll
     public static void setupExpressions() throws ProgramRunException {
         UnityProgram program = UnityProgram.getUnityProgram();
-        memory = program.getMemory();
+        memory = UnityProgramMemory.getMemory();
 
         testSimpleVariable = new SimpleVariable("N");
         testBoundedVariable = new SimpleVariable("i");

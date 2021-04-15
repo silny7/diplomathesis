@@ -2,6 +2,7 @@ package unityToJava.unity.expressions.variables;
 
 import unityToJava.unity.exceptions.NonExistingVariableException;
 import unityToJava.unity.exceptions.ProgramRunException;
+import unityToJava.unity.exceptions.UnsupportedOperationException;
 import unityToJava.unity.expressions.Expression;
 import unityToJava.unity.program.UnityProgram;
 import unityToJava.unity.program.UnityProgramMemory;
@@ -20,32 +21,30 @@ public class ArrayVariable extends Variable{
 
     @Override
     public void setValue(Object variableValue) throws ProgramRunException {
-        UnityProgramMemory memory = UnityProgram.getUnityProgram().getMemory();
-        if (memory.variableExists(getVariableName())){
+        if (UnityProgramMemory.getMemory().variableExists(getVariableName())){
             int[] arrayIndexes = getArrayIndexes();
-            Object[] arrayVariable = (Object[]) memory.getVariableValue(getVariableName());
+            Object[] arrayVariable = (Object[]) UnityProgramMemory.getMemory().getVariableValue(getVariableName());
             Object currentValue = getArrayElementAtIndexes(arrayVariable, arrayIndexes);
             if (!currentValue.equals(variableValue)) {
                 UnityProgram.getUnityProgram().setFixedPoint(false);
             }
             Object[] array = setArrayElementAtIndexes(arrayVariable, arrayIndexes, variableValue);
-            memory.setVariable(getVariableName(), array);
+            UnityProgramMemory.getMemory().setVariable(getVariableName(), array);
         } else {
-            throw new NonExistingVariableException("Array variable " + getVariableName() + " does not exists!");
+            throw new NonExistingVariableException("Array variable " + getVariableName() + " referenced before declaration!");
         }
     }
 
 
     @Override
     public Object resolve() throws ProgramRunException {
-        UnityProgramMemory memory = UnityProgram.getUnityProgram().getMemory();
         //if variable varName exists
-        if (memory.variableExists(getVariableName())){
+        if (UnityProgramMemory.getMemory().variableExists(getVariableName())){
             int[] arrayIndexes = getArrayIndexes();
-            Object[] array = (Object[]) memory.getVariableValue(getVariableName());
+            Object[] array = (Object[]) UnityProgramMemory.getMemory().getVariableValue(getVariableName());
             return getArrayElementAtIndexes(array, arrayIndexes);
         } else {
-            throw new NonExistingVariableException("Array variable " + getVariableName() + " does not exists!");
+            throw new NonExistingVariableException("Array variable " + getVariableName() + " referenced before declaration!");
         }
     }
 
@@ -57,11 +56,7 @@ public class ArrayVariable extends Variable{
         for (Expression element : elements){
             if (!first) arrayVar.append(", ");
             else first = false;
-            try {
-                arrayVar.append(element.resolve());
-            } catch (ProgramRunException programRunException) {
-                UnityProgram.errorLog(programRunException);
-            }
+            arrayVar.append(element.toString());
         }
         arrayVar.append("]");
         return arrayVar.toString();
@@ -69,12 +64,12 @@ public class ArrayVariable extends Variable{
 
     @Override
     public Integer lowestAcceptableValue() throws ProgramRunException {
-        return 0;
+        throw new UnsupportedOperationException("Unsupported operation");
     }
 
     @Override
     public Integer highestAcceptableValue() throws ProgramRunException {
-        return 0;
+        throw new UnsupportedOperationException("Unsupported operation");
     }
 
     private Object getArrayElementAtIndexes(Object[] array, int... indexes) throws NonExistingVariableException {

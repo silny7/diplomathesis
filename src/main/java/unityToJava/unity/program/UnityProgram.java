@@ -1,6 +1,7 @@
 package unityToJava.unity.program;
 
 import unityToJava.unity.exceptions.ProgramRunException;
+import unityToJava.unity.program.configuration.Configuration;
 import unityToJava.unity.program.logger.LogManager;
 import unityToJava.unity.sections.*;
 import unityToJava.unity.thread.ThreadManager;
@@ -20,9 +21,6 @@ public class UnityProgram {
     //flags
     private boolean fixedPoint = false;
 
-    //program memory
-    private static UnityProgramMemory memory;
-
     private static UnityProgram instance = null;
     private static LogManager logManager;
     private static Section currentSection;
@@ -30,7 +28,6 @@ public class UnityProgram {
     private ThreadManager threadManager;
 
     private UnityProgram(){
-        memory = new UnityProgramMemory();
         currentSection = Section.DECLARE;
     }
 
@@ -39,27 +36,32 @@ public class UnityProgram {
             infoLog("Unity program " + (programName != null ? programName : "") + " started");
             long startMillis = System.currentTimeMillis();
 
+            initializeThreadManager();
             executeDeclareSection();
             executeInitiallySection();
             executeAlwaysSection();
             programLog("Starting assign section: ", Section.ASSIGN);
-            int cycleCount = 0;
             while (!isFixedPoint()){
                 fixedPoint = true;
                 executeAssignSection();
 
                 //after every run of assignSection, execute alwaysSection
                 executeAlwaysSection();
-                //logManager.logMemory(memory);
-                cycleCount++;
-                //if (cycleCount == 100) setFixedPoint(true);
             }
             //after program run
             logProgramTime(startMillis);
+
             logMemory();
-            shutdownThreadManager();
+            //shutdownThreadManager();
+            discardProgramMemory();
         } catch (ProgramRunException programRunException) {
             errorLog(programRunException);
+        }
+    }
+
+    private void initializeThreadManager() {
+        if (Configuration.isMultithreading() && threadManager == null) {
+            threadManager = new ThreadManager();
         }
     }
 
@@ -71,6 +73,8 @@ public class UnityProgram {
     private void executeAssignSection() throws ProgramRunException {
         setCurrentSection(Section.ASSIGN);
         assignSection.execute();
+
+        checkSectionCompleted();
     }
 
     private void executeAlwaysSection() throws ProgramRunException {
@@ -78,6 +82,8 @@ public class UnityProgram {
             setCurrentSection(Section.ALWAYS);
             alwaysSection.execute();
         }
+
+        checkSectionCompleted();
     }
 
     private void executeInitiallySection() throws ProgramRunException {
@@ -85,15 +91,31 @@ public class UnityProgram {
             setCurrentSection(Section.INITIALLY);
             initiallySection.execute();
         }
+
+        checkSectionCompleted();
+
+        programLog("Memory after Initially section", Section.INITIALLY);
+        programLog(UnityProgramMemory.getMemory().print(), Section.INITIALLY);
+    }
+
+    //Todo this has to be done after also writing to memory was done
+    private void checkSectionCompleted() {
+        if (threadManager != null && Configuration.isMultithreading()){
+            while (!threadManager.allDone()) {
+                //do nothing, just wait
+            }
+        }
     }
 
     private void executeDeclareSection() throws ProgramRunException {
         if (declareSection != null) {
-            declareSection.declareVariables(memory);
+            declareSection.declareVariables();
         }
+        programLog("Memory after Declare section", Section.DECLARE);
+        programLog(UnityProgramMemory.getMemory().print(), Section.DECLARE);
     }
 
-    private void shutdownThreadManager() throws ProgramRunException {
+    public void shutdownThreadManager() throws ProgramRunException {
         if (threadManager != null) {
             try {
                 threadManager.shutdown();
@@ -104,11 +126,11 @@ public class UnityProgram {
     }
 
     private void logMemory() {
-        logManager.logMemory(memory);
+        logManager.logMemory(UnityProgramMemory.getMemory());
     }
 
 
-    public synchronized static UnityProgram getUnityProgram(){
+    public static UnityProgram getUnityProgram(){
         if (instance == null) instance = new UnityProgram();
         return instance;
     }
@@ -143,6 +165,11 @@ public class UnityProgram {
 
     public static void discardProgram() {
         instance = null;
+        discardProgramMemory();
+    }
+
+    private static void discardProgramMemory() {
+        UnityProgramMemory.discard();
     }
 
 
@@ -157,8 +184,6 @@ public class UnityProgram {
     public void setInitiallySection(InitiallySection initiallySection) { this.initiallySection = initiallySection; }
     public AssignSection getAssignSection() { return assignSection; }
     public void setAssignSection(AssignSection assignSection) { this.assignSection = assignSection; }
-
-    public UnityProgramMemory getMemory() { return this.memory; }
 
     public boolean isFixedPoint() { return fixedPoint; }
 

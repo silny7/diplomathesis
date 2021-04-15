@@ -4,6 +4,8 @@ import unityToJava.unity.exceptions.IllegalArgumentTypeException;
 import unityToJava.unity.exceptions.ProgramRunException;
 import unityToJava.unity.expressions.functions.Functions;
 
+import static unityToJava.unity.expressions.functions.Functions.randomBool;
+
 public class SimpleType extends BaseType {
 
     private Type valueType;
@@ -17,7 +19,7 @@ public class SimpleType extends BaseType {
 
     public Object getNewTypeObject() throws ProgramRunException {
         switch (valueType){
-            case Bool: return true; //randomBool();
+            case Bool: return randomBool();
             case Integer: return Functions.random(0, 100);
         }
         throw new IllegalArgumentTypeException("Illegal SimpleType " + valueType.toString());

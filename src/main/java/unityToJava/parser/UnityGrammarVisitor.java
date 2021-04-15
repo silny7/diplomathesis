@@ -20,6 +20,10 @@ import unityToJava.unity.sections.AssignSection;
 import unityToJava.unity.sections.DeclareSection;
 import unityToJava.unity.sections.InitiallySection;
 import unityToJava.unity.statements.*;
+import unityToJava.unity.statements.assignments.Assignment;
+import unityToJava.unity.statements.assignments.ConditionalEnumeratedAssignment;
+import unityToJava.unity.statements.assignments.EnumeratedAssignment;
+import unityToJava.unity.statements.assignments.QuantifiedAssignment;
 import unityToJava.unity.variables.*;
 
 import java.util.ArrayList;

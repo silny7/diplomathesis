@@ -29,16 +29,15 @@ public class VariableDeclaration {
 
     /**
      * saves variableName and type to program memory
-     * @param memory
      */
-    public void declare(UnityProgramMemory memory) throws ProgramRunException {
+    public void declare() throws ProgramRunException {
         for (DeclaredVariable variable : variables) {
-            if (memory.variableExists(variable.getVarName())) {
+            if (UnityProgramMemory.getMemory().variableExists(variable.getVarName())) {
                 throw new MultipleDeclarationException(variable.getVarName(), "Variable " + variable.getVarName() + " is already declared");
             }
             else {
                 UnityProgram.programLog("Declaring variable: " + variable.getVarName() + " with type: " + type.toString(), Section.DECLARE);
-                memory.initGlobalVariable(variable.getVarName(), type.getNewTypeObject());
+                UnityProgramMemory.getMemory().initGlobalVariable(variable.getVarName(), type.getNewTypeObject());
             }
         }
     }

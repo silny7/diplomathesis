@@ -59,7 +59,7 @@ public class LocalMemory implements Memory{
     }
 
     public Map<String, Object> getMemoryCopy() {
-        Map<String, Object> map = new Hashtable<String, Object>();
+        Map<String, Object> map = new ConcurrentHashMap<String, Object>();
         for (Map.Entry<String, Object> variable : boundedMemory.entrySet()){
             map.put(variable.getKey(), variable.getValue());
         }

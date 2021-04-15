@@ -3,15 +3,11 @@ package unityToJava.unity.statements;
 import unityToJava.unity.exceptions.ProgramRunException;
 import unityToJava.unity.program.UnityProgram;
 import unityToJava.unity.program.UnityProgramMemory;
-import unityToJava.unity.program.memory.MemoryCopy;
-import unityToJava.unity.program.memory.MemoryType;
+import unityToJava.unity.statements.assignments.Assignment;
+import unityToJava.unity.thread.TaskCreator;
 import unityToJava.unity.thread.ThreadManager;
 
 import java.util.List;
-
-/**
- * all assignments inside AssignmentStatement can be executed parallel
- */
 
 public class AssignmentStatement extends Statement {
 
@@ -26,42 +22,37 @@ public class AssignmentStatement extends Statement {
 
     @Override
     public void execute() throws ProgramRunException {
-        UnityProgramMemory memory = UnityProgram.getUnityProgram().getMemory();
         ThreadManager threadManager = UnityProgram.getUnityProgram().getThreadManager();
-        if (threadManager != null) {
+        if (threadManager != null && assignments.size() > 1) {
             executeParallel(threadManager);
         } else {
-            for (Assignment assignment : assignments) {
-                assignment.assign();
-            }
+            executeSingleThread();
         }
 
+        waitForTaskToFinish(threadManager);
+
         //after all assignments, copy changed WRITE memory into READ memory
-        MemoryCopy memoryCopy = memory.createMemoryCopy(MemoryType.WRITE);
-        memoryCopy.setMemoryType(MemoryType.READ);
-        memory.loadMemoryCopy(memoryCopy);
+        UnityProgramMemory.getMemory().loadWriteToRead();
+    }
+
+    private void executeSingleThread() throws ProgramRunException {
+        for (Assignment assignment : assignments) {
+            assignment.assign();
+        }
     }
 
     private void executeParallel(ThreadManager threadManager) {
-        for (final Assignment assignment : assignments){
-            threadManager.addTask(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        assignment.assign();
-                    } catch (ProgramRunException programRunException) {
-                        programRunException.printStackTrace();
-                    }
-                }
-            });
+        for (Assignment assignment : assignments){
+            threadManager.addTask(TaskCreator.createAssignmentTask(assignment));
         }
     }
 
     @Override
-    public void evaluateQuantifiers() throws ProgramRunException {
+    public void prepareExecution() throws ProgramRunException {
         for (Assignment assignment : assignments) {
-            assignment.evaluateQuantifiers();
+            assignment.prepareExecution();
         }
+
     }
 
     @Override

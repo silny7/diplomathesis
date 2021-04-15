@@ -1,7 +1,9 @@
-package unityToJava.unity.statements;
+package unityToJava.unity.statements.assignments;
 
 import unityToJava.unity.exceptions.ProgramRunException;
 import unityToJava.unity.program.memory.MemoryCopy;
+import unityToJava.unity.statements.AssignmentStatement;
+import unityToJava.unity.statements.Quantification;
 
 public class QuantifiedAssignment extends Assignment {
     Quantification quantification;
@@ -18,27 +20,39 @@ public class QuantifiedAssignment extends Assignment {
     }
 
     @Override
-    public void evaluateQuantifiers() throws ProgramRunException {
+    public void prepareExecution() throws ProgramRunException {
+        //evaluateQuantification();
         quantification.initVariables();
         quantification.evaluate();
         for (MemoryCopy memoryCopy : quantification.getMemorySnapshots()){
             memoryCopy.loadIntoProgramMemory();
             for (Assignment assignment : assignmentStatement.getAssignments()){
-                assignment.evaluateQuantifiers();
+                assignment.prepareExecution();
             }
         }
-        quantification.destroy();
+        quantification.destroyVariables();
+    }
+
+    private void evaluateQuantification() throws ProgramRunException {
+        quantification.initVariables();
+        quantification.evaluate();
+        for (MemoryCopy memoryCopy : quantification.getMemorySnapshots()){
+            memoryCopy.loadIntoProgramMemory();
+            for (Assignment assignment : assignmentStatement.getAssignments()){
+                assignment.prepareExecution();
+            }
+        }
+        quantification.destroyVariables();
     }
 
     @Override
     public void assign() throws ProgramRunException {
         quantification.initVariables();
-        quantification.evaluate();
+        if (!quantification.isEvaluated()) {
+            quantification.evaluate();
+        }
 
-        if (quantification.getMemorySnapshots().isEmpty()){
-            quantification.destroy();
-            //there are not values for boundedVals for which boolExpr in quantification is true
-        } else {
+        if (!quantification.getMemorySnapshots().isEmpty()){
             for (MemoryCopy memCopy : quantification.getMemorySnapshots()){
                 memCopy.loadIntoProgramMemory();
                 for (Assignment assignment : assignmentStatement.getAssignments()){
@@ -52,7 +66,7 @@ public class QuantifiedAssignment extends Assignment {
                     assignment.assign();
                 }
             }
-            quantification.destroy();
         }
+        quantification.destroy();
     }
 }

@@ -22,11 +22,11 @@ public class DeclareSection {
     public List<VariableDeclaration> getDeclarations() { return declarations; }
     public void setDeclarations(List<VariableDeclaration> declarations) { this.declarations = declarations; }
 
-    public void declareVariables(UnityProgramMemory memory) throws ProgramRunException {
+    public void declareVariables() throws ProgramRunException {
         //for each variable, register it to memory with correct type
         UnityProgram.programLog("Starting declare section: ", Section.DECLARE);
         for (VariableDeclaration variableDeclaration : declarations){
-            variableDeclaration.declare(memory);
+            variableDeclaration.declare();
         }
     }
 

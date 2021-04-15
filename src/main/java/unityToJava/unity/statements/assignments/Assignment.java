@@ -1,4 +1,4 @@
-package unityToJava.unity.statements;
+package unityToJava.unity.statements.assignments;
 
 import unityToJava.unity.exceptions.ProgramRunException;
 import unityToJava.unity.program.UnityProgram;
@@ -7,7 +7,7 @@ public abstract class Assignment {
 
     public abstract String toString();
 
-    public abstract void evaluateQuantifiers() throws ProgramRunException;
+    public abstract void prepareExecution() throws ProgramRunException;
 
     public abstract void assign() throws ProgramRunException;
 

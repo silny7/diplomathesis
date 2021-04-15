@@ -1,4 +1,4 @@
-package unityToJava.unity.statements;
+package unityToJava.unity.statements.assignments;
 
 import unityToJava.unity.exceptions.IllegalProgramStateException;
 import unityToJava.unity.exceptions.ProgramRunException;
@@ -67,7 +67,7 @@ public class ConditionalEnumeratedAssignment extends Assignment {
      * does nothing
      */
     @Override
-    public void evaluateQuantifiers() {}
+    public void prepareExecution() {}
 
     @Override
     public void assign() throws ProgramRunException {

@@ -8,7 +8,7 @@ import unityToJava.unity.program.UnityProgram;
 import unityToJava.unity.sections.AssignSection;
 import unityToJava.unity.sections.DeclareSection;
 import unityToJava.unity.statements.AssignmentStatement;
-import unityToJava.unity.statements.EnumeratedAssignment;
+import unityToJava.unity.statements.assignments.EnumeratedAssignment;
 import unityToJava.unity.statements.VariableDeclaration;
 import unityToJava.unity.variables.SimpleType;
 

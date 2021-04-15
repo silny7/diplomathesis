@@ -1,22 +1,41 @@
 package unityToJava.unity.program;
 
+import com.sun.org.apache.regexp.internal.RE;
 import unityToJava.unity.exceptions.NonExistingVariableException;
 import unityToJava.unity.program.memory.GlobalMemory;
 import unityToJava.unity.program.memory.LocalMemory;
 import unityToJava.unity.program.memory.MemoryCopy;
 import unityToJava.unity.program.memory.MemoryType;
+import unityToJava.unity.sections.Section;
 
 public class UnityProgramMemory {
 
+    private volatile static UnityProgramMemory memoryInstance = null;
+
     //global memory
-    GlobalMemory globalMemory;
+    volatile GlobalMemory globalMemory;
 
     //bounded memory
-    LocalMemory boundedMemory;
+    volatile LocalMemory boundedMemory;
 
-    public UnityProgramMemory() {
+    private UnityProgramMemory() {
         globalMemory = new GlobalMemory();
         boundedMemory = new LocalMemory();
+    }
+
+    public static UnityProgramMemory getMemory(){
+        if (memoryInstance == null) {
+            synchronized (UnityProgramMemory.class) {
+                if (memoryInstance == null) {
+                    memoryInstance = new UnityProgramMemory();
+                }
+            }
+        }
+        return memoryInstance;
+    }
+
+    public static void discard() {
+        memoryInstance = null;
     }
 
     public void initGlobalVariable(String varName, Object value){
@@ -55,14 +74,16 @@ public class UnityProgramMemory {
         } else if (isGlobalVariable(varName)){
             return globalMemory.getVariable(varName);
         } else {
-            throw new NonExistingVariableException("Variable " + varName + " does not exists");
+            throw new NonExistingVariableException("Variable " + varName + " referenced before declaration");
         }
     }
 
     public void setVariable(String variableName, Object variableValue) {
         if (isBoundedVariable(variableName)) {
+            //UnityProgram.programLog("Setting boundedVariable: " + variableName + " to value: " + (String) variableValue, Section.DECLARE);
             boundedMemory.setVariable(variableName, variableValue);
         } else {
+            //UnityProgram.programLog("Setting globalVariable: " + variableName + " to value: " + (String) variableValue, Section.DECLARE);
             globalMemory.setVariable(variableName, variableValue);
         }
     }
@@ -76,8 +97,7 @@ public class UnityProgramMemory {
             case LOCAL:
                 return new MemoryCopy(boundedMemory.getMemoryCopy(), memoryType);
             default:
-                //todo better throw some exception
-                return null;
+                throw new IllegalStateException("Unknown memorytype: " + memoryType);
         }
     }
 
@@ -91,8 +111,7 @@ public class UnityProgramMemory {
                 boundedMemory.loadMemoryCopy(memoryCopy);
                 break;
             default:
-                //todo better throw some exception
-                break;
+                throw new IllegalStateException("Unknown memorytype: " + memoryCopy.getMemoryType());
         }
     }
 
@@ -100,5 +119,11 @@ public class UnityProgramMemory {
         StringBuilder string = new StringBuilder();
         string.append(globalMemory.print());
         return string.toString();
+    }
+
+    public synchronized void loadWriteToRead() {
+        MemoryCopy memoryCopy = createMemoryCopy(MemoryType.WRITE);
+        memoryCopy.setMemoryType(MemoryType.READ);
+        loadMemoryCopy(memoryCopy);
     }
 }

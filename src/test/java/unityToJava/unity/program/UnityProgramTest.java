@@ -26,7 +26,7 @@ public class UnityProgramTest {
         unity.createProgramFromString(program);
         assertNotNull(unity.getUnityProgram());
         unity.startProgram();
-        UnityProgramMemory finalMemory = unity.getUnityProgram().getMemory();
+        UnityProgramMemory finalMemory = UnityProgramMemory.getMemory();
         Integer[] sortedArray = (Integer[]) finalMemory.getVariableValue("A");
         for (int i = 0; i < sortedArray.length - 1; i++){
             Assertions.assertTrue(sortedArray[i] <= sortedArray[i+1]);
