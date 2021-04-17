@@ -12,4 +12,5 @@ public abstract class Variable extends Expression {
     public String getVariableName() {return this.variableName;}
 
     public abstract void setValue(Object variableValue) throws ProgramRunException;
+
 }

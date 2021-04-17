@@ -3,56 +3,77 @@ package unityToJava.unity.statements;
 import unityToJava.unity.exceptions.ProgramRunException;
 import unityToJava.unity.program.UnityProgram;
 import unityToJava.unity.program.UnityProgramMemory;
+import unityToJava.unity.program.memory.MemoryCopy;
 import unityToJava.unity.statements.assignments.Assignment;
-import unityToJava.unity.thread.TaskCreator;
+import unityToJava.unity.statements.assignments.QuantifiedAssignment;
 import unityToJava.unity.thread.ThreadManager;
+import unityToJava.unity.thread.tasks.Task;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Future;
 
 public class AssignmentStatement extends Statement {
 
+    List<Task> tasks;
     List<Assignment> assignments;
     public AssignmentStatement(List<Assignment> assignments) {
         this.assignments = assignments;
+        this.tasks = new ArrayList<>();
     }
 
     public List<Assignment> getAssignments() {
         return assignments;
     }
 
+    //todo execute parallel only if:
+    //assignments > 1 or assignments == 1 && assignment instaceof QuantifiedAssignment
     @Override
     public void execute() throws ProgramRunException {
         ThreadManager threadManager = UnityProgram.getUnityProgram().getThreadManager();
-        if (threadManager != null && assignments.size() > 1) {
-            executeParallel(threadManager);
+        if (runParallel() && threadManager != null && tasks.size() > 1) {
+            List<Future<?>> runningTasks = executeParallel(threadManager);
+            waitForTaskToFinish(threadManager, runningTasks);
         } else {
             executeSingleThread();
         }
-
-        waitForTaskToFinish(threadManager);
 
         //after all assignments, copy changed WRITE memory into READ memory
         UnityProgramMemory.getMemory().loadWriteToRead();
     }
 
+    /**
+     * execute parallel only if:
+     * assignments > 1 or assignments == 1 && assignment instaceof QuantifiedAssignment
+     * @return
+     */
+    private boolean runParallel() {
+        return (assignments.size() > 1 || (assignments.get(0) instanceof QuantifiedAssignment));
+    }
+
     private void executeSingleThread() throws ProgramRunException {
-        for (Assignment assignment : assignments) {
-            assignment.assign();
+        for (Task task : tasks) {
+            task.execute();
         }
     }
 
-    private void executeParallel(ThreadManager threadManager) {
-        for (Assignment assignment : assignments){
-            threadManager.addTask(TaskCreator.createAssignmentTask(assignment));
+    private List<Future<?>> executeParallel(ThreadManager threadManager) {
+        List<Future<?>> submittedTasks = new ArrayList<>();
+        for (Task task : tasks){
+            task.setLock(threadManager.getLock());
+            submittedTasks.add(threadManager.addTask(task.executeParallel()));
         }
+        return submittedTasks;
     }
 
     @Override
-    public void prepareExecution() throws ProgramRunException {
+    public void prepareExecution(List<MemoryCopy> memorySnapshots) throws ProgramRunException {
+        tasks = new ArrayList<>();
         for (Assignment assignment : assignments) {
-            assignment.prepareExecution();
+            assignment.prepareExecution(memorySnapshots);
+            tasks.addAll(assignment.getTasks());
         }
-
     }
 
     @Override
@@ -62,5 +83,10 @@ public class AssignmentStatement extends Statement {
             string.append(assignment.toString()).append(" \n");
         }
         return string.toString();
+    }
+
+    @Override
+    protected Collection<? extends Task> getTasks() {
+        return tasks;
     }
 }

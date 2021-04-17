@@ -2,6 +2,7 @@ package unityToJava.unity.expressions;
 
 import unityToJava.unity.exceptions.ProgramRunException;
 import unityToJava.unity.exceptions.UnsupportedOperationException;
+import unityToJava.unity.program.memory.MemoryCopy;
 
 import java.util.List;
 

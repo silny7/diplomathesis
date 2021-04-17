@@ -5,7 +5,6 @@ import unityToJava.unity.exceptions.ProgramRunException;
 import unityToJava.unity.exceptions.UnsupportedOperationException;
 import unityToJava.unity.expressions.Expression;
 import unityToJava.unity.expressions.variables.Variable;
-import unityToJava.unity.program.UnityProgram;
 import unityToJava.unity.program.UnityProgramMemory;
 import unityToJava.unity.program.configuration.Configuration;
 import unityToJava.unity.program.memory.MemoryCopy;

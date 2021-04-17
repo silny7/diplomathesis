@@ -56,12 +56,14 @@ public class Function extends Expression{
     public String toString() {
         StringBuilder string = new StringBuilder();
         string.append(methodName);
+        string.append("(");
         boolean first = true;
         for (Expression arg : args){
             if (!first) string.append(", ");
             else first = false;
             string.append(arg.toString());
         }
+        string.append(")");
         return string.toString();
     }
 

@@ -2,6 +2,7 @@ package unityToJava.unity.expressions;
 
 import unityToJava.unity.exceptions.IllegalArgumentTypeException;
 import unityToJava.unity.exceptions.ProgramRunException;
+import unityToJava.unity.program.memory.MemoryCopy;
 
 public class Constant extends Expression{
     private Object constantValue;

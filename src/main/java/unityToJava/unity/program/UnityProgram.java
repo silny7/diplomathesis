@@ -41,16 +41,18 @@ public class UnityProgram {
             executeInitiallySection();
             executeAlwaysSection();
             programLog("Starting assign section: ", Section.ASSIGN);
+            int cycles = 0;
             while (!isFixedPoint()){
                 fixedPoint = true;
                 executeAssignSection();
 
                 //after every run of assignSection, execute alwaysSection
                 executeAlwaysSection();
+                cycles++;
             }
             //after program run
             logProgramTime(startMillis);
-
+            logNumberOfCycles(cycles);
             logMemory();
             //shutdownThreadManager();
             discardProgramMemory();
@@ -59,9 +61,14 @@ public class UnityProgram {
         }
     }
 
+    private void logNumberOfCycles(int cycles) {
+        infoLog("Unity program finished in " + cycles + " runs of assign section");
+    }
+
+    //todo make ThreadManager Singleton class
     private void initializeThreadManager() {
         if (Configuration.isMultithreading() && threadManager == null) {
-            threadManager = new ThreadManager();
+            threadManager = ThreadManager.getInstance();
         }
     }
 
@@ -74,7 +81,7 @@ public class UnityProgram {
         setCurrentSection(Section.ASSIGN);
         assignSection.execute();
 
-        checkSectionCompleted();
+        //checkSectionCompleted();
     }
 
     private void executeAlwaysSection() throws ProgramRunException {
@@ -83,7 +90,7 @@ public class UnityProgram {
             alwaysSection.execute();
         }
 
-        checkSectionCompleted();
+        //checkSectionCompleted();
     }
 
     private void executeInitiallySection() throws ProgramRunException {
@@ -92,7 +99,7 @@ public class UnityProgram {
             initiallySection.execute();
         }
 
-        checkSectionCompleted();
+        //checkSectionCompleted();
 
         programLog("Memory after Initially section", Section.INITIALLY);
         programLog(UnityProgramMemory.getMemory().print(), Section.INITIALLY);

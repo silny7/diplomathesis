@@ -30,4 +30,12 @@ public class MemoryCopy {
     public void loadIntoProgramMemory(){
         UnityProgramMemory.getMemory().loadMemoryCopy(this);
     }
+
+    public boolean containsVariable(String varName) {
+        return variables.keySet().contains(varName);
+    }
+
+    public Object getVariable(String varName) {
+        return variables.get(varName);
+    }
 }

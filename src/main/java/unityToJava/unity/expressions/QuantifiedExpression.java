@@ -43,7 +43,7 @@ public class QuantifiedExpression extends Expression{
                 return BinaryOperator.getDefaultOperatorValue((BinaryOperator) operator);
             } else if (operator instanceof String){
                 //operator is a method
-                return new Function(operator.toString(), new ArrayList<Expression>()).resolve();
+                return new Function(operator.toString(), new ArrayList<>()).resolve();
             } else {
                 throw new IllegalProgramStateException("Invalid QuantifiedExpression operator: " + operator);
             }

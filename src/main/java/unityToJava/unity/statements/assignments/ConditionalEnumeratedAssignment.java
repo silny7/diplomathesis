@@ -4,8 +4,12 @@ import unityToJava.unity.exceptions.IllegalProgramStateException;
 import unityToJava.unity.exceptions.ProgramRunException;
 import unityToJava.unity.expressions.Expression;
 import unityToJava.unity.expressions.variables.Variable;
+import unityToJava.unity.program.memory.MemoryCopy;
+import unityToJava.unity.thread.tasks.TaskCreator;
+import unityToJava.unity.thread.tasks.Task;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class ConditionalEnumeratedAssignment extends Assignment {
@@ -16,16 +20,17 @@ public class ConditionalEnumeratedAssignment extends Assignment {
     List<List<Expression>> expressionsList;
     List<Expression> bool_expr_list;
 
+    List<Task> tasks;
+
     public ConditionalEnumeratedAssignment(List<Variable> vars, List<List<Expression>> expressionsList, List<Expression> bool_expr){
         this.variableList = vars;
         this.expressionsList = expressionsList;
         this.bool_expr_list = bool_expr;
+        this.tasks = new ArrayList<>();
     }
 
     public ConditionalEnumeratedAssignment(){
-        this.variableList = new ArrayList<Variable>();
-        this.expressionsList = new ArrayList<List<Expression>>();
-        this.bool_expr_list = new ArrayList<Expression>();
+        this(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
 
     public void addCondition(List<Expression> expressions, Expression boolExpr){
@@ -43,17 +48,20 @@ public class ConditionalEnumeratedAssignment extends Assignment {
         //variables:
         boolean first = true;
         for (Variable variable : variableList){
-            string.append(variable.toString());
             if (!first) string.append(", ");
             first = false;
+            string.append(variable.toString());
         }
 
         string.append(" := ");
 
         //expressions in format: expression_list if boolean expression
+        first = true;
         for (Expression boolean_expr : bool_expr_list){
             for (List<Expression> simpleExpressionList : expressionsList) {
                 for (Expression simpleExpression : simpleExpressionList){
+                    if (!first) string.append(", ");
+                    first = false;
                     string.append(simpleExpression.toString() + " ");
                 }
             }
@@ -64,55 +72,84 @@ public class ConditionalEnumeratedAssignment extends Assignment {
     }
 
     /**
-     * does nothing
+     * @param memorySnapshots
      */
     @Override
-    public void prepareExecution() {}
+    public void prepareExecution(List<MemoryCopy> memorySnapshots) {
+        tasks = new ArrayList<>();
+        if (memorySnapshots != null) {
+            for (MemoryCopy memoryCopy : memorySnapshots){
+                tasks.add(TaskCreator.createAssignmentTask(memoryCopy, this));
+            }
+        }
+        else {
+            tasks.add(TaskCreator.createAssignmentTask(null, this));
+        }
+    }
 
     @Override
-    public void assign() throws ProgramRunException {
-        List<Integer> expressionSatisfiedIndexes = new ArrayList<Integer>();
+    public void executeAssignment(MemoryCopy boundedMemoryToInject) throws ProgramRunException {
+        List<List<Expression>> expressionsToSet = getSatisfiedExpressions();
+        if (!expressionsToSet.isEmpty()) {
+            List<Expression> expressionsToResolve = expressionsToSet.get(0);
+            List<Object> resolvedValues = resolveExpressions(expressionsToResolve);
+            resultsCheck(expressionsToSet, resolvedValues);
+            assign(resolvedValues);
+        }
+
+    }
+
+    private void assign(List<Object> resolvedValues) throws ProgramRunException {
+        if (resolvedValues.size() != variableList.size()) {
+            throw new IllegalProgramStateException("Size of resolvedValues (" + resolvedValues.size() +") is not the same as variableList (" + variableList.size() +")");
+        } else {
+            //assign resolved values to variable list
+            for (int i = 0; i < variableList.size(); i++) {
+                variableList.get(i).setValue(resolvedValues.get(i));
+                log(variableList.get(i).toString() + " = " + resolvedValues.get(i));
+            }
+        }
+    }
+
+    private List<Object> resolveExpressions(List<Expression> expressionsToResolve) throws ProgramRunException {
+        List<Object> resolvedValues = new ArrayList<>();
+        for (Expression expression : expressionsToResolve){
+            resolvedValues.add(expression.resolve());
+        }
+        return resolvedValues;
+    }
+
+    /**
+     *
+     * @returns List of List<Expression> for which is bool_expr[index] true
+     */
+    private List<List<Expression>> getSatisfiedExpressions() throws ProgramRunException {
+        List<List<Expression>> expressionsToSet = new ArrayList<>();
         for (int index = 0; index < bool_expr_list.size(); index++){
             Boolean expressionResult = (Boolean) bool_expr_list.get(index).resolve();
             if (expressionResult) {
-                expressionSatisfiedIndexes.add(index);
+                expressionsToSet.add(expressionsList.get(index));
             }
         }
+        return expressionsToSet;
+    }
 
-        if (expressionSatisfiedIndexes.isEmpty()) {
-            //no boolean expression is true, tho no assignments are made
-        } else {
-            List<Expression> expressionsToResolve = expressionsList.get(expressionSatisfiedIndexes.get(0));
-            List<Object> resolvedValues = new ArrayList<Object>();
-            for (Expression expression : expressionsToResolve){
-                resolvedValues.add(expression.resolve());
-            }
-            resultsCheck(expressionSatisfiedIndexes, resolvedValues);
-
-            if (resolvedValues.size() != variableList.size()) {
-                throw new IllegalProgramStateException("Size of resolvedValues (" + resolvedValues.size() +") is not the same as variableList (" + variableList.size() +")");
-            } else {
-                //assign resolved values to variable list
-                for (int i = 0; i < variableList.size(); i++) {
-                    variableList.get(i).setValue(resolvedValues.get(i));
-                    log(variableList.get(i).toString() + " = " + resolvedValues.get(i));
-                }
-            }
-        }
+    @Override
+    public Collection<? extends Task> getTasks() {
+        return tasks;
     }
 
     /**
      * If more than one boolean expression is true, then
      * all the corresponding simple-expr-lists must have the same value; hence any
      * one of them can be used for assignment.
-     * @param expressionSatisfiedIndexes
+     * @param expressionsToSet
      * @param resolvedValues
      */
-    private void resultsCheck(List<Integer> expressionSatisfiedIndexes, List<Object> resolvedValues) throws ProgramRunException {
-        for (int i = 1; i < expressionSatisfiedIndexes.size(); i++){
-            List<Expression> expressionsCheck = expressionsList.get(i);
-            for (int j = 0; j < resolvedValues.size(); j++){
-                if (!resolvedValues.get(j).equals(expressionsCheck.get(j).resolve())) {
+    private void resultsCheck(List<List<Expression>> expressionsToSet, List<Object> resolvedValues) throws ProgramRunException {
+        for (List<Expression> expressions : expressionsToSet) {
+            for (int i = 0; i < resolvedValues.size(); i++) {
+                if (!resolvedValues.get(i).equals(expressions.get(i).resolve())) {
                     throw new IllegalProgramStateException("Resolved expressions in conditionalEnumeratedAssignment do not have the same value!");
                 }
             }

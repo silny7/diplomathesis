@@ -18,14 +18,9 @@ import javax.swing.*;
 public class Unity {
     private final LogManager logManager;
     private UnityProgram unityProgram;
-    private ThreadManager threadManager;
-
-
+    
     public Unity(JTextArea errorTA, JTextArea programOutputTA) {
         this.logManager = new LogManager(programOutputTA, errorTA);
-        if (Configuration.isMultithreading()) {
-            this.threadManager = new ThreadManager();
-        }
     }
 
     public void startLogging(){
@@ -72,10 +67,6 @@ public class Unity {
         //start program logging
         startProgramLogging();
         unityProgram.interpret();
-    }
-
-    private ThreadManager getThreadManager() {
-        return this.threadManager;
     }
 
     public UnityProgram getUnityProgram() { return this.unityProgram; }

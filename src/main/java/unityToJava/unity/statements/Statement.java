@@ -1,7 +1,13 @@
 package unityToJava.unity.statements;
 
 import unityToJava.unity.exceptions.ProgramRunException;
+import unityToJava.unity.program.memory.MemoryCopy;
 import unityToJava.unity.thread.ThreadManager;
+import unityToJava.unity.thread.tasks.Task;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.Future;
 
 public abstract class Statement {
 
@@ -13,20 +19,17 @@ public abstract class Statement {
      *             - evaluates quantification if there is any
      *             - creates assignments as a single tasks
      * @throws ProgramRunException
+     * @param memorySnapshots
      */
-    public abstract void prepareExecution() throws ProgramRunException;
+    public abstract void prepareExecution(List<MemoryCopy> memorySnapshots) throws ProgramRunException;
 
-    protected void waitForTaskToFinish(ThreadManager threadManager) throws ProgramRunException {
-            if (threadManager != null) {
-                while (threadManager.allDone() == false) {
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                        throw new ProgramRunException("Unable to sleep thread: " + e.getMessage());
-                    }
-                }
-            }
+    protected void waitForTaskToFinish(ThreadManager threadManager, List<Future<?>> tasks) {
+        while (!threadManager.allDone(tasks)){
+            //wait
+        }
     }
 
     public abstract String toString();
+
+    protected abstract Collection<? extends Task> getTasks();
 }

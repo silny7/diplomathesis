@@ -3,6 +3,7 @@ package unityToJava.unity.expressions;
 import unityToJava.unity.exceptions.IllegalOperatorException;
 import unityToJava.unity.exceptions.ProgramRunException;
 import unityToJava.unity.expressions.operators.BinaryOperator;
+import unityToJava.unity.program.memory.MemoryCopy;
 
 public class BinaryExpression extends Expression{
 

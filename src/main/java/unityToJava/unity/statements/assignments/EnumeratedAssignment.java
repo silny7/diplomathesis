@@ -4,17 +4,24 @@ import unityToJava.unity.exceptions.IllegalProgramStateException;
 import unityToJava.unity.exceptions.ProgramRunException;
 import unityToJava.unity.expressions.Expression;
 import unityToJava.unity.expressions.variables.Variable;
+import unityToJava.unity.program.memory.MemoryCopy;
+import unityToJava.unity.thread.tasks.TaskCreator;
+import unityToJava.unity.thread.tasks.Task;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class EnumeratedAssignment extends Assignment {
 
+    private List<Task> tasks;
     private final List<Variable> variables;
     private final List<Expression> expressions;
 
     public EnumeratedAssignment(List<Variable> vars, List<Expression> exprs){
         this.variables = vars;
         this.expressions = exprs;
+        this.tasks = new ArrayList<>();
     }
 
     public List<Variable> getVariables() {
@@ -49,21 +56,35 @@ public class EnumeratedAssignment extends Assignment {
     }
 
     /**
-     * does nothing
+     * @param memorySnapshots
      */
     @Override
-    public void prepareExecution() {}
+    public void prepareExecution(List<MemoryCopy> memorySnapshots) {
+        tasks = new ArrayList<>();
+        if (memorySnapshots != null) {
+            for (MemoryCopy memoryCopy : memorySnapshots){
+                tasks.add(TaskCreator.createAssignmentTask(memoryCopy, this));
+            }
+        }
+        else {
+            tasks.add(TaskCreator.createAssignmentTask(null, this));
+        }
+    }
 
     @Override
-    public void assign() throws ProgramRunException {
+    public void executeAssignment(MemoryCopy boundedMemoryToInject) throws ProgramRunException {
         if (variables.size() != expressions.size()){
             throw new IllegalProgramStateException("Size of expressionsList (" + expressions.size() +") is not the same as variableList (" + variables.size() +")");
         }
-
         for (int index = 0; index < variables.size(); index++){
             Object value = expressions.get(index).resolve();
             variables.get(index).setValue(value);
             log(variables.get(index).toString() + " = " + value);
         }
+    }
+
+    @Override
+    public Collection<? extends Task> getTasks() {
+        return tasks;
     }
 }

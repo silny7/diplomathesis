@@ -4,6 +4,7 @@ import unityToJava.unity.exceptions.IllegalArgumentTypeException;
 import unityToJava.unity.exceptions.ProgramRunException;
 import unityToJava.unity.program.UnityProgram;
 import unityToJava.unity.program.UnityProgramMemory;
+import unityToJava.unity.program.memory.MemoryCopy;
 
 public class SimpleVariable extends Variable{
 

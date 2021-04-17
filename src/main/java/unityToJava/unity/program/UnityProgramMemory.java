@@ -8,10 +8,15 @@ import unityToJava.unity.program.memory.MemoryCopy;
 import unityToJava.unity.program.memory.MemoryType;
 import unityToJava.unity.sections.Section;
 
+/**
+ * todo
+ * allow injection of local memory for methods get, exists, ?set?
+ */
+
 public class UnityProgramMemory {
 
     private volatile static UnityProgramMemory memoryInstance = null;
-
+    private static Object mutex = new Object();
     //global memory
     volatile GlobalMemory globalMemory;
 
@@ -24,14 +29,16 @@ public class UnityProgramMemory {
     }
 
     public static UnityProgramMemory getMemory(){
-        if (memoryInstance == null) {
-            synchronized (UnityProgramMemory.class) {
-                if (memoryInstance == null) {
-                    memoryInstance = new UnityProgramMemory();
+        UnityProgramMemory memory = memoryInstance;
+        if (memory == null) {
+            synchronized (mutex) {
+                memory = memoryInstance;
+                if (memory == null) {
+                    memory = memoryInstance = new UnityProgramMemory();
                 }
             }
         }
-        return memoryInstance;
+        return memory;
     }
 
     public static void discard() {
@@ -78,7 +85,7 @@ public class UnityProgramMemory {
         }
     }
 
-    public void setVariable(String variableName, Object variableValue) {
+    public synchronized void setVariable(String variableName, Object variableValue) {
         if (isBoundedVariable(variableName)) {
             //UnityProgram.programLog("Setting boundedVariable: " + variableName + " to value: " + (String) variableValue, Section.DECLARE);
             boundedMemory.setVariable(variableName, variableValue);

@@ -2,9 +2,9 @@ package unityToJava.unity.expressions;
 
 import unityToJava.unity.exceptions.IllegalArgumentTypeException;
 import unityToJava.unity.exceptions.ProgramRunException;
+import unityToJava.unity.program.memory.MemoryCopy;
 
 public abstract class Expression {
-
 
     public abstract Object resolve() throws ProgramRunException;
 

@@ -7,8 +7,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class GlobalMemory implements Memory{
 
-    Map<String, Object> memoryRead = new ConcurrentHashMap<>();
-    Map<String, Object> memoryWrite = new ConcurrentHashMap<>();
+    private final Map<String, Object> memoryRead = new ConcurrentHashMap<>();
+    private final Map<String, Object> memoryWrite = new ConcurrentHashMap<>();
 
     @Override
     public boolean containsVariable(String variableName){

@@ -56,7 +56,11 @@ public class ArrayVariable extends Variable{
         for (Expression element : elements){
             if (!first) arrayVar.append(", ");
             else first = false;
-            arrayVar.append(element.toString());
+            try {
+                arrayVar.append(element.resolve());
+            } catch (ProgramRunException exception) {
+                UnityProgram.errorLog(exception);
+            }
         }
         arrayVar.append("]");
         return arrayVar.toString();
