@@ -5,8 +5,9 @@ import unityToJava.unity.exceptions.ProgramRunException;
 import unityToJava.unity.expressions.Expression;
 import unityToJava.unity.expressions.variables.Variable;
 import unityToJava.unity.program.memory.MemoryCopy;
-import unityToJava.unity.thread.tasks.TaskCreator;
+import unityToJava.unity.thread.locks.CondEnumAssignLock;
 import unityToJava.unity.thread.tasks.Task;
+import unityToJava.unity.thread.tasks.TaskCreator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,6 +22,8 @@ public class ConditionalEnumeratedAssignment extends Assignment {
     List<Expression> bool_expr_list;
 
     List<Task> tasks;
+
+    private CondEnumAssignLock lock;
 
     public ConditionalEnumeratedAssignment(List<Variable> vars, List<List<Expression>> expressionsList, List<Expression> bool_expr){
         this.variableList = vars;
@@ -88,7 +91,7 @@ public class ConditionalEnumeratedAssignment extends Assignment {
     }
 
     @Override
-    public void executeAssignment(MemoryCopy boundedMemoryToInject) throws ProgramRunException {
+    public void executeAssignment() throws ProgramRunException {
         List<List<Expression>> expressionsToSet = getSatisfiedExpressions();
         if (!expressionsToSet.isEmpty()) {
             List<Expression> expressionsToResolve = expressionsToSet.get(0);
@@ -99,7 +102,8 @@ public class ConditionalEnumeratedAssignment extends Assignment {
 
     }
 
-    private void assign(List<Object> resolvedValues) throws ProgramRunException {
+
+    private synchronized void assign(List<Object> resolvedValues) throws ProgramRunException {
         if (resolvedValues.size() != variableList.size()) {
             throw new IllegalProgramStateException("Size of resolvedValues (" + resolvedValues.size() +") is not the same as variableList (" + variableList.size() +")");
         } else {
@@ -111,7 +115,13 @@ public class ConditionalEnumeratedAssignment extends Assignment {
         }
     }
 
-    private List<Object> resolveExpressions(List<Expression> expressionsToResolve) throws ProgramRunException {
+    /**
+     * lock memory at this, causes memory rewrites and errors at resultsCheck
+     * @param expressionsToResolve
+     * @return
+     * @throws ProgramRunException
+     */
+    private synchronized List<Object> resolveExpressions(List<Expression> expressionsToResolve) throws ProgramRunException {
         List<Object> resolvedValues = new ArrayList<>();
         for (Expression expression : expressionsToResolve){
             resolvedValues.add(expression.resolve());
@@ -123,7 +133,7 @@ public class ConditionalEnumeratedAssignment extends Assignment {
      *
      * @returns List of List<Expression> for which is bool_expr[index] true
      */
-    private List<List<Expression>> getSatisfiedExpressions() throws ProgramRunException {
+    private synchronized List<List<Expression>> getSatisfiedExpressions() throws ProgramRunException {
         List<List<Expression>> expressionsToSet = new ArrayList<>();
         for (int index = 0; index < bool_expr_list.size(); index++){
             Boolean expressionResult = (Boolean) bool_expr_list.get(index).resolve();
@@ -146,13 +156,26 @@ public class ConditionalEnumeratedAssignment extends Assignment {
      * @param expressionsToSet
      * @param resolvedValues
      */
-    private void resultsCheck(List<List<Expression>> expressionsToSet, List<Object> resolvedValues) throws ProgramRunException {
-        for (List<Expression> expressions : expressionsToSet) {
-            for (int i = 0; i < resolvedValues.size(); i++) {
-                if (!resolvedValues.get(i).equals(expressions.get(i).resolve())) {
+    private synchronized void resultsCheck(List<List<Expression>> expressionsToSet, List<Object> resolvedValues) throws ProgramRunException {
+        for (int expressionsIndex = 1; expressionsIndex < expressionsToSet.size(); expressionsIndex++) {
+            List<Expression> expressions = expressionsToSet.get(expressionsIndex);
+            for (int resolvedValueIndex = 0; resolvedValueIndex < resolvedValues.size(); resolvedValueIndex++){
+                if (!resolvedValues.get(resolvedValueIndex).equals(expressions.get(resolvedValueIndex).resolve())) {
                     throw new IllegalProgramStateException("Resolved expressions in conditionalEnumeratedAssignment do not have the same value!");
                 }
             }
         }
+    }
+
+    public void setLock(CondEnumAssignLock condEnumAssignLock) {
+        this.lock = condEnumAssignLock;
+    }
+
+    private void lock() {
+        if (this.lock != null) lock.lock();
+    }
+
+    private void unlock() {
+        if (this.lock != null) lock.unlock();
     }
 }

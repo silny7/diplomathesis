@@ -87,7 +87,7 @@ public class UnityProgramMemory {
 
     public synchronized void setVariable(String variableName, Object variableValue) {
         if (isBoundedVariable(variableName)) {
-            //UnityProgram.programLog("Setting boundedVariable: " + variableName + " to value: " + (String) variableValue, Section.DECLARE);
+           // UnityProgram.programLog("Setting boundedVariable: " + variableName + " to value: " + variableValue, Section.DECLARE);
             boundedMemory.setVariable(variableName, variableValue);
         } else {
             //UnityProgram.programLog("Setting globalVariable: " + variableName + " to value: " + (String) variableValue, Section.DECLARE);
@@ -129,8 +129,12 @@ public class UnityProgramMemory {
     }
 
     public synchronized void loadWriteToRead() {
-        MemoryCopy memoryCopy = createMemoryCopy(MemoryType.WRITE);
-        memoryCopy.setMemoryType(MemoryType.READ);
-        loadMemoryCopy(memoryCopy);
+//        MemoryCopy memoryCopy = createMemoryCopy(MemoryType.WRITE);
+//        memoryCopy.setMemoryType(MemoryType.READ);
+//        loadMemoryCopy(memoryCopy);
+    }
+
+    public void addBoundedMemoryForThread(String threadName, MemoryCopy memoryCopy){
+        boundedMemory.addBoundedMemoryForThread(threadName, memoryCopy);
     }
 }

@@ -12,14 +12,14 @@ public abstract class Expression {
 
     protected Integer objectToInteger(Object object) throws IllegalArgumentTypeException {
         if (!(object instanceof Integer)) {
-            throw new IllegalArgumentTypeException("Expression value is not of type Integer");
+            throw new IllegalArgumentTypeException("Expression value is not of type Integer, but of type " + object.getClass());
         }
         return (Integer) object;
     }
 
     protected Boolean objectToBoolean(Object object) throws IllegalArgumentTypeException {
         if (!(object instanceof Boolean)) {
-            throw new IllegalArgumentTypeException("Expression value is not of type Boolean");
+            throw new IllegalArgumentTypeException("Expression value is not of type Boolean, but of type " + object.getClass());
         }
         return (Boolean) object;
     }

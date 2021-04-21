@@ -24,8 +24,8 @@ public abstract class Statement {
     public abstract void prepareExecution(List<MemoryCopy> memorySnapshots) throws ProgramRunException;
 
     protected void waitForTaskToFinish(ThreadManager threadManager, List<Future<?>> tasks) {
-        while (!threadManager.allDone(tasks)){
-            //wait
+        while (threadManager.allDone(tasks) == false){
+            //wait until all tasks are finished
         }
     }
 

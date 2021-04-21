@@ -9,9 +9,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LocalMemory implements Memory{
 
     private final Map<String, Object> boundedMemory = new ConcurrentHashMap<>();
+    private final Map<String, MemoryCopy> threadsBoundedMemory = new ConcurrentHashMap<>();
 
     @Override
     public boolean containsVariable(String variableName) {
+        MemoryCopy memoryCopy = threadsBoundedMemory.get(Thread.currentThread().getName());
+        if (memoryCopy != null) {
+            return memoryCopy.containsVariable(variableName);
+        }
         return boundedMemory.containsKey(variableName);
     }
 
@@ -27,6 +32,11 @@ public class LocalMemory implements Memory{
 
     @Override
     public Object getVariable(String variableName) {
+        MemoryCopy memoryCopy = threadsBoundedMemory.get(Thread.currentThread().getName());
+        if (memoryCopy != null) {
+            //System.out.println("Thread " + Thread.currentThread().getName() + " accessing its memory for variableName: " + variableName);
+            return memoryCopy.getVariable(variableName);
+        }
         return boundedMemory.get(variableName);
     }
 
@@ -63,5 +73,9 @@ public class LocalMemory implements Memory{
             map.put(variable.getKey(), variable.getValue());
         }
         return map;
+    }
+
+    public void addBoundedMemoryForThread(String threadName, MemoryCopy memoryCopy) {
+        this.threadsBoundedMemory.put(threadName, memoryCopy);
     }
 }

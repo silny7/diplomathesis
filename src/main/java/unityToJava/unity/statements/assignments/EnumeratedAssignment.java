@@ -72,15 +72,28 @@ public class EnumeratedAssignment extends Assignment {
     }
 
     @Override
-    public void executeAssignment(MemoryCopy boundedMemoryToInject) throws ProgramRunException {
+    public void executeAssignment() throws ProgramRunException {
         if (variables.size() != expressions.size()){
             throw new IllegalProgramStateException("Size of expressionsList (" + expressions.size() +") is not the same as variableList (" + variables.size() +")");
         }
+        List<Object> valuesToSet = resolveExpressions();
+        setValuesToVariables(valuesToSet);
+    }
+
+    private void setValuesToVariables(List<Object> valuesToSet) throws ProgramRunException {
         for (int index = 0; index < variables.size(); index++){
-            Object value = expressions.get(index).resolve();
+            Object value = valuesToSet.get(index);
             variables.get(index).setValue(value);
             log(variables.get(index).toString() + " = " + value);
         }
+    }
+
+    private List<Object> resolveExpressions() throws ProgramRunException {
+        List<Object> valuesToSet = new ArrayList<>();
+        for (Expression expression : expressions){
+            valuesToSet.add(expression.resolve());
+        }
+        return valuesToSet;
     }
 
     @Override

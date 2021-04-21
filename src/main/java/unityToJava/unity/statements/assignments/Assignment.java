@@ -14,7 +14,7 @@ public abstract class Assignment {
 
     public abstract void prepareExecution(List<MemoryCopy> memorySnapshots) throws ProgramRunException;
 
-    public abstract void executeAssignment(MemoryCopy boundedMemoryToInject) throws ProgramRunException;
+    public abstract void executeAssignment() throws ProgramRunException;
 
     public void log(String logMessage){
         UnityProgram.programLog(logMessage, UnityProgram.getCurrentSection());

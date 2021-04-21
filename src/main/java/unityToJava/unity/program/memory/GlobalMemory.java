@@ -34,7 +34,7 @@ public class GlobalMemory implements Memory{
 
     @Override
     public void setVariable(String variableName, Object variableValue) {
-        memoryWrite.put(variableName, variableValue);
+        memoryRead.put(variableName, variableValue);
     }
 
     @Override

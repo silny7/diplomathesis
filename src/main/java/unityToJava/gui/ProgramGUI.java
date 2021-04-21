@@ -49,6 +49,8 @@ public class ProgramGUI extends JFrame {
     //private JMenuItem programShortestPath;
     private JMenuItem programTwoSorts;
     private JMenuItem programGCD;
+    private JMenuItem programFibonacci;
+
 
     private Dimension guiScreenSize;
 
@@ -198,6 +200,7 @@ public class ProgramGUI extends JFrame {
         //programShortestPath = new JMenuItem("Shortest path");
         programTwoSorts = new JMenuItem("Sort + bubbleSort");
         programGCD = new JMenuItem("Greatest common divisor");
+        programFibonacci = new JMenuItem("Fibonacci");
 
         programs.add(programSort);
         programs.add(programBubbleSort);
@@ -205,6 +208,7 @@ public class ProgramGUI extends JFrame {
         //programs.add(programShortestPath);
         programs.add(programTwoSorts);
         programs.add(programGCD);
+        programs.add(programFibonacci);
 
         programBinomical.addActionListener(e -> loadUnityProgramFromFile("binomicalProgram.txt"));
 
@@ -217,6 +221,8 @@ public class ProgramGUI extends JFrame {
         programTwoSorts.addActionListener((e) -> { loadUnityProgramFromFile("twoSorts.txt"); });
 
         programGCD.addActionListener((e) -> { loadUnityProgramFromFile("greatestCommonDivisor.txt"); });
+
+        programFibonacci.addActionListener((e) -> { loadUnityProgramFromFile("fibonacci.txt"); });
     }
 
     private void loadUnityProgramFromFile(String programFileName) {

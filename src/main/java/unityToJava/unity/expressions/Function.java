@@ -35,13 +35,16 @@ public class Function extends Expression{
                 return resolveEven();
             } else if (Functions.RANDOM.equals(methodName.toLowerCase())) {
                 return resolveRandom();
-            } else {
+            } else if (Functions.FIBONACCI.equals(methodName.toLowerCase())) {
+                return resolveFib();
+            }else {
                 throw new NonExistingFunctionException("Function " + this.methodName + " does not exists");
             }
         } else {
             throw new NonExistingFunctionException("Function " + this.methodName + " does not exists");
         }
     }
+
 
     private void resolveArgs() throws ProgramRunException {
         if (!args.isEmpty()){
@@ -123,6 +126,15 @@ public class Function extends Expression{
             return Functions.add(value1, value2);
         } else {
             throw new IllegalArgumentTypeException("There is no implementation for method " + methodName + " with 1 argument: " + args.toString());
+        }
+    }
+
+    private Object resolveFib() throws IllegalArgumentTypeException {
+        if (args.size() == 1) {
+            Integer param = objectToInteger(argsValues.get(0));
+            return Functions.fib(param);
+        } else {
+            throw new IllegalArgumentTypeException("There is no implementation for method " + methodName + " with other than 1 argument");
         }
     }
 }

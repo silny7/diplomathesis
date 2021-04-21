@@ -1,0 +1,10 @@
+Program fibonacci
+declare
+    N:integer;
+    fib: array [0..29] of integer;
+initially
+    N = 30 []
+    <<|| i : 0 <= i < N :: fib[i] = fib(i) >>
+assign
+    N = 1
+END

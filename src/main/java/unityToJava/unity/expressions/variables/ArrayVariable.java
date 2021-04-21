@@ -20,7 +20,7 @@ public class ArrayVariable extends Variable{
     }
 
     @Override
-    public void setValue(Object variableValue) throws ProgramRunException {
+    public synchronized void setValue(Object variableValue) throws ProgramRunException {
         if (UnityProgramMemory.getMemory().variableExists(getVariableName())){
             int[] arrayIndexes = getArrayIndexes();
             Object[] arrayVariable = (Object[]) UnityProgramMemory.getMemory().getVariableValue(getVariableName());

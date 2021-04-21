@@ -58,10 +58,13 @@ public class QuantifiedAssignment extends Assignment {
     }
 
     @Override
-    public void executeAssignment(MemoryCopy boundedMemoryToInject) throws ProgramRunException {
+    public void executeAssignment() throws ProgramRunException {
         ThreadManager threadManager = UnityProgram.getUnityProgram().getThreadManager();
         if (threadManager != null && tasks.size() > 1) {
-            executeParallel(threadManager);
+            List<Future<?>> submittedTasks = executeParallel(threadManager);
+            while (!threadManager.allDone(submittedTasks)) {
+                //wait
+            }
         } else {
             executeSingleThread();
         }
@@ -76,8 +79,8 @@ public class QuantifiedAssignment extends Assignment {
     private List<Future<?>> executeParallel(ThreadManager threadManager) {
         List<Future<?>> submittedTasks = new ArrayList<>();
         for (Task task : tasks){
-            task.setLock(threadManager.getLock());
-            submittedTasks.add(threadManager.addTask(task.executeParallel()));
+            task.setLocks(threadManager.getLocks());
+            submittedTasks.add(threadManager.addTask(task.createRunnable()));
         }
         return submittedTasks;
     }

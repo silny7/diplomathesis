@@ -15,8 +15,9 @@ public class Functions {
     public static final String ODD = "odd";
     public static final String EVEN = "even";
     public static final String RANDOM = "rand";
+    public static final String FIBONACCI = "fib";
 
-    private static final ImmutableList<String> builtInFunctions = ImmutableList.of(ADD, MIN, MAX, ODD, EVEN, RANDOM);
+    private static final ImmutableList<String> builtInFunctions = ImmutableList.of(ADD, MIN, MAX, ODD, EVEN, RANDOM, FIBONACCI);
 
     public static boolean functionExists(String functionName){
         return builtInFunctions.contains(functionName);
@@ -69,5 +70,11 @@ public class Functions {
 
     public static boolean randomBool() {
         return random(2) == 0;
+    }
+
+    public static int fib(int num) {
+        if (num <= 1)
+            return num;
+        return fib(num-1) + fib(num-2);
     }
 }

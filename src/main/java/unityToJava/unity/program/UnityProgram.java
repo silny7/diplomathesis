@@ -98,9 +98,6 @@ public class UnityProgram {
             setCurrentSection(Section.INITIALLY);
             initiallySection.execute();
         }
-
-        //checkSectionCompleted();
-
         programLog("Memory after Initially section", Section.INITIALLY);
         programLog(UnityProgramMemory.getMemory().print(), Section.INITIALLY);
     }

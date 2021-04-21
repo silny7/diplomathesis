@@ -13,7 +13,7 @@ public class SimpleVariable extends Variable{
     }
 
     @Override
-    public void setValue(Object variableValue) throws ProgramRunException {
+    public synchronized void setValue(Object variableValue) throws ProgramRunException {
         boolean isBounded = UnityProgramMemory.getMemory().isBoundedVariable(getVariableName());
 
         Object recentValue = UnityProgramMemory.getMemory().getVariableValue(getVariableName());

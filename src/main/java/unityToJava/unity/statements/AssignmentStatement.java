@@ -27,8 +27,6 @@ public class AssignmentStatement extends Statement {
         return assignments;
     }
 
-    //todo execute parallel only if:
-    //assignments > 1 or assignments == 1 && assignment instaceof QuantifiedAssignment
     @Override
     public void execute() throws ProgramRunException {
         ThreadManager threadManager = UnityProgram.getUnityProgram().getThreadManager();
@@ -38,7 +36,6 @@ public class AssignmentStatement extends Statement {
         } else {
             executeSingleThread();
         }
-
         //after all assignments, copy changed WRITE memory into READ memory
         UnityProgramMemory.getMemory().loadWriteToRead();
     }
@@ -61,8 +58,10 @@ public class AssignmentStatement extends Statement {
     private List<Future<?>> executeParallel(ThreadManager threadManager) {
         List<Future<?>> submittedTasks = new ArrayList<>();
         for (Task task : tasks){
-            task.setLock(threadManager.getLock());
-            submittedTasks.add(threadManager.addTask(task.executeParallel()));
+            task.setLocks(threadManager.getLocks());
+            Runnable runnableTask = task.createRunnable();
+            Future<?> futureTask = threadManager.addTask(runnableTask);
+            submittedTasks.add(futureTask);
         }
         return submittedTasks;
     }
