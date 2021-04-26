@@ -50,21 +50,6 @@ public class ThreadManager {
         if (executorService.isShutdown()) System.out.println("Executor service terminated");
     }
 
-    /**
-     * make this section locked -- cause too many submittedTasks slows down the program. Let the assignment (place where tasks are submitted)
-     * check if the assignment is all done only on submitted tasks by itself.
-     * @return
-     */
-    public boolean allDone(){
-        boolean allDone = true;
-        for (Future<?> task : submittedTasks){
-            allDone &= task.isDone();
-        }
-        //System.out.println("All tasks done: " + allDone);
-        return allDone;
-    }
-
-
     public MyLock[] getLocks() {
         return this.locks;
     }
@@ -74,7 +59,6 @@ public class ThreadManager {
         for (Future<?> task : tasks){
             allDone &= task.isDone();
         }
-        //System.out.println("All tasks done: " + allDone);
         return allDone;
     }
 }

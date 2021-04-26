@@ -23,12 +23,12 @@ public class UnityProgram {
 
     private static UnityProgram instance = null;
     private static LogManager logManager;
-    private static Section currentSection;
+    private static Sections currentSection;
 
     private ThreadManager threadManager;
 
     private UnityProgram(){
-        currentSection = Section.DECLARE;
+        currentSection = Sections.DECLARE;
     }
 
     public void interpret() {
@@ -40,9 +40,9 @@ public class UnityProgram {
             executeDeclareSection();
             executeInitiallySection();
             executeAlwaysSection();
-            programLog("Starting assign section: ", Section.ASSIGN);
+            programLog("Starting assign section: ", Sections.ASSIGN);
             int cycles = 0;
-            while (!isFixedPoint()){
+            while (!isFixedPointReached()){
                 fixedPoint = true;
                 executeAssignSection();
 
@@ -65,7 +65,6 @@ public class UnityProgram {
         infoLog("Unity program finished in " + cycles + " runs of assign section");
     }
 
-    //todo make ThreadManager Singleton class
     private void initializeThreadManager() {
         if (Configuration.isMultithreading() && threadManager == null) {
             threadManager = ThreadManager.getInstance();
@@ -78,7 +77,7 @@ public class UnityProgram {
     }
 
     private void executeAssignSection() throws ProgramRunException {
-        setCurrentSection(Section.ASSIGN);
+        setCurrentSection(Sections.ASSIGN);
         assignSection.execute();
 
         //checkSectionCompleted();
@@ -86,7 +85,7 @@ public class UnityProgram {
 
     private void executeAlwaysSection() throws ProgramRunException {
         if (alwaysSection != null) {
-            setCurrentSection(Section.ALWAYS);
+            setCurrentSection(Sections.ALWAYS);
             alwaysSection.execute();
         }
 
@@ -95,28 +94,20 @@ public class UnityProgram {
 
     private void executeInitiallySection() throws ProgramRunException {
         if (initiallySection != null) {
-            setCurrentSection(Section.INITIALLY);
+            setCurrentSection(Sections.INITIALLY);
+            UnityProgram.programLog("Starting initially section: ", Sections.INITIALLY);
             initiallySection.execute();
         }
-        programLog("Memory after Initially section", Section.INITIALLY);
-        programLog(UnityProgramMemory.getMemory().print(), Section.INITIALLY);
-    }
-
-    //Todo this has to be done after also writing to memory was done
-    private void checkSectionCompleted() {
-        if (threadManager != null && Configuration.isMultithreading()){
-            while (!threadManager.allDone()) {
-                //do nothing, just wait
-            }
-        }
+        programLog("Memory after Initially section", Sections.INITIALLY);
+        programLog(UnityProgramMemory.getMemory().print(), Sections.INITIALLY);
     }
 
     private void executeDeclareSection() throws ProgramRunException {
         if (declareSection != null) {
             declareSection.declareVariables();
         }
-        programLog("Memory after Declare section", Section.DECLARE);
-        programLog(UnityProgramMemory.getMemory().print(), Section.DECLARE);
+        programLog("Memory after Declare section", Sections.DECLARE);
+        programLog(UnityProgramMemory.getMemory().print(), Sections.DECLARE);
     }
 
     public void shutdownThreadManager() throws ProgramRunException {
@@ -139,15 +130,15 @@ public class UnityProgram {
         return instance;
     }
 
-    public static Section getCurrentSection(){
+    public static Sections getCurrentSection(){
         return currentSection;
     }
 
-    public static void setCurrentSection(Section section){
+    public static void setCurrentSection(Sections section){
         currentSection = section;
     }
 
-    public static void programLog(String message, Section section){
+    public static void programLog(String message, Sections section){
         switch (section){
             case DECLARE: logManager.logDeclaration(message); break;
             case INITIALLY: logManager.logInitialization(message); break;
@@ -189,7 +180,7 @@ public class UnityProgram {
     public AssignSection getAssignSection() { return assignSection; }
     public void setAssignSection(AssignSection assignSection) { this.assignSection = assignSection; }
 
-    public boolean isFixedPoint() { return fixedPoint; }
+    public boolean isFixedPointReached() { return fixedPoint; }
 
     public void setFixedPoint(boolean fixedPoint) { this.fixedPoint = fixedPoint; }
 

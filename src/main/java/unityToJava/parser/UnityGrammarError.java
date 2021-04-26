@@ -13,11 +13,6 @@ public class UnityGrammarError {
     private int charPositionInLine;
 
     /**
-     * error message
-     */
-    private String errorMessage;
-
-    /**
      * whole error message
      * format:
      * errorMessage 'at line' lineNumber 'at position' charPositionInLine
@@ -27,8 +22,6 @@ public class UnityGrammarError {
     public UnityGrammarError(int lineNumber, int charPositionInLine, String errorMessage){
         this.lineNumber = lineNumber;
         this.charPositionInLine = charPositionInLine;
-        this.errorMessage = errorMessage;
-
         this.fullErrorMessage = errorMessage + " at line " + this.lineNumber + " at position " + this.charPositionInLine;
     }
 

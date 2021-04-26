@@ -12,14 +12,14 @@ import unityToJava.unity.thread.locks.MyLock;
 
 public class AssignmentTask extends Task{
 
-    private final MemoryCopy memoryCopy;
+    private final MemoryCopy taskMemory;
     private final Assignment assignment;
 
     private BoundedMemoryLock memoryLock;
     private CondEnumAssignLock condEnumAssignLock;
 
     public AssignmentTask(MemoryCopy memoryCopy, Assignment assignment) {
-        this.memoryCopy = memoryCopy;
+        this.taskMemory = memoryCopy;
         this.assignment = assignment;
     }
 
@@ -31,8 +31,8 @@ public class AssignmentTask extends Task{
 
     @Override
     public synchronized void execute() throws ProgramRunException {
-        if (memoryCopy != null) {
-            memoryCopy.loadIntoProgramMemory();
+        if (taskMemory != null) {
+            taskMemory.loadIntoProgramMemory();
         }
         assignment.executeAssignment();
     }
@@ -57,21 +57,21 @@ public class AssignmentTask extends Task{
     }
 
     private void addMemoryCopyToMemory() {
-        if (memoryCopy != null) {
-            UnityProgramMemory.getMemory().addBoundedMemoryForThread(Thread.currentThread().getName(), memoryCopy);
+        if (taskMemory != null) {
+            UnityProgramMemory.getMemory().addBoundedMemoryForThread(Thread.currentThread().getName(), taskMemory);
         }
     }
 
     private void unlockMemory() {
-        if (memoryCopy != null) {
+        if (taskMemory != null) {
             memoryLock.unlock();
         }
     }
 
     private void lockAndLoadMemory() {
-        if (memoryCopy != null) {
+        if (taskMemory != null) {
             memoryLock.lock();
-            memoryCopy.loadIntoProgramMemory();
+            taskMemory.loadIntoProgramMemory();
         }
     }
 }

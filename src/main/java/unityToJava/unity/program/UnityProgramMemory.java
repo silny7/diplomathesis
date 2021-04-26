@@ -1,17 +1,12 @@
 package unityToJava.unity.program;
 
-import com.sun.org.apache.regexp.internal.RE;
 import unityToJava.unity.exceptions.NonExistingVariableException;
 import unityToJava.unity.program.memory.GlobalMemory;
 import unityToJava.unity.program.memory.LocalMemory;
 import unityToJava.unity.program.memory.MemoryCopy;
 import unityToJava.unity.program.memory.MemoryType;
-import unityToJava.unity.sections.Section;
 
-/**
- * todo
- * allow injection of local memory for methods get, exists, ?set?
- */
+
 
 public class UnityProgramMemory {
 
@@ -97,10 +92,8 @@ public class UnityProgramMemory {
 
     public MemoryCopy createMemoryCopy(MemoryType memoryType){
         switch (memoryType){
-            case READ:
-                return new MemoryCopy(globalMemory.getReadMemoryCopy(), memoryType);
-            case WRITE:
-                return new MemoryCopy(globalMemory.getWriteMemoryCopy(), memoryType);
+            case GLOBAL:
+                return new MemoryCopy(globalMemory.getGlobalMemoryCopy(), memoryType);
             case LOCAL:
                 return new MemoryCopy(boundedMemory.getMemoryCopy(), memoryType);
             default:
@@ -110,8 +103,7 @@ public class UnityProgramMemory {
 
     public void loadMemoryCopy(MemoryCopy memoryCopy){
         switch (memoryCopy.getMemoryType()){
-            case READ:
-            case WRITE:
+            case GLOBAL:
                 globalMemory.loadMemoryCopy(memoryCopy);
                 break;
             case LOCAL:
@@ -128,11 +120,6 @@ public class UnityProgramMemory {
         return string.toString();
     }
 
-    public synchronized void loadWriteToRead() {
-//        MemoryCopy memoryCopy = createMemoryCopy(MemoryType.WRITE);
-//        memoryCopy.setMemoryType(MemoryType.READ);
-//        loadMemoryCopy(memoryCopy);
-    }
 
     public void addBoundedMemoryForThread(String threadName, MemoryCopy memoryCopy){
         boundedMemory.addBoundedMemoryForThread(threadName, memoryCopy);

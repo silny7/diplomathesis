@@ -45,8 +45,6 @@ initially_section: INITIALLY COLON? statement_list;
 assign_section: ASSIGN COLON? statement_list;
 
 //statement definition
-//todo split statements by section and by separator (DETERM/NONDETERM)
-
 statement_list: statement (NONDETERM_SEPARATOR statement)*;
 
 statement: assignment_statement | quantified_statement;

@@ -43,12 +43,12 @@ public class Quantification {
          * one dimensional array with boundedVars.size()
          */
         int[] boundedVarsValues = new int[boundedVars.size()];
-        createVarsValsCombs(boundedVarsWithRanges, boundedVarsValues, 0, memorySnapshots);
+        combineVariableValuesAndCheckBoolExpr(boundedVarsWithRanges, boundedVarsValues, 0, memorySnapshots);
 
         evaluated = true;
     }
 
-    private void createVarsValsCombs(List<BoundedVariable> boundedVarsWithRanges, int[] boundedVarsValues, int currentVar, List<MemoryCopy> memorySnapshots) throws ProgramRunException {
+    private void combineVariableValuesAndCheckBoolExpr(List<BoundedVariable> boundedVarsWithRanges, int[] boundedVarsValues, int currentVar, List<MemoryCopy> memorySnapshots) throws ProgramRunException {
 
         //we have been thru all boundedVars
         if (currentVar == boundedVars.size()){
@@ -72,7 +72,7 @@ public class Quantification {
             BoundedVariable boundedVariable = boundedVarsWithRanges.get(currentVar);
             for (int varValue = boundedVariable.getVarMinValue(); varValue <= boundedVariable.getVarMaxValue(); varValue++){
                 boundedVarsValues[currentVar] = varValue;
-                createVarsValsCombs(boundedVarsWithRanges, boundedVarsValues, currentVar + 1, memorySnapshots);
+                combineVariableValuesAndCheckBoolExpr(boundedVarsWithRanges, boundedVarsValues, currentVar + 1, memorySnapshots);
             }
         }
     }

@@ -6,18 +6,9 @@ import unityToJava.unity.utils.Randomizer;
 
 import java.util.List;
 
-public class AlwaysSection {
-    List<Statement> statements;
+public class AlwaysSection extends Section {
 
     public AlwaysSection(List<Statement> statements) {
-        this.statements = statements;
-    }
-
-    public void execute() throws ProgramRunException {
-        Randomizer.shuffleList(statements);
-        for (Statement statement : statements){
-            statement.prepareExecution(null);
-            statement.execute();
-        }
+        super(statements);
     }
 }

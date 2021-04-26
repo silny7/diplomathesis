@@ -30,8 +30,6 @@ public class QuantifiedStatement extends Statement {
         for (Statement statement : statements){
             statement.execute();
         }
-        //after all assignments, copy changed WRITE memory into READ memory
-        UnityProgramMemory.getMemory().loadWriteToRead();
     }
 
     @Override

@@ -151,7 +151,7 @@ public class ConditionalEnumeratedAssignment extends Assignment {
 
     /**
      * If more than one boolean expression is true, then
-     * all the corresponding simple-expr-lists must have the same value; hence any
+     * all the corresponding simple-expression-lists must have the same value; hence any
      * one of them can be used for assignment.
      * @param expressionsToSet
      * @param resolvedValues

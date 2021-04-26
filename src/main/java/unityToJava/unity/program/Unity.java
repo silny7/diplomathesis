@@ -62,11 +62,16 @@ public class Unity {
     }
 
     public void startProgram(){
-        unityProgram.setUnityLogger(getLogManager());
-        //unityProgram.setThreadManager(getThreadManager());
-        //start program logging
-        startProgramLogging();
-        unityProgram.interpret();
+        if (unityProgram != null) {
+            unityProgram.setUnityLogger(getLogManager());
+            //unityProgram.setThreadManager(getThreadManager());
+            //start program logging
+            startProgramLogging();
+            unityProgram.interpret();
+        }
+        else {
+            System.out.println("UnityProgram is null");
+        }
     }
 
     public UnityProgram getUnityProgram() { return this.unityProgram; }

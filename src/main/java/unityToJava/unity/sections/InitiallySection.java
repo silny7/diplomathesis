@@ -6,15 +6,15 @@ import unityToJava.unity.statements.Statement;
 
 import java.util.List;
 
-public class InitiallySection {
-    List<Statement> statements;
+public class InitiallySection extends Section{
 
     public InitiallySection(List<Statement> statements) {
-        this.statements = statements;
+        super(statements);
     }
 
+    @Override
     public void execute() throws ProgramRunException {
-        UnityProgram.programLog("Starting initially section: ", Section.INITIALLY);
+        UnityProgram.programLog("Starting initially section: ", Sections.INITIALLY);
         for (Statement statement : statements){
             statement.prepareExecution(null);
             statement.execute();

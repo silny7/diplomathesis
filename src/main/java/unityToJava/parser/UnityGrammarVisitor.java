@@ -9,6 +9,7 @@ import unityToJava.parser.exceptions.InvalidOperatorException;
 import unityToJava.parser.exceptions.InvalidStatementException;
 import unityToJava.parser.exceptions.InvalidVariableTypeException;
 import unityToJava.unity.expressions.*;
+import unityToJava.unity.expressions.functions.Functions;
 import unityToJava.unity.expressions.variables.ArrayVariable;
 import unityToJava.unity.expressions.variables.SimpleVariable;
 import unityToJava.unity.expressions.variables.Variable;
@@ -108,7 +109,7 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
         }
 
         errors.add(new UnityGrammarError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Invalid variable type"));
-        throw new ParseCancellationException(new InvalidVariableTypeException(ctx.getText()));
+        return null;
     }
 
     @Override
@@ -124,7 +125,7 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
             return simpleType;
         }
         errors.add(new UnityGrammarError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Invalid variable type"));
-        throw new ParseCancellationException(new InvalidVariableTypeException(ctx.getText()));
+        return null;
     }
 
     @Override
@@ -151,7 +152,7 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
         }
 
         errors.add(new UnityGrammarError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Invalid type of array."));
-        throw new ParseCancellationException(new InvalidVariableTypeException(ctx.getText()));
+        return null;
     }
 
     @Override
@@ -174,8 +175,6 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
     @Override
     public RangeElement visitRangeElement(UnityGrammarParser.RangeElementContext ctx){
         return new RangeElement(visitExpression(ctx.expression()));
-//        errors.add(new UnityGrammarError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Invalid range element"));
-//        throw new ParseCancellationException(new InvalidVariableTypeException(ctx.getText()));
     }
 
 
@@ -216,7 +215,7 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
         if (ctx.quantified_statement() != null) return visitQuantified_statement(ctx.quantified_statement());
 
         errors.add(new UnityGrammarError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Invalid statement definition"));
-        throw new ParseCancellationException(new InvalidStatementException(ctx.getText()));
+        return null;
     }
 
     @Override
@@ -241,7 +240,7 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
         if (ctx.quantified_assignment() != null) return visitQuantified_assignment(ctx.quantified_assignment());
 
         errors.add(new UnityGrammarError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Invalid assignment definition"));
-        throw new ParseCancellationException(new InvalidStatementException(ctx.getText()));
+        return null;
     }
 
     @Override
@@ -260,7 +259,7 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
         }
 
         errors.add(new UnityGrammarError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Invalid enumerated assignment definition"));
-        throw new ParseCancellationException(new InvalidStatementException(ctx.getText()));
+        return null;
     }
 
     @Override
@@ -323,8 +322,7 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
         else if (ctx.complex_relational_operator_expression() != null) return visitComplex_relational_operator_expression(ctx.complex_relational_operator_expression());
 
         errors.add(new UnityGrammarError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Invalid expression definition"));
-        throw new ParseCancellationException(new InvalidExpressionException(ctx.getText()));
-
+        return null;
     }
 
     @Override
@@ -413,7 +411,7 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
         else if (ctx.elementListDeclaration() != null) return visitElementListDeclaration(ctx.elementListDeclaration());
 
         errors.add(new UnityGrammarError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Invalid primary expression definition"));
-        throw new ParseCancellationException(new InvalidExpressionException(ctx.getText()));
+        return null;
     }
 
     @Override
@@ -421,6 +419,10 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
         String methodName = visitFunction(ctx.function());
         List<Expression> args = new ArrayList<Expression>();
         if (ctx.simple_expression_list() != null) args = visitSimple_expression_list(ctx.simple_expression_list());
+        if (!Functions.functionExists(methodName)){
+            errors.add(new UnityGrammarError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Invalid method definition, function \"" + methodName + "\" is not supported"));
+            return null;
+        }
         return new Function(methodName, args);
     }
 
@@ -469,7 +471,7 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
         if (ctx.LESS_THAN() != null) return BinaryOperator.LESS_THAN;
 
         errors.add(new UnityGrammarError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Invalid relational operator"));
-        throw new ParseCancellationException(new InvalidOperatorException(ctx.getText()));
+        return null;
     }
 
     @Override
@@ -479,7 +481,7 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
         if (ctx.OR() != null) return BinaryOperator.OR;
 
         errors.add(new UnityGrammarError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Invalid relational operator"));
-        throw new ParseCancellationException(new InvalidOperatorException(ctx.getText()));
+        return null;
     }
 
     @Override
@@ -490,7 +492,7 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
         if (ctx.MOD() != null) return BinaryOperator.MOD;
 
         errors.add(new UnityGrammarError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Invalid relational operator"));
-        throw new ParseCancellationException(new InvalidOperatorException(ctx.getText()));
+        return null;
     }
 
     @Override
@@ -500,7 +502,7 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
         if (ctx.NOT() != null) return UnaryOperator.NOT;
 
         errors.add(new UnityGrammarError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Invalid relational operator"));
-        throw new ParseCancellationException(new InvalidOperatorException(ctx.getText()));
+        return null;
     }
 
     @Override
@@ -513,7 +515,7 @@ public class UnityGrammarVisitor extends UnityGrammarBaseVisitor {
             if (ctx.OR() != null) return BinaryOperator.OR;
 
             errors.add(new UnityGrammarError(ctx.start.getLine(), ctx.start.getCharPositionInLine(), "Invalid relational operator"));
-            throw new ParseCancellationException(new InvalidOperatorException(ctx.getText()));
+            return null;
         }
     }
 

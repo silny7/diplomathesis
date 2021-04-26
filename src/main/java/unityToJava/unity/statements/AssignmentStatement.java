@@ -36,8 +36,6 @@ public class AssignmentStatement extends Statement {
         } else {
             executeSingleThread();
         }
-        //after all assignments, copy changed WRITE memory into READ memory
-        UnityProgramMemory.getMemory().loadWriteToRead();
     }
 
     /**

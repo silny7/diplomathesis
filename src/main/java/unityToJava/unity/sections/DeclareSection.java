@@ -2,7 +2,6 @@ package unityToJava.unity.sections;
 
 import unityToJava.unity.exceptions.ProgramRunException;
 import unityToJava.unity.program.UnityProgram;
-import unityToJava.unity.program.UnityProgramMemory;
 import unityToJava.unity.statements.VariableDeclaration;
 
 import java.util.ArrayList;
@@ -24,7 +23,7 @@ public class DeclareSection {
 
     public void declareVariables() throws ProgramRunException {
         //for each variable, register it to memory with correct type
-        UnityProgram.programLog("Starting declare section: ", Section.DECLARE);
+        UnityProgram.programLog("Starting declare section: ", Sections.DECLARE);
         for (VariableDeclaration variableDeclaration : declarations){
             variableDeclaration.declare();
         }
