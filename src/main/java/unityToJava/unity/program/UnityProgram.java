@@ -35,8 +35,9 @@ public class UnityProgram {
         try {
             infoLog("Unity program " + (programName != null ? programName : "") + " started");
             long startMillis = System.currentTimeMillis();
-
+            initializeProgramMemory();
             initializeThreadManager();
+
             executeDeclareSection();
             executeInitiallySection();
             executeAlwaysSection();
@@ -55,10 +56,13 @@ public class UnityProgram {
             logNumberOfCycles(cycles);
             logMemory();
             //shutdownThreadManager();
-            discardProgramMemory();
         } catch (ProgramRunException programRunException) {
             errorLog(programRunException);
         }
+    }
+
+    private void initializeProgramMemory() {
+        UnityProgramMemory.discard();
     }
 
     private void logNumberOfCycles(int cycles) {

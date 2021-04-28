@@ -28,13 +28,11 @@ public class UnityProgramTest {
         unity.startProgram();
         UnityProgramMemory finalMemory = UnityProgramMemory.getMemory();
         Integer[] sortedArray = (Integer[]) finalMemory.getVariableValue("A");
-        for (int i = 0; i < sortedArray.length - 1; i++){
-            Assertions.assertTrue(sortedArray[i] <= sortedArray[i+1]);
-        }
+        checkArrayIsSorted(sortedArray);
     }
 
     @Test
-    public void bubbleSort_unityProgram_test() throws UnityGrammarException {
+    public void bubbleSort_unityProgram_test() throws UnityGrammarException, NonExistingVariableException {
         String program = "Program bubblesort\n" +
                 "declare\n" +
                 "    n: integer;\n" +
@@ -49,6 +47,10 @@ public class UnityProgramTest {
         unity.createProgramFromString(program);
         assertNotNull(unity.getUnityProgram());
         unity.startProgram();
+
+        UnityProgramMemory finalMemory = UnityProgramMemory.getMemory();
+        Integer[] sortedArray = (Integer[]) finalMemory.getVariableValue("A");
+        checkArrayIsSorted(sortedArray);
     }
 
     @Test
@@ -68,25 +70,9 @@ public class UnityProgramTest {
         unity.startProgram();
     }
 
-    @Test
-    public void shortestPath_unityProgram_test() throws UnityGrammarException {
-        String program = "Program shortestpath\n" +
-                            "declare\n" +
-                            "    n,k: integer;\n" +
-                            "    D: array [0..9, 0..9] of integer\n" +
-                            "initially\n" +
-                            "    n := 10[]\n" +
-                            "    k := 0 []\n" +
-                            "    <<|| i,j : (0<=i<n) and (0<=j<n) :: D[i,j] := rand(0,20) >>\n" +
-                            "assign\n" +
-                            "   <<|| i,j : (0<=i<n) and (0<=j<n) ::\n" +
-                            "        D[i,j] := min(D[i,j], D[i,k] + D[k,j]) \n" +
-                            "    >> \n" +
-                            "   ||  k := k + 1 if k < n - 1\n" +
-                         "end ";
-        Unity unity = new Unity(null, null);
-        unity.createProgramFromString(program);
-        assertNotNull(unity.getUnityProgram());
-        unity.startProgram();
+    private void checkArrayIsSorted(Integer[] array){
+        for (int i = 0; i < array.length - 1; i++){
+            Assertions.assertTrue(array[i] <= array[i+1]);
+        }
     }
 }

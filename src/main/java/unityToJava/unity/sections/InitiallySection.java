@@ -14,7 +14,6 @@ public class InitiallySection extends Section{
 
     @Override
     public void execute() throws ProgramRunException {
-        UnityProgram.programLog("Starting initially section: ", Sections.INITIALLY);
         for (Statement statement : statements){
             statement.prepareExecution(null);
             statement.execute();
