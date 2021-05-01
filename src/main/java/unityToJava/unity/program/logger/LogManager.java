@@ -66,6 +66,10 @@ public class LogManager {
         logProgram(logText);
     }
 
+    public void logVerification(String message) {
+        logProgram(message);
+    }
+
 
     //REGION ERROR LOGGING
     private void log(MessageType messageType, String logText){
@@ -100,4 +104,5 @@ public class LogManager {
         errorLogger.stop();
         programLogger.stop();
     }
+
 }
