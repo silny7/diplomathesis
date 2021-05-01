@@ -26,14 +26,11 @@ public class UnityProgramMemoryTest {
     }
 
     @Test
-    public void addVariableToWriteMemoryAndLoadToRead() throws NonExistingVariableException {
+    public void addedVariableExistsInMemory() throws NonExistingVariableException {
         memory.initGlobalVariable(VARIABLE_NAME, 0);
-        assertEquals((Integer) memory.getVariableValue(VARIABLE_NAME), 0);
+        assertEquals(0, (Integer) memory.getVariableValue(VARIABLE_NAME));
 
         memory.setVariable(VARIABLE_NAME, 10);
-//        MemoryCopy copy = memory.createMemoryCopy(MemoryType.WRITE);
-//        copy.setMemoryType(MemoryType.GLOBAL);
-//        copy.loadIntoProgramMemory();
-//        assertEquals((Integer) memory.getVariableValue(VARIABLE_NAME), 10);
+        assertEquals(10, (Integer) memory.getVariableValue(VARIABLE_NAME));
     }
 }
