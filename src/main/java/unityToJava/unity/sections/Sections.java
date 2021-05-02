@@ -4,5 +4,6 @@ public enum Sections {
     DECLARE,
     INITIALLY,
     ALWAYS,
-    ASSIGN
+    ASSIGN,
+    VERIFICATION;
 }

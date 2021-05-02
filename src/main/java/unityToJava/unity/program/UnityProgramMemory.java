@@ -6,6 +6,7 @@ import unityToJava.unity.program.memory.LocalMemory;
 import unityToJava.unity.program.memory.MemoryCopy;
 import unityToJava.unity.program.memory.MemoryType;
 
+import java.util.Set;
 
 
 public class UnityProgramMemory {
@@ -123,5 +124,9 @@ public class UnityProgramMemory {
 
     public void addBoundedMemoryForThread(String threadName, MemoryCopy memoryCopy){
         boundedMemory.addBoundedMemoryForThread(threadName, memoryCopy);
+    }
+
+    public Set<String> getVariableNames() {
+        return globalMemory.getVariableNames();
     }
 }

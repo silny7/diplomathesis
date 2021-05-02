@@ -5,6 +5,7 @@ import unityToJava.unity.program.configuration.Configuration;
 import unityToJava.unity.program.logger.LogManager;
 import unityToJava.unity.sections.*;
 import unityToJava.unity.thread.ThreadManager;
+import unityToJava.unity.verification.Verificator;
 
 /**
  * singleton class
@@ -26,6 +27,7 @@ public class UnityProgram {
     private static Sections currentSection;
 
     private ThreadManager threadManager;
+    private Verificator verificator;
 
     private UnityProgram(){
         currentSection = Sections.DECLARE;
@@ -40,6 +42,9 @@ public class UnityProgram {
 
             executeDeclareSection();
             executeInitiallySection();
+
+            initializeProgramVerification();
+
             executeAlwaysSection();
             programLog("Starting assign section: ", Sections.ASSIGN);
             int cycles = 0;
@@ -55,10 +60,19 @@ public class UnityProgram {
             logProgramTime(startMillis);
             logNumberOfCycles(cycles);
             logMemory();
+            verifyProgram();
             //shutdownThreadManager();
         } catch (ProgramRunException programRunException) {
             errorLog(programRunException);
         }
+    }
+
+    private void verifyProgram() {
+        verificator.verifyLeadsTo();
+    }
+
+    private void initializeProgramVerification() {
+        verificator = new Verificator(programName);
     }
 
     private void initializeProgramMemory() {
@@ -149,6 +163,8 @@ public class UnityProgram {
             case ALWAYS:
             case ASSIGN:
                 logManager.logAssignment(message); break;
+            case VERIFICATION:
+                logManager.logVerification(message); break;
             default: logManager.logProgramMessage(message);
         }
     }

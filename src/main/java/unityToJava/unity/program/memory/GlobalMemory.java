@@ -2,6 +2,7 @@ package unityToJava.unity.program.memory;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GlobalMemory implements Memory{
@@ -76,5 +77,9 @@ public class GlobalMemory implements Memory{
             map.put(variable.getKey(), variable.getValue());
         }
         return map;
+    }
+
+    public Set<String> getVariableNames() {
+        return globalMemory.keySet();
     }
 }
