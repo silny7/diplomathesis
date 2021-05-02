@@ -10,14 +10,12 @@ import java.util.List;
 
 public class Verificator {
 
-    ProgramVerification programVerification;
 
     List<LeadsToVerification> verificationList;
 
     boolean verify = true;
 
-    public Verificator(String programName){
-        //programVerification = getVerificationForProgram(programName);
+    public Verificator(){
         verificationList = new ArrayList<>();
         setupVerifications();
     }
@@ -38,14 +36,6 @@ public class Verificator {
                 verify = false;
             }
         }
-    }
-
-    private ProgramVerification getVerificationForProgram(String programName) {
-        if (programName.contains("Sort") || programName.contains("sort")) return new SortVerification();
-        else {
-            System.out.println("No verification for program " + programName);
-        }
-        return null;
     }
 
     public void verifyLeadsTo(){
